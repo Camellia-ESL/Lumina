@@ -10,8 +10,6 @@ workspace "lumina"
 
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
-group "engine"
-	include "engine/build_engine.lua"
-group ""
-
+-- Build files of Lumina containing every project
+include "engine/build_engine.lua"
 include "editor/build_editor.lua"
