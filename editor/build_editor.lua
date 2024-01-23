@@ -10,13 +10,14 @@ project "lumina_editor"
    includedirs
    {
       "src",
-      "../engine/src/",
-      "../vendors"
+      "../engine/src",
+      "../engine/vendors"
    }
 
    links
    {
-      "lumina_engine"
+      "lumina_engine",
+      "d3d11.lib"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")

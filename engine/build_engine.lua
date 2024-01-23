@@ -5,12 +5,17 @@ project "lumina_engine"
    targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "off"
 
-   files { "src/**.h", "src/**.cpp" }
+   files { "src/**.h", "src/**.cpp", "vendors/**.h", "vendors/**.cpp" }
 
    includedirs
    {
       "src",
-      "../vendors"
+      "vendors"
+   }
+
+   links
+   {
+      "d3d11.lib"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
