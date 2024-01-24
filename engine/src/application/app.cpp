@@ -17,12 +17,21 @@ namespace lumina
 		// Set the app in running status
 		is_running_ = true;
 
-		// Joins the main application loop
-		while (is_running_)
-		{
-			on_update();
-			on_render();
-		}
+		// Init surface
+		surface_.init(app_info.surface_width, app_info.surface_height, app_info.surface_name);
+
+		// Calls On Init
+        on_init();
+
+		// Join main application loop
+        while (surface_.is_surface_opened() && is_running_)
+        {
+			surface_.update_events();
+            on_update();
+			surface_.clear_screen();
+            on_render();
+			surface_.present();
+        }
 	}
 
 	void application_player::exit()

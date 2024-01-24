@@ -8,6 +8,9 @@ namespace lumina_editor
 	{
 	public:
 
+		// Called one time when app starts
+		void on_init() override;
+
 		// Called every frame before rendering
 		void on_update() override;
 

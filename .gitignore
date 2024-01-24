@@ -9,6 +9,7 @@ Binaries/
 *.sln
 *.log
 Makefile
+imgui.ini
 
 # Exclude
 !vendors/bin

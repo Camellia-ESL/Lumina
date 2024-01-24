@@ -14,10 +14,16 @@ project "lumina_editor"
       "../engine/vendors"
    }
 
+   libdirs
+   {
+      "../vendors_bin",
+   }
+
    links
    {
       "lumina_engine",
-      "d3d11.lib"
+      "d3d11.lib",
+      "glfw3.lib"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")

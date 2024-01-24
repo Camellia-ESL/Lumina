@@ -1,9 +1,12 @@
 #pragma once
 
+#include "surface.h"
+
 #include <string>
 
 namespace lumina
 {
+	// App creation configs type
 	struct app_info_t
 	{
 		// The application name (not the surface name)
@@ -19,7 +22,7 @@ namespace lumina
 		float surface_height{ 1024 };
 	};
 
-	// Application player abstraction, create, run and holds an application
+	// Application player abstraction, create, run and holds an application (singleton)
 	class application_player
 	{
 	public:
@@ -34,14 +37,11 @@ namespace lumina
 		// Should be called only once, terminate the application
 		void exit();
 
-		// Called every frame before rendering
-		virtual void on_update() {}
-
-		// Called every frame on rendering
-		virtual void on_render() {}
-
 		// Wheter if the app is running or not
 		const bool is_running() const { return is_running_; }
+
+		// Gets the application surface 
+		const app_surface& get_surface() const { return surface_; }
 
 	protected:
 
@@ -50,6 +50,15 @@ namespace lumina
 	protected:
 
 		bool is_running_ = false;
+		app_surface surface_;
 
+		// Called one time when app starts
+		virtual void on_init() {}
+
+		// Called every frame before rendering
+		virtual void on_update() {}
+
+		// Called every frame on rendering
+		virtual void on_render() {}
 	};
 }
