@@ -19,6 +19,9 @@ namespace lumina
 
 		// The size of the data to load [Optional]
 		uint32_t data_to_load_size = 0;
+
+		// The stride that will be used by the vertex buffer, can be set later [Optional]
+		uint32_t data_stride = 0;
 	};
 
 	class d3d11_vertex_buffer

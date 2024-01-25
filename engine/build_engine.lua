@@ -24,6 +24,8 @@ project "lumina_engine"
       "glfw3.lib"
    }
 
+   characterset ("MBCS")
+
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 

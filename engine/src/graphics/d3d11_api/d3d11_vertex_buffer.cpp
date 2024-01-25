@@ -7,6 +7,7 @@ namespace lumina
 	bool d3d11_vertex_buffer::allocate(const d3d11_vertex_buffer_alloc_info_t& alloc_info)
 	{
 		topology_ = alloc_info.topology;
+		vertex_stride_ = alloc_info.data_stride;
 
 		// @enhancement-[Graphics]: The buffer usage init flag should be changed to DEFAULT for speed improvement and a staging buffer should be prefered to upload data
 		D3D11_BUFFER_DESC buffer_description;
@@ -40,7 +41,10 @@ namespace lumina
 	void d3d11_vertex_buffer::enable()
 	{
 		if (!is_allocated())
+		{
+			spdlog::error("Trying to enable a vertex buffer to a non allocated buffer");
 			return;
+		}
 
 		if (vertex_stride_ == 0)
 		{

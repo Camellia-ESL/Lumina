@@ -9,9 +9,10 @@
 
 #include "application/app.h"
 #include "application/surface.h"
+#include "graphics/d3d11_api/d3d11_api.h"
 
 // Lumina is the namespace containing the lumina engine (editor and template app excluded)
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.3";
+	constexpr const char* VERSION = "0.0.35";
 }
