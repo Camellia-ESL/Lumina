@@ -6,6 +6,12 @@
 
 namespace lumina
 {
+	// Available surface graphics api
+	enum class graphics_api_e
+	{
+		D3D11_API
+	};
+
 	class app_surface
 	{
 	public:
@@ -15,6 +21,9 @@ namespace lumina
 
 		// Wheter if the surface is opened or it's been closed (on desktop devices for example closed by cliking exit button)
 		const bool is_surface_opened() const { return !glfwWindowShouldClose(window_); }
+
+		// Get's the current graphics api that the application is using to render
+		const graphics_api_e get_graphics_api_running() const { return graphics_api_running_; }
 
 	private:
 
@@ -36,10 +45,13 @@ namespace lumina
 		// Present all the render data to the surface screen
 		void present();
 
-		// Function executed when the surface get's resized
-		static void on_resize(GLFWwindow* window, int width, int height);
+		// Called on surface destruction
+		void on_destroy();
 
 	private:
+
+		// Which graphics api the application is currently using 
+		graphics_api_e graphics_api_running_;
 
 		// Holds Glfw Window that represent the surface on desktop devices
 		GLFWwindow* window_ = nullptr;

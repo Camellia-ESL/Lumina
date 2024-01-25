@@ -18,6 +18,7 @@ namespace lumina
 		is_running_ = true;
 
 		// Init surface
+		surface_.graphics_api_running_ = app_info.graphics_api;
 		surface_.init(app_info.surface_width, app_info.surface_height, app_info.surface_name);
 
 		// Calls On Init
@@ -32,6 +33,10 @@ namespace lumina
             on_render();
 			surface_.present();
         }
+
+		// Cleanup the surface
+		surface_.on_destroy();
+		surface_.destroy();
 	}
 
 	void application_player::exit()

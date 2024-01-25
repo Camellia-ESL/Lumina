@@ -37,7 +37,7 @@ namespace lumina
 
 	private:
 
-		friend class app_surface;
+		friend class d3d11_renderer;
 
 	};
 }

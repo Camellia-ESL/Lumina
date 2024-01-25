@@ -13,5 +13,5 @@
 // Lumina is the namespace containing the lumina engine (editor and template app excluded)
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.2";
+	constexpr const char* VERSION = "0.0.3";
 }

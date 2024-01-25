@@ -6,8 +6,8 @@
 
 namespace lumina
 {
-	event_dispatcher* event_dispatcher::event_dispatcher_instance_ = nullptr;
-	event_listener* event_listener::event_listener_instance_ = nullptr;
+	event_dispatcher* event_dispatcher::instance_ = nullptr;
+	event_listener* event_listener::instance_ = nullptr;
 
 	// Glfw Callbacks handlers functions
 
@@ -16,39 +16,39 @@ namespace lumina
 	// Called whenever the mouse moves
 	static void mouse_cursor_callback(GLFWwindow* window, double x_pos, double y_pos)
 	{
-		event_dispatcher::get().on_mouse_cursor_move(x_pos, y_pos);
+		event_dispatcher::get_singleton().on_mouse_cursor_move(x_pos, y_pos);
 	}
 
 	// Called whenever the mouse enter or leave window area
 	static void mouse_cursor_enter_callback(GLFWwindow* window, int entered)
 	{
-		event_dispatcher::get().on_mouse_cursor_enter_leave_window_area(entered);
+		event_dispatcher::get_singleton().on_mouse_cursor_enter_leave_window_area(entered);
 	}
 
 	// Called whenever a mouse button gets clicked (either called if pressed or released)
 	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
-		event_dispatcher::get().on_mouse_button_click(button, action, mods);
+		event_dispatcher::get_singleton().on_mouse_button_click(button, action, mods);
 	}
 
 	// Called whenever the mouse wheel gets scrolled up or down
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	{
-		event_dispatcher::get().on_mouse_wheel_scroll(xoffset, yoffset);
+		event_dispatcher::get_singleton().on_mouse_wheel_scroll(xoffset, yoffset);
 	}
 
 	// --KEYBOARD--
 
 	static void keyboard_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		event_dispatcher::get().on_key_input(key, scancode, action, mods);
+		event_dispatcher::get_singleton().on_key_input(key, scancode, action, mods);
 	}
 
 
 	// --WINDOW RESIZE--
 	static void window_resize_callback(GLFWwindow* window, int width, int height)
 	{
-		event_dispatcher::get().on_window_resize(width, height);
+		event_dispatcher::get_singleton().on_window_resize(width, height);
 	}
 
 	// Event dispatcher functions
@@ -70,20 +70,20 @@ namespace lumina
 
 	void event_dispatcher::dispatch_mouse_events(const mouse_event_t& mouse_event)
 	{
-		for (size_t i = 0; i < event_listener::get().mouse_event_callbacks_.size(); i++)
-			event_listener::get().mouse_event_callbacks_[i](mouse_event);
+		for (size_t i = 0; i < event_listener::get_singleton().mouse_event_callbacks_.size(); i++)
+			event_listener::get_singleton().mouse_event_callbacks_[i](mouse_event);
 	}
 
 	void event_dispatcher::dispatch_keyboard_events(const keyboard_event_t& keyboard_event)
 	{
-		for (size_t i = 0; i < event_listener::get().keyboard_event_callbacks.size(); i++)
-			event_listener::get().keyboard_event_callbacks[i](keyboard_event);
+		for (size_t i = 0; i < event_listener::get_singleton().keyboard_event_callbacks.size(); i++)
+			event_listener::get_singleton().keyboard_event_callbacks[i](keyboard_event);
 	}
 
 	void event_dispatcher::dispatch_window_resize(const window_resize_event_t& window_resize_event)
 	{
-		for (size_t i = 0; i < event_listener::get().window_resize_event_callbacks_.size(); i++)
-			event_listener::get().window_resize_event_callbacks_[i](window_resize_event);
+		for (size_t i = 0; i < event_listener::get_singleton().window_resize_event_callbacks_.size(); i++)
+			event_listener::get_singleton().window_resize_event_callbacks_[i](window_resize_event);
 	}
 
 	// Event dispatcher callbacks related to the glfw callbacks (MOUSE)

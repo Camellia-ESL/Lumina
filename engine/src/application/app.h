@@ -20,6 +20,9 @@ namespace lumina
 
 		// Surface start height size 
 		float surface_height{ 1024 };
+
+		// The graphics api that will be used to render on the surface
+		graphics_api_e graphics_api = graphics_api_e::D3D11_API;
 	};
 
 	// Application player abstraction, create, run and holds an application (singleton)

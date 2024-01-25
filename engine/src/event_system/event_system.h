@@ -1,5 +1,10 @@
 #pragma once
 
+/*
+	This header contains the whole function of the event system of Lumina Engine
+	made by https://github.com/VanityEmptiness 
+*/
+
 #include "mouse_event.h"
 #include "keyboard_event.h"
 #include "window_resize_event.h"
@@ -8,12 +13,14 @@
 
 namespace lumina
 {
-	// Dispatcher encharged to dispatch events to the listener
+	// Dispatcher encharged to dispatch events to the listener (singleton)
 	class event_dispatcher
 	{
 	public:
 
-		event_dispatcher() { event_dispatcher_instance_ = this; }
+		event_dispatcher() { instance_ = this; }
+		
+		static event_dispatcher& get_singleton() { return *instance_; }
 
 		void dispatch_mouse_events(const mouse_event_t& mouse_event);
 		void dispatch_keyboard_events(const keyboard_event_t& keyboard_event);
@@ -34,11 +41,10 @@ namespace lumina
 		
 		void on_window_resize(int width, int height);
 
-		static event_dispatcher& get() { return *event_dispatcher_instance_; }
 
 	private:
 
-		static event_dispatcher* event_dispatcher_instance_;
+		static event_dispatcher* instance_;
 	
 	private:
 
@@ -50,22 +56,23 @@ namespace lumina
 
 	};
 
-	// Event listener that handles the updates of binded event callbacks
+	// Event listener that handles the updates of binded event callbacks (singleton)
 	class event_listener
 	{
 	public:
 
-		event_listener() { event_listener_instance_ = this; }
+		event_listener() { instance_ = this; }
+		
+		static event_listener& get_singleton() { return *instance_; }
 
 		void submit_event_callback(std::function<void(const mouse_event_t&)> mouse_event_callback);
 		void submit_event_callback(std::function<void(const keyboard_event_t&)> keyboard_event_callback);
 		void submit_event_callback(std::function<void(const window_resize_event_t&)> window_resize_event_callback);
 
-		static event_listener& get() { return *event_listener_instance_; }
 
 	private:
 
-		static event_listener* event_listener_instance_;
+		static event_listener* instance_;
 
 	private:
 
