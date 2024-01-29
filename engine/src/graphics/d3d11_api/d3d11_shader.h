@@ -22,6 +22,8 @@ namespace lumina
 	{
 	public:
 
+		~d3d11_shader() { shader_memory_blob_->Release(); }
+
 		ID3DBlob* get_blob() { return shader_memory_blob_; }
 
 		// Load a shader from file
@@ -44,4 +46,51 @@ namespace lumina
 		virtual bool allocate_shader() { return true; };
 	};
 
+	class d3d11_vertex_shader : public d3d11_shader
+	{
+	public:
+
+		~d3d11_vertex_shader() { vertex_shader_->Release(); }
+
+		// Enables the shader for the current render pass
+		void enable() override;
+
+		// Wheter if the shader is loaded and usable or not
+		bool is_loaded() override { return vertex_shader_ != nullptr; }
+
+		// Gets the pointer to the contained shader
+		void* get_shader() override { return vertex_shader_; }
+
+	private:
+
+		ID3D11VertexShader* vertex_shader_ = nullptr; 
+
+		// Allocates the shader and encapsulate it
+		bool allocate_shader() override;
+
+	};
+
+	class d3d11_pixel_shader : public d3d11_shader
+	{
+	public:
+
+		~d3d11_pixel_shader() { pixel_shader_->Release(); }
+
+		// Enables the shader for the current render pass
+		void enable() override;
+
+		// Wheter if the shader is loaded and usable or not
+		bool is_loaded() override { return pixel_shader_ != nullptr; }
+
+		// Gets the pointer to the contained shader
+		void* get_shader() override { return pixel_shader_; }
+
+	private:
+
+		ID3D11PixelShader* pixel_shader_ = nullptr; 
+
+		// Allocates the shader and encapsulate it
+		bool allocate_shader() override;
+
+	};
 }

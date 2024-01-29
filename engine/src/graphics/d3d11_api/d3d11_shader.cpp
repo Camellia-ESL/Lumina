@@ -1,5 +1,6 @@
 #include "d3d11_shader.h"
 
+#include "graphics/d3d11_api/d3d11_api.h"
 #include "core/lumina_strings.h"
 
 #include "spdlog/spdlog.h"
@@ -30,7 +31,7 @@ namespace lumina
 			spdlog::error("Error compiling shader from file.");
 
 			if (error_msg_blob != nullptr) 
-				spdlog::error((char*)error_msg_blob->GetBufferPointer());
+				spdlog::error("D3D11 Shader Compiler -> " + (std::string)((char*)error_msg_blob->GetBufferPointer()));
 			
 			return false;
 		}
@@ -42,5 +43,51 @@ namespace lumina
 		}
 
 		return allocate_shader();
+	}
+
+	bool d3d11_vertex_shader::allocate_shader()
+	{
+		if (shader_memory_blob_ == nullptr)
+			return false;
+
+		d3d11_instance::get_singleton().get_device()->CreateVertexShader(
+			shader_memory_blob_->GetBufferPointer(), 
+			shader_memory_blob_->GetBufferSize(), 
+			nullptr, 
+			&vertex_shader_
+		);
+
+		return is_loaded();
+	}
+
+	void d3d11_vertex_shader::enable()
+	{
+		if (!is_loaded())
+			return;
+
+		d3d11_instance::get_singleton().get_device_context()->VSSetShader(vertex_shader_, 0, 0);
+	}
+
+	bool d3d11_pixel_shader::allocate_shader()
+	{
+		if (shader_memory_blob_ == nullptr)
+			return false;
+
+		d3d11_instance::get_singleton().get_device()->CreatePixelShader(
+			shader_memory_blob_->GetBufferPointer(), 
+			shader_memory_blob_->GetBufferSize(), 
+			nullptr, 
+			&pixel_shader_
+		);
+
+		return is_loaded();
+	}
+
+	void d3d11_pixel_shader::enable()
+	{
+		if (!is_loaded())
+			return;
+
+		d3d11_instance::get_singleton().get_device_context()->PSSetShader(pixel_shader_, 0, 0);
 	}
 }

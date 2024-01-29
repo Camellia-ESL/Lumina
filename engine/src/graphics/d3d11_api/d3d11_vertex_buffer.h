@@ -28,7 +28,7 @@ namespace lumina
 	{
 	public:
 
-		d3d11_vertex_buffer() {}
+		~d3d11_vertex_buffer() { vertex_buffer_->Release(); }
 
 		// Allocates the vertex buffer and eventually load the given data into it
 		bool allocate(const d3d11_vertex_buffer_alloc_info_t& alloc_info);

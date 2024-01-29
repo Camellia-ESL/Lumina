@@ -8,3 +8,4 @@
 #include "d3d11_instance.h"
 #include "d3d11_renderer.h"
 #include "d3d11_vertex_buffer.h"
+#include "d3d11_shader.h"
