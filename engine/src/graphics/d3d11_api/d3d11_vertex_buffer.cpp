@@ -16,7 +16,18 @@ namespace lumina
 		buffer_description.ByteWidth = alloc_info.buffer_size;
 		buffer_description.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		buffer_description.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		d3d11_instance::get_singleton().get_device()->CreateBuffer(&buffer_description, NULL, &vertex_buffer_);
+		
+		if (FAILED(
+			d3d11_instance::get_singleton().get_device()->CreateBuffer(
+				&buffer_description, 
+				NULL, 
+				&vertex_buffer_
+			)
+		))
+		{
+			spdlog::error("D3D11 Vertex Buffer -> Error allocating vertex buffer.");
+			return false;
+		}
 
 		if(alloc_info.data_to_load != nullptr)
 			load_data(alloc_info.data_to_load, alloc_info.data_to_load_size);
@@ -24,11 +35,11 @@ namespace lumina
 		return is_allocated();
 	}
 
-	void d3d11_vertex_buffer::load_data(const void* data, uint32_t size)
+	void d3d11_vertex_buffer::load_data(const void* data, uint32_t size) const 
 	{
 		if (!is_allocated())
 		{
-			spdlog::error("Trying to update data to a non allocated buffer");
+			spdlog::error("D3D11 Vertex Buffer -> Trying to update data to a non allocated buffer");
 			return;
 		}
 
@@ -38,17 +49,17 @@ namespace lumina
 		d3d11_instance::get_singleton().get_device_context()->Unmap(vertex_buffer_, NULL);
 	}
 
-	void d3d11_vertex_buffer::enable()
+	void d3d11_vertex_buffer::enable() const 
 	{
 		if (!is_allocated())
 		{
-			spdlog::error("Trying to enable a vertex buffer to a non allocated buffer");
+			spdlog::error("D3D11 Vertex Buffer -> Trying to enable a vertex buffer to a non allocated buffer");
 			return;
 		}
 
 		if (vertex_stride_ == 0)
 		{
-			spdlog::error("Trying to enable a vertex buffer with a null stride, did you forget to specify the stride?");
+			spdlog::error("D3D11 Vertex Buffer -> Trying to enable a vertex buffer with a null stride, did you forget to specify the stride?");
 			return;
 		}
 

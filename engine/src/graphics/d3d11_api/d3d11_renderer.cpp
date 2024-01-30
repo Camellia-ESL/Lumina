@@ -25,6 +25,7 @@ namespace lumina
     {
         constexpr const float clear_color_with_alpha[4] = { 0.12f, 0.12f, 0.12f, 1.0f };
         ID3D11RenderTargetView* render_target = d3d11_instance::get_singleton().get_main_render_target_view();
+        
         d3d11_instance::get_singleton().get_device_context()->OMSetRenderTargets(
             1,
             &render_target,
@@ -43,6 +44,6 @@ namespace lumina
     {
         d3d11_instance::get_singleton().cleanup_render_target();
         d3d11_instance::get_singleton().get_swap_chain()->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-        d3d11_instance::get_singleton().create_rendere_target();
+        d3d11_instance::get_singleton().create_render_target();
     }
 }

@@ -32,7 +32,7 @@ namespace lumina
 
 		bool create_device(HWND hwnd);
 		void cleanup_device();
-		void create_rendere_target();
+		void create_render_target();
 		void cleanup_render_target();
 
 	private:

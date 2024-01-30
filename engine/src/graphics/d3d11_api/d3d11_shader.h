@@ -22,7 +22,7 @@ namespace lumina
 	{
 	public:
 
-		~d3d11_shader() { shader_memory_blob_->Release(); }
+		~d3d11_shader() { shader_memory_blob_->Release(); shader_memory_blob_ = nullptr; }
 
 		ID3DBlob* get_blob() { return shader_memory_blob_; }
 
@@ -50,7 +50,7 @@ namespace lumina
 	{
 	public:
 
-		~d3d11_vertex_shader() { vertex_shader_->Release(); }
+		~d3d11_vertex_shader() { vertex_shader_->Release(); vertex_shader_ = nullptr; }
 
 		// Enables the shader for the current render pass
 		void enable() override;
@@ -74,7 +74,7 @@ namespace lumina
 	{
 	public:
 
-		~d3d11_pixel_shader() { pixel_shader_->Release(); }
+		~d3d11_pixel_shader() { pixel_shader_->Release(); pixel_shader_ = nullptr; }
 
 		// Enables the shader for the current render pass
 		void enable() override;

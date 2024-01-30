@@ -9,3 +9,4 @@
 #include "d3d11_renderer.h"
 #include "d3d11_vertex_buffer.h"
 #include "d3d11_shader.h"
+#include "d3d11_input_layout_descriptor.h"

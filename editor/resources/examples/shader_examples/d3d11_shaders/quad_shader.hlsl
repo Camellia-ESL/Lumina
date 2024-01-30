@@ -1,21 +1,9 @@
-cbuffer input_constant_buffer : register(b0)
+float4 v_shader(float3 pos : POSITION) : SV_Position
 {
-    float4x4 model_ortho_matrix;
-    float4 quad2d_color;
-};
+    return float4(pos, 1.0f);
+}
 
-struct vertex_shader_output_t
+float4 p_shader(float4 pos : SV_Position) : SV_Target
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
-};
-
-vertex_shader_output_t vertex_shader_main(float3 position : POSITION, float4 color : COLOR)
-{
-    vertex_shader_output_t output;
-
-    output.position = mul(float4(position, 1.0f), model_ortho_matrix);
-    output.color = quad2d_color;
-    
-    return output;
+    return float4(1.0f, 1.0f, 0.0f, 1.0f); 
 }

@@ -34,10 +34,10 @@ namespace lumina
 		bool allocate(const d3d11_vertex_buffer_alloc_info_t& alloc_info);
 
 		// Load data in the buffer
-		void load_data(const void* data, uint32_t size);
+		void load_data(const void* data, uint32_t size) const;
 
 		// Enable the vertex buffer to be used in the render pass
-		void enable();
+		void enable() const;
 
 		// Set the stride of the vertex buffer (the size of the type of a single chunk of data of the vertex buffer)
 		void set_stride(const uint32_t stride) { vertex_stride_ = stride; }

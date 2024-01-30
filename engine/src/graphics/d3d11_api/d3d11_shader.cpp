@@ -18,7 +18,7 @@ namespace lumina
 			D3DCompileFromFile(
 				lumina_strings_s::str_to_wstr(load_info.file_path_name).c_str(),
 				nullptr,
-				nullptr,
+				D3D_COMPILE_STANDARD_FILE_INCLUDE,
 				load_info.shader_func_name.c_str(),
 				load_info.shader_profile.c_str(),
 				0,
@@ -28,7 +28,7 @@ namespace lumina
 			)
 		))
 		{
-			spdlog::error("Error compiling shader from file.");
+			spdlog::error("D3D11 Shader Compiler -> Error compiling shader from file.");
 
 			if (error_msg_blob != nullptr) 
 				spdlog::error("D3D11 Shader Compiler -> " + (std::string)((char*)error_msg_blob->GetBufferPointer()));
@@ -38,7 +38,7 @@ namespace lumina
 
 		if (shader_memory_blob_ == nullptr)
 		{
-			spdlog::error("Error compiling shader from file, unknown error occured!");
+			spdlog::error("D3D11 Shader Compiler -> Error compiling shader from file, unknown error occured!");
 			return false;
 		}
 
@@ -50,12 +50,18 @@ namespace lumina
 		if (shader_memory_blob_ == nullptr)
 			return false;
 
-		d3d11_instance::get_singleton().get_device()->CreateVertexShader(
-			shader_memory_blob_->GetBufferPointer(), 
-			shader_memory_blob_->GetBufferSize(), 
-			nullptr, 
-			&vertex_shader_
-		);
+		if (FAILED(
+			d3d11_instance::get_singleton().get_device()->CreateVertexShader(
+				shader_memory_blob_->GetBufferPointer(),
+				shader_memory_blob_->GetBufferSize(),
+				nullptr,
+				&vertex_shader_
+			)
+		))
+		{
+			spdlog::error("D3D11 Shader Compiler -> Error creating vertex shader.");
+			return false;
+		}
 
 		return is_loaded();
 	}
@@ -73,12 +79,18 @@ namespace lumina
 		if (shader_memory_blob_ == nullptr)
 			return false;
 
-		d3d11_instance::get_singleton().get_device()->CreatePixelShader(
-			shader_memory_blob_->GetBufferPointer(), 
-			shader_memory_blob_->GetBufferSize(), 
-			nullptr, 
-			&pixel_shader_
-		);
+		if (FAILED(
+			d3d11_instance::get_singleton().get_device()->CreatePixelShader(
+				shader_memory_blob_->GetBufferPointer(),
+				shader_memory_blob_->GetBufferSize(),
+				nullptr,
+				&pixel_shader_
+			)
+		))
+		{
+			spdlog::error("D3D11 Shader Compiler -> Error creating pixel shader.");
+			return false;
+		}
 
 		return is_loaded();
 	}
