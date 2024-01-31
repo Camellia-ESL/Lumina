@@ -1,17 +1,13 @@
 #pragma once
 
+#include "graphics/graphics_driver.h"
+
 #include "GLFW/glfw3.h"
 
 #include <string>
 
 namespace lumina
 {
-	// Available surface graphics api
-	enum class graphics_api_e
-	{
-		D3D11_API
-	};
-
 	class app_surface
 	{
 	public:
@@ -22,8 +18,8 @@ namespace lumina
 		// Wheter if the surface is opened or it's been closed (on desktop devices for example closed by cliking exit button)
 		const bool is_surface_opened() const { return !glfwWindowShouldClose(window_); }
 
-		// Get's the current graphics api that the application is using to render
-		const graphics_api_e get_graphics_api_running() const { return graphics_api_running_; }
+		// Get's the graphics driver used to render everything on screen
+		graphics_driver& get_graphics_driver() { return graphics_driver_; }
 
 	private:
 
@@ -50,8 +46,8 @@ namespace lumina
 
 	private:
 
-		// Which graphics api the application is currently using 
-		graphics_api_e graphics_api_running_;
+		// Holds the graphic driver the application uses to render everything on screen
+		graphics_driver graphics_driver_;
 
 		// Holds Glfw Window that represent the surface on desktop devices
 		GLFWwindow* window_ = nullptr;

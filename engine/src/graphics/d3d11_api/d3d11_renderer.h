@@ -35,7 +35,7 @@ namespace lumina
 	private:
 
 		friend class app_surface;
-		friend class graphics_initializer_s;
+		friend class graphics_driver;
 
 	};
 }

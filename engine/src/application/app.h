@@ -25,7 +25,9 @@ namespace lumina
 		graphics_api_e graphics_api = graphics_api_e::D3D11_API;
 	};
 
-	// Application player abstraction, create, run and holds an application (singleton)
+	// Application player abstraction, create, run and holds an application 
+	// it should be inherited by the class you want to use to handle the application player instance
+	// overrideable methods [on_init(), on_update(), on_render()](singleton)
 	class application_player
 	{
 	public:

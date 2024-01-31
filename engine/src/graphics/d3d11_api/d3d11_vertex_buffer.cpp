@@ -6,6 +6,10 @@ namespace lumina
 {
 	bool d3d11_vertex_buffer::allocate(const d3d11_vertex_buffer_alloc_info_t& alloc_info)
 	{
+		// Check if the buffer is already allocated
+		if (is_allocated())
+			return false;
+
 		topology_ = alloc_info.topology;
 		vertex_stride_ = alloc_info.data_stride;
 
@@ -20,7 +24,7 @@ namespace lumina
 		if (FAILED(
 			d3d11_instance::get_singleton().get_device()->CreateBuffer(
 				&buffer_description, 
-				NULL, 
+				nullptr, 
 				&vertex_buffer_
 			)
 		))

@@ -5,7 +5,7 @@
 
 #include "event_system/event_system.h"
 
-#include "graphics/graphics_initializer.h"
+#include "graphics/graphics_driver.h"
 #include "graphics/d3d11_api/d3d11_renderer.h"
 
 namespace lumina
@@ -42,7 +42,7 @@ namespace lumina
         }
 
         // Init Graphics API
-        graphics_initializer_s::on_init();
+        graphics_driver_.on_init();
 
         // Install events callbacks
         spdlog::info("Installing event callbacks...");
@@ -68,14 +68,12 @@ namespace lumina
 
     void app_surface::clear_screen()
     {
-        if(graphics_api_running_ == graphics_api_e::D3D11_API)
-            d3d11_renderer::get_singleton().clear_screen();
+        graphics_driver_.clear_screen();
     }
 
     void app_surface::present()
     {
-        if (graphics_api_running_ == graphics_api_e::D3D11_API)
-            d3d11_renderer::get_singleton().present();
+        graphics_driver_.present();
     }
 
     void app_surface::install_events_handler()
@@ -90,8 +88,7 @@ namespace lumina
         event_listener_instance->submit_event_callback(
             [&](const window_resize_event_t& resize_event) -> void 
             {
-                if(graphics_api_running_ == graphics_api_e::D3D11_API)
-                    d3d11_renderer::get_singleton().handle_resize(resize_event.app_width, resize_event.app_height);
+                graphics_driver_.resize(resize_event.app_width, resize_event.app_height);
             }
         );
     }
@@ -101,8 +98,6 @@ namespace lumina
         delete& event_dispatcher::get_singleton();
         delete& event_listener::get_singleton();
 
-        if (graphics_api_running_ == graphics_api_e::D3D11_API)
-            delete& d3d11_renderer::get_singleton();
-
+        graphics_driver_.on_destroy();
     }
 }

@@ -20,6 +20,10 @@ namespace lumina
 			return false;
 		}
 
+		// Check if the descriptor is already allocated
+		if (is_allocated())
+			return false;
+
 		input_elements_descriptor_ = descriptor;
 
 		if (FAILED(

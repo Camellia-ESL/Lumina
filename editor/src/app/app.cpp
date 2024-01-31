@@ -2,8 +2,6 @@
 
 #include "ui/ui_render.h"
 
-#include "lumina.h"
-
 namespace lumina_editor
 {
 	void editor_app_player::on_init()

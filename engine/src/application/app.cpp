@@ -18,7 +18,7 @@ namespace lumina
 		is_running_ = true;
 
 		// Init surface
-		surface_.graphics_api_running_ = app_info.graphics_api;
+		surface_.get_graphics_driver().set_graphics_api(app_info.graphics_api);
 		surface_.init(app_info.surface_width, app_info.surface_height, app_info.surface_name);
 
 		// Calls On Init
