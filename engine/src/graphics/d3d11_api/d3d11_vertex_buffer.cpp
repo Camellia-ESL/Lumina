@@ -12,6 +12,7 @@ namespace lumina
 
 		topology_ = alloc_info.topology;
 		vertex_stride_ = alloc_info.data_stride;
+		vertex_buffer_size_ = alloc_info.buffer_size;
 
 		// @enhancement-[Graphics]: The buffer usage init flag should be changed to DEFAULT for speed improvement and a staging buffer should be prefered to upload data
 		D3D11_BUFFER_DESC buffer_description;

@@ -13,8 +13,16 @@ namespace lumina
 
 	struct d3d11_shader_load_info_t
 	{
+		// Must be specified to load a shader from file
 		std::string file_path_name{ "" };
+
+		// Must be specified to load a shader from string
+		std::string src_code{ "" };
+
+		// Must be specified in every case
 		std::string shader_func_name{ "" };
+		
+		// Must be specified in every case
 		std::string shader_profile{ "" };
 	};
 
@@ -28,6 +36,9 @@ namespace lumina
 
 		// Load a shader from file
 		bool load_from_file(const d3d11_shader_load_info_t& load_info);
+
+		// Load a shader from a code string
+		bool load_from_string(const d3d11_shader_load_info_t& load_info);
 
 		// Enables the shader for the current render pass
 		virtual void enable() {}

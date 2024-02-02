@@ -10,9 +10,14 @@
 #include "application/app.h"
 #include "application/surface.h"
 #include "graphics/d3d11_api/d3d11_api.h"
+#include "graphics/renderer_2d.h"
+
+#include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Lumina is the namespace containing the lumina engine (editor and template app excluded)
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.43";
+	constexpr const char* VERSION = "0.0.45";
 }

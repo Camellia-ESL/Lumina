@@ -46,9 +46,6 @@ namespace lumina_editor
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Test");
-        ImGui::End();
-
         // Rendering
         ImGui::Render();
 

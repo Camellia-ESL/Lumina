@@ -1,6 +1,7 @@
 #include "d3d11_renderer.h"
 
 #include "d3d11_instance.h"
+#include "../d3d11_2d_renderers/d3d11_quad_renderer.h"
 
 #include "spdlog/spdlog.h"
 
@@ -19,6 +20,9 @@ namespace lumina
             spdlog::error("Error creating D3D Device!");
             return;
         }
+
+        // Init shapes batch renderers
+        d3d11_quad_renderer_s::init();
 	}
 
     void d3d11_renderer::clear_screen()
@@ -37,7 +41,7 @@ namespace lumina
 
     void d3d11_renderer::present()
     {
-        d3d11_instance::get_singleton().get_swap_chain()->Present(TRUE, 0);
+        d3d11_instance::get_singleton().get_swap_chain()->Present(FALSE, 0);
     }
 
     void d3d11_renderer::handle_resize(const float width, const float height)

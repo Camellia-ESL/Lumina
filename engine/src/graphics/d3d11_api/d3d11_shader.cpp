@@ -45,6 +45,44 @@ namespace lumina
 		return allocate_shader();
 	}
 
+	bool d3d11_shader::load_from_string(const d3d11_shader_load_info_t& load_info)
+	{
+		ID3DBlob* error_msg_blob = nullptr;
+		
+		// Tries to compile shader and display eventual errors while compiling if there are
+		if (FAILED(
+			D3DCompile(
+				load_info.src_code.c_str(),
+				load_info.src_code.length(),
+				nullptr,
+				nullptr,
+				D3D_COMPILE_STANDARD_FILE_INCLUDE,
+				load_info.shader_func_name.c_str(),
+				load_info.shader_profile.c_str(),
+				0,
+				0,
+				&shader_memory_blob_,
+				&error_msg_blob
+			)
+		))
+		{
+			spdlog::error("D3D11 Shader Compiler -> Error compiling shader from string.");
+
+			if (error_msg_blob != nullptr)
+				spdlog::error("D3D11 Shader Compiler -> " + (std::string)((char*)error_msg_blob->GetBufferPointer()));
+
+			return false;
+		}
+
+		if (shader_memory_blob_ == nullptr)
+		{
+			spdlog::error("D3D11 Shader Compiler -> Error compiling shader from string, unknown error occured!");
+			return false;
+		}
+
+		return allocate_shader();
+	}
+
 	bool d3d11_vertex_shader::allocate_shader()
 	{
 		if (shader_memory_blob_ == nullptr)

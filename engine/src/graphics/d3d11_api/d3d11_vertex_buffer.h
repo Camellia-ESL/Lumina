@@ -28,10 +28,13 @@ namespace lumina
 	{
 	public:
 
-		~d3d11_vertex_buffer() { vertex_buffer_->Release(); }
+		~d3d11_vertex_buffer() { destroy(); }
 
 		// Allocates the vertex buffer and eventually load the given data into it
 		bool allocate(const d3d11_vertex_buffer_alloc_info_t& alloc_info);
+
+		// Free the resources
+		void destroy() { vertex_buffer_->Release(); }
 
 		// Load data in the buffer
 		void load_data(const void* data, uint32_t size) const;
@@ -44,12 +47,14 @@ namespace lumina
 
 		const bool is_allocated() const { return vertex_buffer_ != nullptr; }
 		const uint32_t get_stride() const { return vertex_stride_; }
+		const uint32_t get_size() const { return vertex_buffer_size_; }
 		const D3D11_PRIMITIVE_TOPOLOGY get_topology() const { return topology_; }
 
 	private:
 
 		ID3D11Buffer* vertex_buffer_ = nullptr;
 		uint32_t vertex_stride_ = 0;
+		uint32_t vertex_buffer_size_ = 0;
 
 		// @enhancement-[Graphics]: Topology property should really be moved somewhere else.
 		D3D11_PRIMITIVE_TOPOLOGY topology_; 

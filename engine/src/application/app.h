@@ -46,7 +46,7 @@ namespace lumina
 		const bool is_running() const { return is_running_; }
 
 		// Gets the application surface 
-		const app_surface& get_surface() const { return surface_; }
+		app_surface& get_surface() { return surface_; }
 
 	protected:
 

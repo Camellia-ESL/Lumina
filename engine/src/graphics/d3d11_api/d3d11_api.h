@@ -8,5 +8,7 @@
 #include "d3d11_instance.h"
 #include "d3d11_renderer.h"
 #include "d3d11_vertex_buffer.h"
+#include "d3d11_index_buffer.h"
 #include "d3d11_shader.h"
 #include "d3d11_input_layout_descriptor.h"
+#include "d3d11_blend_state.h"
