@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include "../scene_system/components/camera_component.h"
 
 namespace lumina
 {
@@ -12,7 +12,7 @@ namespace lumina
 	public:
 
 		// Must be called before any draw
-		static void begin_render_pass();
+		static void begin_render_pass(camera_component* camera);
 
 		// Must be called after drawing everything (draw everything on screen)
 		static void end_render_pass();

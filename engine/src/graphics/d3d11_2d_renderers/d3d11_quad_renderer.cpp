@@ -5,6 +5,13 @@
 namespace lumina
 {
 	const std::string vertex_shader_src = R"(
+	
+		cbuffer generic_constant_buffer : register(b0)
+		{
+			float4x4 projection_matrix;
+			float4x4 view_matrix;
+		};
+
 		struct vertex_output
 		{ 
 			float4 position : SV_POSITION; 
@@ -14,7 +21,7 @@ namespace lumina
 		vertex_output v_main(float2 position : POSITION, float4x4 model : MODEL_TRANSFORM, float4 color : COLOR)
 		{
 			vertex_output output;
-			output.position = mul(float4(position, 0.0f, 1.0f), model);
+			output.position = mul(float4(position, 0.0f, 1.0f), mul(model, mul(view_matrix, projection_matrix)));
 			output.color = color;
 
 			return output;
@@ -30,9 +37,23 @@ namespace lumina
 		
 	struct quad_vertex_t
 	{
+		// Static quad position that will be multiplied by the transform
 		glm::vec2 position;
+		
+		// The model transform that will be used to multiply the position
 		glm::mat4 model_transform;
+
+		// The quad color
 		glm::vec4 color;
+	};
+
+	struct alignas(16) generic_constant_buffer_t
+	{
+		// A orthographic or a perspective projection matrix
+		glm::mat4 projection_matrix{ glm::mat4(1.0f) };
+
+		// A view matrix (the camera matrix)
+		glm::mat4 view_matrix{ glm::mat4(1.0f) };
 	};
 
 	d3d11_vertex_buffer vertex_buffer{};
@@ -41,17 +62,33 @@ namespace lumina
 	d3d11_pixel_shader pixel_shader{};
 	d3d11_input_layout_descriptor input_layout_descriptor{};
 	d3d11_blend_state blend_state{};
+	d3d11_constant_buffer generic_constant_buffer{};
 
 	std::vector<quad_vertex_t> verticies{};
+	generic_constant_buffer_t generic_constant_buffer_data{};
 	uint32_t rendered_quads_this_frame = 0;
+	camera_component* camera_this_frame = nullptr;
 	const uint32_t verticies_per_quad = 4;
 	const uint32_t indicies_per_quad = 6;
 	
-	void d3d11_quad_renderer_s::begin_render_pass()
+	void d3d11_quad_renderer_s::begin_render_pass(camera_component* camera)
 	{
 		// Clear the previous render pass
 		verticies.clear();
 		rendered_quads_this_frame = 0;
+		
+		// Assert that the camera exist
+		if (camera_this_frame == nullptr)
+			return;
+		
+		camera_this_frame = camera;
+
+		generic_constant_buffer_data.view_matrix = camera_this_frame->get_view_matrix();
+		generic_constant_buffer_data.projection_matrix = camera_this_frame->get_projection_matrix();
+
+		// Traspose matricies contained in the constant buffer
+		generic_constant_buffer_data.view_matrix = glm::transpose(generic_constant_buffer_data.view_matrix);
+		generic_constant_buffer_data.projection_matrix = glm::transpose(generic_constant_buffer_data.projection_matrix);
 	}
 
 	void d3d11_quad_renderer_s::end_render_pass()
@@ -66,9 +103,13 @@ namespace lumina
 		pixel_shader.enable();
 		input_layout_descriptor.enable();
 		blend_state.enable();
+		generic_constant_buffer.enable();
 
 		// Load the vertex buffer with the verticies of this render pass
 		vertex_buffer.load_data(&verticies[0], sizeof(quad_vertex_t) * verticies.size());
+
+		// Load the constant buffer with the updated data
+		generic_constant_buffer.load_data(&generic_constant_buffer_data, sizeof(generic_constant_buffer_t));
 
 		// Draw call, render all the quads
 		d3d11_instance::get_singleton().get_device_context()->DrawIndexed(rendered_quads_this_frame * indicies_per_quad, 0, 0);
@@ -79,14 +120,14 @@ namespace lumina
 		if (rendered_quads_this_frame >= max_renderable_quads_)
 		{
 			end_render_pass();
-			begin_render_pass();
+			begin_render_pass(camera_this_frame);
 		}
 
 		glm::mat4 transposed_transform = glm::transpose(quad_transform);
 
 		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, color }); // Top left
-		verticies.push_back({ { 0.5f,  0.5f }, transposed_transform, color }); // Top right
-		verticies.push_back({ { 0.5f, -0.5f }, transposed_transform, color }); // Bottom right
+		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, color }); // Top right
+		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, color }); // Bottom right
 		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, color }); // Bottom left
 
 		rendered_quads_this_frame++;
@@ -152,6 +193,9 @@ namespace lumina
 
 		// Allocate the blend state
 		blend_state.allocate(nullptr);
+
+		// Allocate the constant buffer
+		generic_constant_buffer.allocate(sizeof(generic_constant_buffer_t));
 	}
 
 	void d3d11_quad_renderer_s::destroy()

@@ -5,13 +5,13 @@
 
 namespace lumina
 {
-	void renderer_2d_s::begin_render_pass()
+	void renderer_2d_s::begin_render_pass(camera_component* camera)
 	{
 		graphics_api_e running_graphics_api = application_player::get_singleton().get_surface().get_graphics_driver().get_graphics_api_running();
 
 		if (running_graphics_api == graphics_api_e::D3D11_API)
 		{
-			d3d11_quad_renderer_s::begin_render_pass();
+			d3d11_quad_renderer_s::begin_render_pass(camera);
 		}
 	}
 

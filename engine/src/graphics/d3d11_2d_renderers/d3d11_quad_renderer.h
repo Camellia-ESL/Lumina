@@ -1,8 +1,6 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "../../scene_system/components/camera_component.h"
 
 namespace lumina
 {
@@ -12,7 +10,7 @@ namespace lumina
 	public:
 
 		// Begin a new render pass 
-		static void begin_render_pass();
+		static void begin_render_pass(camera_component* camera);
 		
 		// End the render pass and draws everything on screen
 		static void end_render_pass();

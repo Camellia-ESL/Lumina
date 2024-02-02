@@ -12,3 +12,4 @@
 #include "d3d11_shader.h"
 #include "d3d11_input_layout_descriptor.h"
 #include "d3d11_blend_state.h"
+#include "d3d11_constant_buffer.h"
