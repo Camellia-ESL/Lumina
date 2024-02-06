@@ -17,6 +17,10 @@ namespace lumina_editor
 
 	void editor_app_player::on_render()
 	{
+		// Renders Scene
+		lumina::scenes_system::get_singleton().render();
+
+		// Renders UI
 		ui_render_s::on_render();
 	}
 }

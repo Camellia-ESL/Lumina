@@ -78,7 +78,7 @@ namespace lumina
 		rendered_quads_this_frame = 0;
 		
 		// Assert that the camera exist
-		if (camera_this_frame == nullptr)
+		if (camera == nullptr)
 			return;
 		
 		camera_this_frame = camera;

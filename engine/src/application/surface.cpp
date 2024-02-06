@@ -4,6 +4,7 @@
 #include "GLFW/glfw3.h"
 
 #include "event_system/event_system.h"
+#include "scene_system/scenes_system.h"
 
 #include "graphics/graphics_driver.h"
 #include "graphics/d3d11_api/d3d11_renderer.h"
@@ -47,6 +48,9 @@ namespace lumina
         // Install events callbacks
         spdlog::info("Installing event callbacks...");
         install_events_handler();
+
+        // Init the scene system
+        scenes_system* scene_system_instance = new scenes_system();
 
         glfwSetWindowPos(
             window_,
@@ -95,9 +99,14 @@ namespace lumina
 
     void app_surface::on_destroy()
     {
+        // Destroy scene system
+        delete& scenes_system::get_singleton();
+
+        // Destroy event system
         delete& event_dispatcher::get_singleton();
         delete& event_listener::get_singleton();
 
+        // Destroy graphics 
         graphics_driver_.on_destroy();
     }
 }

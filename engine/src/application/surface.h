@@ -3,6 +3,7 @@
 #include "graphics/graphics_driver.h"
 
 #include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
 
 #include <string>
 
@@ -20,6 +21,9 @@ namespace lumina
 
 		// Get's the graphics driver used to render everything on screen
 		graphics_driver& get_graphics_driver() { return graphics_driver_; }
+
+		// Get's the surface width and height
+		const glm::vec2 get_dimensions() const { int width, height; glfwGetWindowSize(window_, &width, &height); return { width, height }; }
 
 	private:
 
