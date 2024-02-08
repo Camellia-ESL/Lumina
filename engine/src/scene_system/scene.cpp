@@ -4,7 +4,9 @@ namespace lumina
 {
 	entity scene::create_entity()
 	{
-		return entity{ registry_, registry_.create() };
+		entity entity_buffer{ &registry_, registry_.create() };
+		entity_buffer.add_component<identity_component>();
+		return entity_buffer;
 	}
 
 	void scene::destroy_entity(entt::entity entity)

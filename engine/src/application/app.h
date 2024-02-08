@@ -48,6 +48,12 @@ namespace lumina
 		// Gets the application surface 
 		app_surface& get_surface() { return surface_; }
 
+		// Gets the delta time of the application
+		const float get_delta_time() const { return delta_time_; }
+
+		// Gets the FPS of the app (frame per second)
+		const float get_fps() const { return 1.0f / delta_time_; }
+
 	protected:
 
 		static application_player* instance_;
@@ -56,6 +62,7 @@ namespace lumina
 
 		bool is_running_ = false;
 		app_surface surface_;
+		float delta_time_;
 
 		// Called one time when app starts
 		virtual void on_init() {}

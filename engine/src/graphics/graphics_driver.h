@@ -26,6 +26,9 @@ namespace lumina
 		// Get's the graphics api used for rendering
 		const graphics_api_e get_graphics_api_running() const { return graphics_api_running_; }
 
+		// Wheter if the vsync is enabled or not
+		const bool is_vsync_enabled() const { return vsync_; }
+
 	private:
 
 		// Called when the graphic get's initialized
@@ -44,6 +47,9 @@ namespace lumina
 
 		// Which graphics api the application is currently using 
 		graphics_api_e graphics_api_running_;
+
+		// Wheter if the vsync is enabled or not
+		bool vsync_ = true;
 
 		friend class app_surface;
 	};

@@ -13,6 +13,8 @@
 #include "graphics/renderer_2d.h"
 #include "scene_system/scenes_system.h"
 #include "scene_system/components/components.h"
+#include "core/lumina_memory.h"
+#include "core/lumina_strings.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -21,5 +23,5 @@
 // Lumina is the namespace containing the lumina engine (editor and template app excluded)
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.5";
+	constexpr const char* VERSION = "0.0.6";
 }

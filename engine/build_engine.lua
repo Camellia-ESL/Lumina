@@ -24,6 +24,11 @@ project "lumina_engine"
       "glfw3.lib"
    }
 
+   defines
+   {
+      "LUMINA_WIN32_PLATFORM"
+   }
+
    characterset ("MBCS")
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")

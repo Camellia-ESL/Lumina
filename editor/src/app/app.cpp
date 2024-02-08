@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include "ui/ui_render.h"
+#include "ui/view_register.h"
 
 namespace lumina_editor
 {

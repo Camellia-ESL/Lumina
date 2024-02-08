@@ -106,7 +106,7 @@ namespace lumina
 
 		for (auto ent : sprites)
 		{
-			entity sprite_entity{ scene_registry, ent };
+			entity sprite_entity{ &scene_registry, ent };
 
 			transform_component& transform = sprite_entity.get_component<transform_component>();
 			sprite_component& sprite = sprite_entity.get_component<sprite_component>();

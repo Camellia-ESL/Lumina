@@ -1,5 +1,7 @@
 #include "d3d11_renderer.h"
 
+#include "application/app.h"
+
 #include "d3d11_instance.h"
 #include "../d3d11_2d_renderers/d3d11_quad_renderer.h"
 
@@ -41,7 +43,10 @@ namespace lumina
 
     void d3d11_renderer::present()
     {
-        d3d11_instance::get_singleton().get_swap_chain()->Present(FALSE, 0);
+        d3d11_instance::get_singleton().get_swap_chain()->Present(
+            application_player::get_singleton().get_surface().get_graphics_driver().is_vsync_enabled(), 
+            0
+        );
     }
 
     void d3d11_renderer::handle_resize(const float width, const float height)
