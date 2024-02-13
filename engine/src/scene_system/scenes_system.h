@@ -23,6 +23,9 @@ namespace lumina
 		// Destroy a scene
 		bool destroy_scene(const std::string& scene_name);
 
+		// Change name to a scene
+		bool change_name(const std::string& scene_name, const std::string& new_name);
+
 		// Activate a scene
 		void activate_scene(const std::string& scene_name);
 
@@ -37,6 +40,9 @@ namespace lumina
 
 		// Wheter if there is a active scene or not
 		bool has_active_scene() { return active_scene_ != nullptr; }
+
+		// Wheter if the given scene is the current active one
+		bool is_active_scene(scene* scene) { return active_scene_ == scene; }
 
 		// Gets all the available scenes
 		const std::vector<scene>& get_all_scenes() const { return scenes_; }

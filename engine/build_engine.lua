@@ -42,15 +42,18 @@ project "lumina_engine"
        defines { "DEBUG" }
        runtime "Debug"
        symbols "On"
+       links { "yaml-cppd.lib" }
 
    filter "configurations:Release"
        defines { "RELEASE" }
        runtime "Release"
        optimize "On"
        symbols "On"
+       links { "yaml-cpp.lib" }
 
    filter "configurations:Dist"
        defines { "DIST" }
        runtime "Release"
        optimize "On"
        symbols "Off"
+       links { "yaml-cpp.lib" }

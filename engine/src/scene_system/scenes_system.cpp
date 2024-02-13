@@ -53,6 +53,22 @@ namespace lumina
 		return true;
 	}
 
+	bool scenes_system::change_name(const std::string& scene_name, const std::string& new_name)
+	{
+		// Check if the scene to change doesn't exist
+		if (!has_scene(scene_name))
+			return false;
+
+		// Check if another scene with this name already exist
+		if (has_scene(new_name))
+			return false;
+
+		// Set the new scene name
+		get_scene(scene_name)->set_name(new_name);
+
+		return true;
+	}
+
 	void scenes_system::activate_scene(const std::string& scene_name)
 	{
 		if (!has_scene(scene_name))

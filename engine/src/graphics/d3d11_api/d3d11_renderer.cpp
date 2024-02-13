@@ -15,6 +15,8 @@ namespace lumina
 
 	void d3d11_renderer::init(HWND window)
 	{
+        spdlog::warn("Creating a d3d11 instance.");
+
         d3d11_instance* instance = new d3d11_instance();
 
         if (!d3d11_instance::get_singleton().create_device(window))
@@ -25,6 +27,8 @@ namespace lumina
 
         // Init shapes batch renderers
         d3d11_quad_renderer_s::init();
+
+        spdlog::info("D3D11 Renderer initialized.");
 	}
 
     void d3d11_renderer::clear_screen()

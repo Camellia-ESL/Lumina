@@ -17,7 +17,6 @@
 
 namespace lumina_editor
 {
-
 	void ui_render_s::on_init()
 	{
         // Setup Dear ImGui context
@@ -163,5 +162,4 @@ namespace lumina_editor
             ImGui::RenderPlatformWindowsDefault();
         }
 	}
-
 }

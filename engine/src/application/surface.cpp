@@ -13,7 +13,7 @@ namespace lumina
 {
 	void app_surface::init(float surface_width, float surface_height, const std::string& surface_name)
 	{
-        spdlog::info("Creating Surface...");
+        spdlog::warn("Creating Surface...");
 
         if (!glfwInit())
         {
@@ -42,15 +42,20 @@ namespace lumina
             return;
         }
 
+        spdlog::info("Surface Created.");
+
         // Init Graphics API
         graphics_driver_.on_init();
 
         // Install events callbacks
-        spdlog::info("Installing event callbacks...");
+        spdlog::warn("Installing event callbacks...");
         install_events_handler();
+        spdlog::info("Event callbacks installed.");
 
         // Init the scene system
+        spdlog::warn("Instancing the scene system...");
         scenes_system* scene_system_instance = new scenes_system();
+        spdlog::info("Scene system created.");
 
         glfwSetWindowPos(
             window_,

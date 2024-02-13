@@ -13,11 +13,13 @@ namespace lumina
 {
 	void graphics_driver::on_init()
 	{
-        spdlog::info("Initializing graphics...");
+        spdlog::warn("Initializing graphics...");
 
 		// Init DirectX11 Api
 		if (graphics_api_running_ == graphics_api_e::D3D11_API)
 		{
+			spdlog::info("Selected graphics API --> D3D11");
+
 			d3d11_renderer* renderer_instance = new d3d11_renderer();
 			renderer_instance->init(
 				glfwGetWin32Window(application_player::get_singleton().get_surface().get_desktop_handler())

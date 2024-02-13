@@ -93,27 +93,27 @@ namespace lumina_editor
 		// Position 
 		lumina_ui_drag_objects::drag_float_3_multi_text_colored(
 			"Position",
-			editor_ui_colors::red,
-			editor_ui_colors::green,
-			editor_ui_colors::blue,
+			editor_ui_colors::RED,
+			editor_ui_colors::GREEN,
+			editor_ui_colors::BLUE,
 			(float*)position_ptr
 		);
 
 		// Rotation 
 		lumina_ui_drag_objects::drag_float_3_multi_text_colored(
 			"Rotation",
-			editor_ui_colors::red,
-			editor_ui_colors::green,
-			editor_ui_colors::blue,
+			editor_ui_colors::RED,
+			editor_ui_colors::GREEN,
+			editor_ui_colors::BLUE,
 			(float*)rotation_ptr
 		);
 
 		// Scale 
 		lumina_ui_drag_objects::drag_float_3_multi_text_colored(
 			"Scale",
-			editor_ui_colors::red,
-			editor_ui_colors::green,
-			editor_ui_colors::blue,
+			editor_ui_colors::RED,
+			editor_ui_colors::GREEN,
+			editor_ui_colors::BLUE,
 			(float*)scale_ptr
 		);
 	}
@@ -146,9 +146,10 @@ namespace lumina_editor
 
 		lumina::camera_component& camera = entity_.get_component<lumina::camera_component>();
 
-		if(ImGui::Checkbox("Active Camera", &view_instance_data_.is_active_camera))
-		{
+		// Set active camera button
+		if (scene_->is_active_camera(&camera))
+			ImGui::TextColored(editor_ui_colors::GREEN, "Active");
+		else if(ImGui::SmallButton("Set Active"))
 			scene_->set_camera(&camera);
-		}
 	}
 }

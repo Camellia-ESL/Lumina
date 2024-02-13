@@ -10,8 +10,8 @@ namespace lumina
 
 	void application_player::run(const app_info_t& app_info)
 	{
-		spdlog::info("App Starting...");
-		spdlog::info("Please wait while initializing.");
+		spdlog::warn("App Starting...");
+		spdlog::warn("Please wait while initializing.");
 		spdlog::info("Built against Lumina Engine ver. --> " + (std::string)lumina::VERSION);
 
 		// Set the app in running status
@@ -26,6 +26,9 @@ namespace lumina
 
 		// Instance a variable to calculate the delta timem of the application
 		float last_frame_time = 0.0f;
+
+		// Log the app has successfully initialized
+		spdlog::info("App successfully initialized.");
 
 		// Join main application loop
         while (surface_.is_surface_opened() && is_running_)

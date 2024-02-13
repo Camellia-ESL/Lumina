@@ -1,6 +1,7 @@
 #pragma once
 
 #define LUMINA_EDITOR_RESOURCES_PATH "resources/"
+#define LUMINA_EDITOR_TEST_ASSETS_PATH "test_assets/"
 
 namespace lumina_editor_configs
 {

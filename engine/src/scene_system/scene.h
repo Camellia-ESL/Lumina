@@ -34,6 +34,9 @@ namespace lumina
 		// Wheter if the scene has an active scene camera
 		bool has_camera() { return camera_ != nullptr; }
 
+		// Wherter if the given camera is the active one
+		bool is_active_camera(camera_component* camera) { return camera_ == camera; }
+
 		// Set the scene camera
 		void set_camera(camera_component* camera) { camera_ = camera; }
 
@@ -47,5 +50,13 @@ namespace lumina
 
 		// The active camera used to render the scene
 		camera_component* camera_{};
+
+		// Set the scene name
+		void set_name(const std::string& new_name) { name_ = new_name; }
+
+	private:
+
+		friend class scenes_system;
+
 	};
 }
