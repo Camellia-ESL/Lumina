@@ -5,7 +5,7 @@ An attempt to make a simple usable game engine that actually produces playable g
 ### Building on Windows
 - Clone repository
 - Open project_scripts and run Setup-Windows.bat
-- Go back in the main folder, open the generated solutions.
+- Go back in the main folder, open the generated solution.
 - Build and run.
 
 ### Engine architecture
