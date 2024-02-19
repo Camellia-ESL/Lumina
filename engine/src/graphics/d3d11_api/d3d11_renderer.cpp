@@ -9,10 +9,10 @@
 
 #include <Windows.h>
 
+lumina::d3d11_renderer* lumina::d3d11_renderer::singleton_instance_ = nullptr;
+
 namespace lumina
 {
-	d3d11_renderer* d3d11_renderer::instance_ = nullptr;
-
 	void d3d11_renderer::init(HWND window)
 	{
         spdlog::warn("Creating a d3d11 instance.");

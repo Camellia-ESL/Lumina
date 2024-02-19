@@ -8,19 +8,16 @@
 #include "mouse_event.h"
 #include "keyboard_event.h"
 #include "window_resize_event.h"
+#include "core/lumina_singleton.h"
 
 #include <functional>
 
 namespace lumina
 {
 	// Dispatcher encharged to dispatch events to the listener (singleton)
-	class event_dispatcher
+	class LUMINA_SINGLETON_CLASS(event_dispatcher)
 	{
 	public:
-
-		event_dispatcher() { instance_ = this; }
-		
-		static event_dispatcher& get_singleton() { return *instance_; }
 
 		void dispatch_mouse_events(const mouse_event_t& mouse_event);
 		void dispatch_keyboard_events(const keyboard_event_t& keyboard_event);
@@ -40,11 +37,6 @@ namespace lumina
 		// Window resize callbacks
 		
 		void on_window_resize(int width, int height);
-
-
-	private:
-
-		static event_dispatcher* instance_;
 	
 	private:
 
@@ -57,22 +49,13 @@ namespace lumina
 	};
 
 	// Event listener that handles the updates of binded event callbacks (singleton)
-	class event_listener
+	class LUMINA_SINGLETON_CLASS(event_listener)
 	{
 	public:
-
-		event_listener() { instance_ = this; }
-		
-		static event_listener& get_singleton() { return *instance_; }
 
 		void submit_event_callback(std::function<void(const mouse_event_t&)> mouse_event_callback);
 		void submit_event_callback(std::function<void(const keyboard_event_t&)> keyboard_event_callback);
 		void submit_event_callback(std::function<void(const window_resize_event_t&)> window_resize_event_callback);
-
-
-	private:
-
-		static event_listener* instance_;
 
 	private:
 

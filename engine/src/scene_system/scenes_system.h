@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene.h"
+#include "core/lumina_singleton.h"
 
 #include <vector>
 
@@ -9,13 +10,9 @@ namespace lumina
 	// The class that handles every scene creation, destruction and activation
 	// scenes should never be accessed or created without directly using this class. 
 	// Get's created at application start after graphics initialization. (singleton)
-	class scenes_system
+	class LUMINA_SINGLETON_CLASS(scenes_system)
 	{
 	public:
-
-		scenes_system();
-
-		static scenes_system& get_singleton() { return *instance_; }
 
 		// Creates a scene
 		bool create_scene(const std::string& scene_name);
@@ -47,13 +44,11 @@ namespace lumina
 		// Gets all the available scenes
 		const std::vector<scene>& get_all_scenes() const { return scenes_; }
 
-		// Render the active scene, it can only be called inside a rendering method.
-		// It can only be called once.
+		// Render the active scene using the active scene camera, it can only be called inside a rendering method.
 		void render();
 
-	private:
-
-		static scenes_system* instance_;
+		// Render the active scene using a given camera, it can only be called inside a rendering method.
+		void render(camera_component* camera);
 
 	private:
 

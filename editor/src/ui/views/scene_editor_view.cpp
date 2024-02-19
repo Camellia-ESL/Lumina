@@ -26,7 +26,7 @@ namespace lumina_editor
 		// Input Text to handle scene name modification
 		view_instance_data_.scene_name_input_text.render("Name");
 		ImGui::SameLine();
-		if (ImGui::SmallButton("Change"))
+		if (ImGui::SmallButton("Change") && view_instance_data_.scene_name_input_text_buffer.size() > 0)
 		{
 			if (lumina::scenes_system::get_singleton().change_name(
 				scene_->get_name(),

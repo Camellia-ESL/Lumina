@@ -1,24 +1,17 @@
 #pragma once
 
 #include "d3d11_instance.h"	
+#include "core/lumina_singleton.h"
 
 namespace lumina
 {
 	// Abastracted D3D11 Renderer (singleton)
-	class d3d11_renderer
+	class LUMINA_SINGLETON_CLASS(d3d11_renderer)
 	{
 	public:
 
-		d3d11_renderer() { instance_ = this; }
-
-		static d3d11_renderer& get_singleton() { return *instance_; }
-
 		// Handles the resize of the renderer surface
 		void handle_resize(const float width, const float height);
-
-	private:
-
-		static d3d11_renderer* instance_;
 
 	private:
 
@@ -30,7 +23,6 @@ namespace lumina
 
 		// Present everything rendered on screen
 		void present();
-
 
 	private:
 

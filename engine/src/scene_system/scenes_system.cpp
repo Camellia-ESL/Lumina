@@ -3,15 +3,10 @@
 #include "graphics/renderer_2d.h"
 #include "components/components.h"
 
+lumina::scenes_system* lumina::scenes_system::singleton_instance_ = nullptr;
+
 namespace lumina
 {
-	scenes_system* scenes_system::instance_ = nullptr;
-
-	scenes_system::scenes_system()
-	{
-		instance_ = this;
-	}
-
 	bool scenes_system::create_scene(const std::string& scene_name)
 	{
 		// Check if a scene with the given name already exist
@@ -104,16 +99,25 @@ namespace lumina
 		if (!has_active_scene())
 			return;
 
+		render(get_active_scene()->get_camera());
+	}
+
+	void scenes_system::render(camera_component* camera)
+	{
+		// Check if the camera is null
+		if (camera == nullptr)
+			return;
+
+		// Check if there is not an active scene
+		if (!has_active_scene())
+			return;
+
 		// Get the active scene 
 		scene* active_scene = get_active_scene();
 		entt::registry& scene_registry = active_scene->get_entity_registry();
-		
-		// Check if the scene has not an active camera to render
-		if (!active_scene->has_camera())
-			return;
 
 		// Draw Sprites 
-		renderer_2d_s::begin_render_pass(active_scene->get_camera());
+		renderer_2d_s::begin_render_pass(camera);
 
 		auto sprites = active_scene->get_entity_registry().view<
 			transform_component,

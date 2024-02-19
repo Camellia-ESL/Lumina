@@ -4,11 +4,11 @@
 
 #include "GLFW/glfw3.h"
 
+lumina::event_dispatcher* lumina::event_dispatcher::singleton_instance_ = nullptr;
+lumina::event_listener* lumina::event_listener::singleton_instance_ = nullptr;
+
 namespace lumina
 {
-	event_dispatcher* event_dispatcher::instance_ = nullptr;
-	event_listener* event_listener::instance_ = nullptr;
-
 	// Glfw Callbacks handlers functions
 
 	// --MOUSE--
@@ -43,7 +43,6 @@ namespace lumina
 	{
 		event_dispatcher::get_singleton().on_key_input(key, scancode, action, mods);
 	}
-
 
 	// --WINDOW RESIZE--
 	static void window_resize_callback(GLFWwindow* window, int width, int height)
@@ -129,7 +128,6 @@ namespace lumina
 
 		dispatch_mouse_events(mouse_event);
 	}
-
 
 	// Event dispatcher callbacks related to the glfw callbacks (KEYBOARD)
 

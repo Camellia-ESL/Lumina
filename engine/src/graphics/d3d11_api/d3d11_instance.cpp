@@ -2,10 +2,10 @@
 
 #include "application/app.h"
 
+lumina::d3d11_instance* lumina::d3d11_instance::singleton_instance_ = nullptr;
+
 namespace lumina
 {
-    d3d11_instance* d3d11_instance::instance_ = nullptr;
-
     // Helper functions
     bool d3d11_instance::create_device(HWND hwnd)
     {

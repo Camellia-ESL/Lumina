@@ -14,6 +14,7 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_dx11.h"
 #include "ImGui/imgui_impl_glfw.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 namespace lumina_editor
 {
@@ -120,6 +121,7 @@ namespace lumina_editor
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
 
         // Setup Dockspace for this frame
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_AutoHideTabBar;

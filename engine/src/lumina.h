@@ -15,14 +15,15 @@
 #include "scene_system/components/components.h"
 #include "core/lumina_memory.h"
 #include "core/lumina_strings.h"
+#include "core/lumina_singleton.h"
 #include "serializers/scene_serializer.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Lumina is the namespace containing the lumina engine (editor and template app excluded)
+// Lumina is the namespace containing the lumina engine
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.65";
+	constexpr const char* VERSION = "0.0.67";
 }
