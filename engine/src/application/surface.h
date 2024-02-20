@@ -13,6 +13,9 @@ namespace lumina
 	{
 	public:
 
+		// Disable the cursor pointer (acquire the mouse input directly without the cursor to be on the screen)
+		void enable_cursor(bool on) { glfwSetInputMode(window_, GLFW_CURSOR, on ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED); }
+
 		// Get's the surface handle class when app is running on a Desktop device
 		GLFWwindow* get_desktop_handler() const { return window_; }
 

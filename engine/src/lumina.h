@@ -17,6 +17,7 @@
 #include "core/lumina_strings.h"
 #include "core/lumina_singleton.h"
 #include "serializers/scene_serializer.h"
+#include "event_system/event_system.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,5 +26,5 @@
 // Lumina is the namespace containing the lumina engine
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.67";
+	constexpr const char* VERSION = "0.0.69";
 }

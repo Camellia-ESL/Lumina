@@ -5,6 +5,7 @@
 // Editor views (always visible views, editor panels, scene panels, etc..)
 #include "views/profiler_view.h"
 #include "views/scenes_visualizer_view.h"
+#include "views/top_window_toolbar_view.h"
 
 #include "../editor_compile_configs.h"
 
@@ -111,12 +112,13 @@ namespace lumina_editor
         // Inits the editor views
         view_register_s::register_view(std::make_shared<profiler_view>());
         view_register_s::register_view(std::make_shared<scenes_visualizer_view>());
+        view_register_s::register_view(std::make_shared<top_window_toolbar_view>());
 	}
 
 	void ui_render_s::on_render()
 	{
         ImGuiIO& io = ImGui::GetIO(); (void)io;
-
+        
         // Start the Dear ImGui frame
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplGlfw_NewFrame();

@@ -13,6 +13,7 @@ namespace lumina_editor
 		static bool drag_float_3_multi_text(
 			const std::string& label, 
 			float* buffer,
+			float speed = 1.0f,
 			float items_width = 0.0f,
 			const std::string& x_label = "X",
 			const std::string& y_label = "Y",
@@ -25,6 +26,7 @@ namespace lumina_editor
 			const ImVec4& y_color,
 			const ImVec4& z_color,
 			float* buffer,
+			float speed = 1.0f,
 			float items_width = 0.0f,
 			const std::string & x_label = "X",
 			const std::string& y_label = "Y",
@@ -34,6 +36,7 @@ namespace lumina_editor
 		static bool drag_float_4_multi_text(
 			const std::string& label,
 			float* buffer,
+			float speed = 1.0f,
 			float items_width = 0.0f,
 			const std::string& x_label = "X",
 			const std::string& y_label = "Y",
@@ -48,6 +51,7 @@ namespace lumina_editor
 			const ImVec4& z_color,
 			const ImVec4& w_color,
 			float* buffer,
+			float speed = 1.0f,
 			float items_width = 0.0f,
 			const std::string& x_label = "X",
 			const std::string& y_label = "Y",

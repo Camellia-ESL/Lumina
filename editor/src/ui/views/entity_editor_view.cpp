@@ -96,7 +96,8 @@ namespace lumina_editor
 			editor_ui_colors::RED,
 			editor_ui_colors::GREEN,
 			editor_ui_colors::BLUE,
-			(float*)position_ptr
+			(float*)position_ptr,
+			0.01f
 		);
 
 		// Rotation 
@@ -105,7 +106,8 @@ namespace lumina_editor
 			editor_ui_colors::RED,
 			editor_ui_colors::GREEN,
 			editor_ui_colors::BLUE,
-			(float*)rotation_ptr
+			(float*)rotation_ptr,
+			0.01f
 		);
 
 		// Scale 
@@ -114,7 +116,8 @@ namespace lumina_editor
 			editor_ui_colors::RED,
 			editor_ui_colors::GREEN,
 			editor_ui_colors::BLUE,
-			(float*)scale_ptr
+			(float*)scale_ptr,
+			0.01f
 		);
 	}
 
