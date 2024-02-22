@@ -2,6 +2,8 @@
 
 #include "scene_system/scene.h"
 
+#include "yaml-cpp/yaml.h"
+
 namespace lumina
 {
 	class scene_serializer
@@ -9,10 +11,18 @@ namespace lumina
 	public:
 		
 		// Serialize a scene in a yaml file
-		static void serialize_yaml(scene& scene, const std::string& file_path);
+		static void serialize_yaml(scene* scene, const std::string& file_path);
 		
 		// Deserialize a scene from a yaml file
-		static void deserialize_yaml(scene& scene, const std::string& file_path);
+		static bool deserialize_yaml(scene* scene, const std::string& file_path);
+
+	private:
+
+		template<typename component_type>
+		static void serialize_component(component_type& component, YAML::Emitter& yaml_stream_emitter, scene* scene);
+
+		template<typename component_type>
+		static void deserialize_component(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene);
 
 	};
 }

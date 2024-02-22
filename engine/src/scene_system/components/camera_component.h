@@ -85,5 +85,9 @@ namespace lumina
 		void calculate_projection_matrix();
 		void calculate_all();
 
+	private:
+
+		friend class scene_serializer;
+
 	};
 }

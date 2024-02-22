@@ -48,6 +48,13 @@ namespace lumina_editor
 		}
 	}
 
+	void view_register_s::destroy_views(const std::string& tag)
+	{
+		for (auto& view : views)
+			if (view != nullptr && view->tag == tag)
+				view_register_s::destroy_view(view);
+	}
+
 	void view_register_s::render_views()
 	{
 		// Render views

@@ -2,6 +2,11 @@
 
 namespace lumina
 {
+	scene::scene(const std::string& name) 
+		: name_{ name } 
+	{
+	}
+
 	entity scene::create_entity()
 	{
 		entity entity_buffer{ &registry_, registry_.create() };
@@ -13,5 +18,4 @@ namespace lumina
 	{
 		registry_.destroy(entity);
 	}
-
 }

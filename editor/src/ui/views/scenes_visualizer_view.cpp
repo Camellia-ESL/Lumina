@@ -51,24 +51,30 @@ namespace lumina_editor
 		// Display scenes 
 		for (auto& scene : scene_system.get_all_scenes())
 		{ 
+			// Check if the scene isn't valid
+			if (scene == nullptr)
+				continue;
+
 			// Check if the scene is the selected one
 			bool is_scene_selected = false;
-			if (selected_scene == &scene)
+			if (selected_scene == scene.get())
 				is_scene_selected = true;
 
 			// Handle scene on click
-			if (ImGui::Selectable(scene.get_name().c_str(), is_scene_selected))
+			if (ImGui::Selectable(scene->get_name().c_str(), is_scene_selected))
 			{
-				selected_scene = &scene;
+				selected_scene = scene.get();
 
 				destroy_scene_view_context();
 
 				// Create's the new scene hierarchy 
-				scene_hierarchy = std::make_shared<scene_hierarchy_view>(const_cast<lumina::scene*>(&scene));
+				scene_hierarchy = std::make_shared<scene_hierarchy_view>(const_cast<lumina::scene*>(scene.get()));
+				scene_hierarchy->tag = "scene_view_type";
 				view_register_s::register_view(scene_hierarchy);
 
 				// Create's the new scene editor
-				scene_editor = std::make_shared<scene_editor_view>(const_cast<lumina::scene*>(&scene));
+				scene_editor = std::make_shared<scene_editor_view>(const_cast<lumina::scene*>(scene.get()));
+				scene_editor->tag = "scene_view_type";
 				view_register_s::register_view(scene_editor);
 			}
 		}

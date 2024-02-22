@@ -4,6 +4,7 @@
 #include "ui/view_register.h"
 
 #include "scene/editor_camera.h"
+#include "app/projects.h"
 
 namespace lumina_editor
 {
@@ -11,6 +12,9 @@ namespace lumina_editor
 	{
 		// Inits UI Rendering
 		ui_render_s::on_init();
+
+		// Inits the project handler
+		project_handler* project_handler_instance = new project_handler();
 
 		// Inits the editor camera
 		editor_camera* editor_camera_instance = new editor_camera();

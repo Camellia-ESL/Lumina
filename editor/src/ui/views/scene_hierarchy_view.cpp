@@ -51,6 +51,7 @@ namespace lumina_editor
 
 				// Create's a new entity editor view for the new entity
 				entity_editor_view_ = std::make_shared<entity_editor_view>(entity, scene_);
+				entity_editor_view_->tag = "scene_view_type";
 				view_register_s::register_view(entity_editor_view_);
 			}
 		}

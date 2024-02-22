@@ -13,11 +13,8 @@ namespace lumina
 		if (has_scene(scene_name))
 			return false;
 
-		// Create the scene and calls the callbacks
-		scene new_scene{ scene_name };
-
 		// Add the scene to the scene system 
-		scenes_.push_back(std::move(new_scene));
+		scenes_.push_back(std::make_shared<scene>(scene_name));
 
 		return true;
 	}
@@ -34,12 +31,12 @@ namespace lumina
 			active_scene_ = nullptr;
 
 		// Creates an itherator to iterate the list safely
-		std::vector<scene>::iterator scene_it = scenes_.begin();
+		std::vector<std::shared_ptr<scene>>::iterator scene_it = scenes_.begin();
 
 		// Search for missing items and delete them
 		while (scene_it != scenes_.end())
 		{
-			if (scene_it->get_name() == scene_name)
+			if (scene_it->get()->get_name() == scene_name)
 				scene_it = scenes_.erase(scene_it);
 			else
 				scene_it++;
@@ -75,10 +72,19 @@ namespace lumina
 		active_scene_ = scene_to_activate;
 	}
 
+	void scenes_system::destroy_all()
+	{
+		// Set the active scene to nullptr
+		active_scene_ = nullptr;
+
+		// Destroys all the scenes
+		scenes_.clear();
+	}
+
 	bool scenes_system::has_scene(const std::string& scene_name)
 	{
 		for (size_t i = 0; i < scenes_.size(); i++)
-			if (scenes_[i].get_name() == scene_name)
+			if (scenes_[i]->get_name() == scene_name)
 				return true;
 
 		return false;
@@ -87,8 +93,8 @@ namespace lumina
 	scene* scenes_system::get_scene(const std::string& scene_name)
 	{
 		for (size_t i = 0; i < scenes_.size(); i++)
-			if (scenes_[i].get_name() == scene_name)
-				return &scenes_[i];
+			if (scenes_[i]->get_name() == scene_name)
+				return scenes_[i].get();
 
 		return nullptr;
 	}
@@ -119,7 +125,7 @@ namespace lumina
 		// Draw Sprites 
 		renderer_2d_s::begin_render_pass(camera);
 
-		auto sprites = active_scene->get_entity_registry().view<
+		auto sprites = scene_registry.view<
 			transform_component,
 			sprite_component
 		>();

@@ -11,7 +11,8 @@ namespace lumina_editor
 
 		void bind_text_buffer(std::string* text_buffer);
 		void render(const std::string& label);
-		void clear_buffer() { *text_buffer_ = ""; }
+		void clear_buffer() { *text_buffer_ = ""; strcpy(input_holder_buffer_, ""); }
+		void update_buffer(const std::string& str) { *text_buffer_ = str; strcpy(input_holder_buffer_, str.c_str()); }
 
 	private:
 

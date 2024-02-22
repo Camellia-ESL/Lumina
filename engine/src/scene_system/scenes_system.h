@@ -26,6 +26,9 @@ namespace lumina
 		// Activate a scene
 		void activate_scene(const std::string& scene_name);
 
+		// Destroys all the scenes
+		void destroy_all();
+
 		// Check if a given scene exist
 		bool has_scene(const std::string& scene_name);
 
@@ -42,7 +45,7 @@ namespace lumina
 		bool is_active_scene(scene* scene) { return active_scene_ == scene; }
 
 		// Gets all the available scenes
-		const std::vector<scene>& get_all_scenes() const { return scenes_; }
+		std::vector<std::shared_ptr<scene>>& get_all_scenes() { return scenes_; }
 
 		// Render the active scene using the active scene camera, it can only be called inside a rendering method.
 		void render();
@@ -53,7 +56,7 @@ namespace lumina
 	private:
 
 		// The vector that contains all the scenes
-		std::vector<scene> scenes_{};
+		std::vector<std::shared_ptr<scene>> scenes_{};
 		scene* active_scene_ = nullptr;
 
 	};

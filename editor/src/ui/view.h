@@ -9,6 +9,9 @@ namespace lumina_editor
 	{
 	public:
 
+		// An assignable tag identifier (can be everything)
+		std::string tag{ "" };
+
 		// Called when the view get's instanced
 		virtual void on_create() {}
 

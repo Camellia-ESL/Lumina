@@ -14,7 +14,7 @@ namespace lumina
 	{
 	public:
 
-		scene(std::string name) : name_{name} {}
+		scene(const std::string& name);
 
 		// Get's the scene name
 		const std::string& get_name() const { return name_; }
@@ -46,7 +46,7 @@ namespace lumina
 		std::string name_{""};
 
 		// The entity registry (contains all the entities of the scene)
-		entt::registry registry_{};
+		entt::registry registry_;
 
 		// The active camera used to render the scene
 		camera_component* camera_{};

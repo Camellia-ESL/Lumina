@@ -22,6 +22,9 @@ namespace lumina_editor
 		// Destroy's a view in the register and erase it
 		static void destroy_view(std::shared_ptr<view> panel_ptr);
 
+		// Destroy's all the views that match the given tag
+		static void destroy_views(const std::string& tag);
+
 	private:
 
 		// Render every view

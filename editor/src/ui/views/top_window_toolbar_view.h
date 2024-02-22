@@ -13,5 +13,12 @@ namespace lumina_editor
 
 		void on_render() override;
 
+	private:
+
+		bool on_project_save();
+		void on_project_load();
+
+		void render_new_project_popup(bool open_popup);
+
 	};
 }

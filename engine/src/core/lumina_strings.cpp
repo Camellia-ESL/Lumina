@@ -2,16 +2,22 @@
 
 namespace lumina
 {
-	std::wstring lumina_strings_s::str_to_wstr(const std::string& str)
-	{
-		return std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(str);
-	}
-
+    // Random Generator Setup
     static std::random_device              rd;
     static std::mt19937                    gen(rd());
     static std::uniform_int_distribution<> dis(0, 15);
     static std::uniform_int_distribution<> dis2(8, 11);
 
+	std::wstring lumina_strings_s::str_to_wstr(const std::string& str)
+	{
+		return std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(str);
+	}
+
+    std::string lumina_strings_s::wstr_to_str(const std::wstring& str)
+    {
+        return std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().to_bytes(str);
+    }
+    
 	std::string lumina_strings_s::generate_uuidv4()
 	{
         std::stringstream ss;

@@ -1833,7 +1833,7 @@ namespace entt {
  * @return The common remainder.
  */
 [[nodiscard]] inline constexpr std::size_t fast_mod(const std::size_t value, const std::size_t mod) noexcept {
-    ENTT_ASSERT_CONSTEXPR(is_power_of_two(mod), "Value must be a power of two");
+    ENTT_ASSERT_CONSTEXPR(is_power_of_two(mod), "Must be power of two");
     return value & (mod - 1u);
 }
 
