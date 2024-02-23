@@ -15,24 +15,76 @@ namespace lumina
 		struct vertex_output
 		{ 
 			float4 position : SV_POSITION; 
-			float4 color : COLOR; 
+			float4 color : COLOR;
+			float2 texture_coordinates : TEXTURE_COORDINATES;
+			uint texture_slot : TEXTURE_SLOT; 
 		};
 	
-		vertex_output v_main(float2 position : POSITION, float4x4 model : MODEL_TRANSFORM, float4 color : COLOR)
+		vertex_output v_main(
+			float2 position : POSITION, 
+			float4x4 model : MODEL_TRANSFORM, 
+			float4 color : COLOR, 
+			float2 texture_coord : TEXTURE_COORDINATES,
+			uint texture_slot : TEXTURE_SLOT
+		)
 		{
 			vertex_output output;
 			output.position = mul(float4(position, 0.0f, 1.0f), mul(model, mul(view_matrix, projection_matrix)));
 			output.color = color;
+			output.texture_coordinates = texture_coord;
+			output.texture_slot = texture_slot;
 
 			return output;
 		}
+
 	)";
 
 	const std::string pixel_shader_src = R"(
-		float4 p_main(float4 position : SV_POSITION, float4 color : COLOR) : SV_Target
+
+		Texture2D obj_texture0 : register(t0);
+		Texture2D obj_texture1 : register(t1);
+		Texture2D obj_texture2 : register(t2);
+		Texture2D obj_texture3 : register(t3);
+		Texture2D obj_texture4 : register(t4);
+		Texture2D obj_texture5 : register(t5);
+		Texture2D obj_texture6 : register(t6);
+		Texture2D obj_texture7 : register(t7);
+		SamplerState obj_sampler_state : register(s0);
+
+		float4 p_main(
+			float4 position : SV_POSITION, 
+			float4 color : COLOR, 
+			float2 texture_coord : TEXTURE_COORDINATES,
+			uint texture_slot : TEXTURE_SLOT
+		) : SV_Target
 		{
-			return color;
+			float4 color_output;
+
+			if(color.r == 0.0f && color.g == 0.0f && color.b == 0.0f && color.a == 0.0f)
+			{
+				if(texture_slot == 0)
+					color_output = obj_texture0.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 1)
+					color_output = obj_texture1.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 2)
+					color_output = obj_texture2.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 3)
+					color_output = obj_texture3.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 4)
+					color_output = obj_texture4.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 5)
+					color_output = obj_texture5.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 6)
+					color_output = obj_texture6.Sample(obj_sampler_state, texture_coord);
+				if(texture_slot == 7)
+					color_output = obj_texture7.Sample(obj_sampler_state, texture_coord);
+			}
+			else 
+				color_output = color;
+
+			return color_output;
 		}
+
 	)";
 		
 	struct quad_vertex_t
@@ -45,6 +97,12 @@ namespace lumina
 
 		// The quad color
 		glm::vec4 color;
+
+		// The quad texture coordinates
+		glm::vec2 texture_coordinates;
+
+		// The texture slot
+		uint32_t texture_slot;
 	};
 
 	struct alignas(16) generic_constant_buffer_t
@@ -62,19 +120,36 @@ namespace lumina
 	d3d11_pixel_shader pixel_shader{};
 	d3d11_input_layout_descriptor input_layout_descriptor{};
 	d3d11_blend_state blend_state{};
-	d3d11_constant_buffer generic_constant_buffer{};
+	d3d11_constant_buffer generic_constant_buffer{};	
+	d3d11_sampler texture_sampler{};
 
 	std::vector<quad_vertex_t> verticies{};
+	std::vector<d3d11_texture*> textures_submitted{};
 	generic_constant_buffer_t generic_constant_buffer_data{};
 	uint32_t rendered_quads_this_frame = 0;
 	camera_component* camera_this_frame = nullptr;
 	const uint32_t verticies_per_quad = 4;
 	const uint32_t indicies_per_quad = 6;
+
+	static bool has_texture_been_submitted(d3d11_texture* texture_ptr) 
+	{ 
+		return std::find(textures_submitted.begin(), textures_submitted.end(), texture_ptr) != textures_submitted.end();
+	}
+
+	static uint32_t get_texture_slot(d3d11_texture* texture_ptr)
+	{
+		for (uint32_t i = 0; i < textures_submitted.size(); i++)
+			if (textures_submitted[i] == texture_ptr)
+				return i;
+
+		return 0;
+	}
 	
 	void d3d11_quad_renderer_s::begin_render_pass(camera_component* camera)
 	{
 		// Clear the previous render pass
 		verticies.clear();
+		textures_submitted.clear();
 		rendered_quads_this_frame = 0;
 		
 		// Assert that the camera exist
@@ -104,6 +179,10 @@ namespace lumina
 		input_layout_descriptor.enable();
 		blend_state.enable();
 		generic_constant_buffer.enable();
+		texture_sampler.enable();
+
+		for (size_t i = 0; i < textures_submitted.size(); i++)
+			textures_submitted[i]->enable(i);
 
 		// Load the vertex buffer with the verticies of this render pass
 		vertex_buffer.load_data(&verticies[0], sizeof(quad_vertex_t) * verticies.size());
@@ -117,7 +196,7 @@ namespace lumina
 
 	void d3d11_quad_renderer_s::draw_quad(const glm::mat4& quad_transform, const glm::vec4& color)
 	{
-		if (rendered_quads_this_frame >= max_renderable_quads_)
+		if (rendered_quads_this_frame >= MAX_RENDERABLE_QUADS_)
 		{
 			end_render_pass();
 			begin_render_pass(camera_this_frame);
@@ -125,10 +204,44 @@ namespace lumina
 
 		glm::mat4 transposed_transform = glm::transpose(quad_transform);
 
-		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, color }); // Top left
-		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, color }); // Top right
-		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, color }); // Bottom right
-		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, color }); // Bottom left
+		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Top left
+		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Top right
+		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Bottom right
+		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Bottom left
+
+		rendered_quads_this_frame++;
+	}
+
+	void d3d11_quad_renderer_s::draw_quad(const glm::mat4& quad_transform, const d3d11_texture& texture)
+	{
+		const bool has_texture_to_submit = !has_texture_been_submitted(const_cast<d3d11_texture*>(&texture));
+
+		// Check if we have reched the textures slot limit, draw everything and begin a new clean render pass
+		if (textures_submitted.size() >= MAX_TEXTURES_SLOT_ && has_texture_to_submit)
+		{
+			end_render_pass();
+			begin_render_pass(camera_this_frame);
+		}
+
+		// Check if the texture is new and is not already been submitted
+		if (has_texture_to_submit)
+			textures_submitted.push_back(const_cast<d3d11_texture*>(&texture));
+
+		const uint32_t texture_slot = get_texture_slot(const_cast<d3d11_texture*>(&texture));
+
+		// Check if we have reched the quad limit, draw everything and begin a new clean render pass
+		if (rendered_quads_this_frame >= MAX_RENDERABLE_QUADS_)
+		{
+			end_render_pass();
+			begin_render_pass(camera_this_frame);
+		}
+
+		glm::mat4 transposed_transform = glm::transpose(quad_transform);
+
+		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 0.0f, 0.0f }, texture_slot }); // Top left
+		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 1.0f, 0.0f }, texture_slot }); // Top right
+		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 1.0f, 1.0f }, texture_slot }); // Bottom right
+		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 0.0f, 1.0f }, texture_slot }); // Bottom left
 
 		rendered_quads_this_frame++;
 	}
@@ -171,7 +284,7 @@ namespace lumina
 		pixel_shader.load_from_string(pixel_shader_load_info);
 
 		// Return the sum of all the offsets
-		auto progressive_offset =
+		auto progressive_descriptor_memory_offset =
 			[&](uint32_t offset) -> uint32_t
 			{
 				static uint32_t offset_buffer = 0;
@@ -180,14 +293,17 @@ namespace lumina
 			};
 
 		// Allocate input layout descriptor
-		input_layout_descriptor.allocate(&vertex_shader,
+		input_layout_descriptor.allocate(
+			&vertex_shader,
 			{
 				{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "MODEL_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_offset(sizeof(glm::vec2)), D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "MODEL_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "MODEL_TRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "MODEL_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0}
+				{ "MODEL_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec2)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "MODEL_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "MODEL_TRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "MODEL_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "TEXTURE_COORDINATES", 0, DXGI_FORMAT_R32G32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "TEXTURE_SLOT", 0, DXGI_FORMAT_R32_UINT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec2)), D3D11_INPUT_PER_VERTEX_DATA, 0}
 			}
 		);
 
@@ -196,6 +312,9 @@ namespace lumina
 
 		// Allocate the constant buffer
 		generic_constant_buffer.allocate(sizeof(generic_constant_buffer_t));
+
+		// Allocate the texture sampler
+		texture_sampler.allocate();
 	}
 
 	void d3d11_quad_renderer_s::destroy()

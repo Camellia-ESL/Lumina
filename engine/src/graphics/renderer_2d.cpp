@@ -34,4 +34,14 @@ namespace lumina
 			d3d11_quad_renderer_s::draw_quad(model_transform, color);
 		}
 	}
+
+	void renderer_2d_s::draw_quad(const glm::mat4& model_transform, const texture& texture)
+	{
+		graphics_api_e running_graphics_api = application_player::get_singleton().get_surface().get_graphics_driver().get_graphics_api_running();
+
+		if (running_graphics_api == graphics_api_e::D3D11_API)
+		{
+			d3d11_quad_renderer_s::draw_quad(model_transform, *((d3d11_texture*)texture.get_native_resource()));
+		}
+	}
 }

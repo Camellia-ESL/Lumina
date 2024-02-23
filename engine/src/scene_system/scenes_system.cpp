@@ -113,7 +113,7 @@ namespace lumina
 
 		render(get_active_scene()->get_camera());
 	}
-
+	
 	void scenes_system::render(camera_component* camera)
 	{
 		// Check if the camera is null
@@ -143,7 +143,10 @@ namespace lumina
 			transform_component& transform = sprite_entity.get_component<transform_component>();
 			sprite_component& sprite = sprite_entity.get_component<sprite_component>();
 
-			renderer_2d_s::draw_quad(transform.get_model_matrix(), sprite.color);
+			if(sprite.texture != nullptr && sprite.texture->is_allocated())
+				renderer_2d_s::draw_quad(transform.get_model_matrix(), *sprite.texture);
+			else 
+				renderer_2d_s::draw_quad(transform.get_model_matrix(), sprite.color);
 		}
 
 		renderer_2d_s::end_render_pass();

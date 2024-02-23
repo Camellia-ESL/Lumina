@@ -8,6 +8,8 @@
 
 namespace lumina_editor
 {
+	std::vector<lumina::texture*> textures{};
+
 	void editor_app_player::on_init()
 	{
 		// Inits UI Rendering

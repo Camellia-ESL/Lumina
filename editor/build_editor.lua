@@ -37,18 +37,18 @@ project "lumina_editor"
        defines { "DEBUG" }
        runtime "Debug"
        symbols "On"
-       links { "yaml-cppd.lib" }
+       links { "yaml-cppd.lib", "d3dx11.lib" }
 
    filter "configurations:Release"
        defines { "RELEASE" }
        runtime "Release"
        optimize "On"
        symbols "On"
-       links { "yaml-cpp.lib" }
+       links { "yaml-cpp.lib", "d3dx11.lib" }
 
    filter "configurations:Dist"
        defines { "DIST" }
        runtime "Release"
        optimize "On"
        symbols "Off"
-       links { "yaml-cpp.lib" }
+       links { "yaml-cpp.lib", "d3dx11.lib" }

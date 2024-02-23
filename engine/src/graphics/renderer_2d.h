@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../scene_system/components/camera_component.h"
+#include "graphics/texture.h"
 
 namespace lumina
 {
@@ -19,6 +20,9 @@ namespace lumina
 
 		// Draw a colored quad
 		static void draw_quad(const glm::mat4& model_transform, const glm::vec4& color);
+
+		// Draw a textured quad
+		static void draw_quad(const glm::mat4& model_transform, const texture& texture);
 
 	private:
 

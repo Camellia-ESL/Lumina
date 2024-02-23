@@ -24,11 +24,6 @@ project "lumina_engine"
       "glfw3.lib"
    }
 
-   defines
-   {
-      "LUMINA_WIN32_PLATFORM"
-   }
-
    characterset ("MBCS")
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
@@ -36,24 +31,24 @@ project "lumina_engine"
 
    filter "system:windows"
        systemversion "latest"
-       defines { }
+       defines { "LUMINA_WIN32_PLATFORM" }
 
    filter "configurations:Debug"
        defines { "DEBUG" }
        runtime "Debug"
        symbols "On"
-       links { "yaml-cppd.lib" }
+       links { "yaml-cppd.lib", "d3dx11.lib" }
 
    filter "configurations:Release"
        defines { "RELEASE" }
        runtime "Release"
        optimize "On"
        symbols "On"
-       links { "yaml-cpp.lib" }
+       links { "yaml-cpp.lib", "d3dx11.lib" }
 
    filter "configurations:Dist"
        defines { "DIST" }
        runtime "Release"
        optimize "On"
        symbols "Off"
-       links { "yaml-cpp.lib" }
+       links { "yaml-cpp.lib", "d3dx11.lib" }
