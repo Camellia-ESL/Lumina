@@ -14,6 +14,8 @@ namespace lumina
 	{
 	public:
 
+		scenes_system();
+
 		// Creates a scene
 		bool create_scene(const std::string& scene_name);
 
@@ -58,6 +60,8 @@ namespace lumina
 		// The vector that contains all the scenes
 		std::vector<std::shared_ptr<scene>> scenes_{};
 		scene* active_scene_ = nullptr;
+
+		void init();
 
 	};
 }

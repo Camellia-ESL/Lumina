@@ -39,6 +39,9 @@ namespace lumina
 		// Rotate the camera view angle's by a certain offset 
 		void rotate(float yaw, float pitch);
 
+		// Recalculate all the camera matricies
+		void recalculate_all_matricies() { calculate_all(); }
+
 		// Get's the view matrix of the camera
 		const glm::mat4& get_view_matrix() { calculate_vectors(); calculate_view_matrix(); return view_; }
 

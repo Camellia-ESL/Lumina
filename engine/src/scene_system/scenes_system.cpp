@@ -1,5 +1,6 @@
 #include "scenes_system.h"
 
+#include "event_system/event_system.h"
 #include "graphics/renderer_2d.h"
 #include "components/components.h"
 
@@ -7,6 +8,11 @@ lumina::scenes_system* lumina::scenes_system::singleton_instance_ = nullptr;
 
 namespace lumina
 {
+	scenes_system::scenes_system()
+	{
+		init();
+	}
+
 	bool scenes_system::create_scene(const std::string& scene_name)
 	{
 		// Check if a scene with the given name already exist
@@ -141,5 +147,28 @@ namespace lumina
 		}
 
 		renderer_2d_s::end_render_pass();
+	}
+
+	void scenes_system::init()
+	{
+		// Install an event to handle window resize (recalculate all the cameras projections)
+		event_listener::get_singleton().submit_event_callback(
+			[&](const window_resize_event_t& resize_event) -> void 
+			{
+				// Check that sizes aren't null
+				if (resize_event.app_width <= 0 || resize_event.app_height <= 0)
+					return;
+
+				for (auto& scene : scenes_)
+				{
+					auto cameras = scene->get_entity_registry().view<camera_component>();
+					for (auto camera_entity : cameras)
+					{
+						entity camera{ &scene->get_entity_registry(), camera_entity };
+						camera.get_component<camera_component>().recalculate_all_matricies();
+					}
+				}
+			}
+		);
 	}
 }

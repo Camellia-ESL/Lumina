@@ -4,6 +4,8 @@
 #include "types_serializer.h"
 
 #include "spdlog/spdlog.h"
+#include "ImGui/imgui.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 #include <fstream>
 
@@ -36,18 +38,36 @@ namespace lumina
 		// Create's the component map
 		yaml_stream_emitter << YAML::Value << YAML::BeginMap;
 
+		glm::vec3 position_ptr;
+		glm::vec3 rotation_ptr;
+		glm::vec3 scale_ptr;
+
+		ImGuizmo::DecomposeMatrixToComponents(
+			(const float*)&component.get_model_matrix(),
+			(float*)&position_ptr,
+			(float*)&rotation_ptr,
+			(float*)&scale_ptr
+			);
+
 		yaml_stream_emitter << YAML::Key << "Position";
 		yaml_stream_emitter << YAML::Value;
-		types_serializer::serialize_yaml_vec3(component.position, yaml_stream_emitter);
+		types_serializer::serialize_yaml_vec3(position_ptr, yaml_stream_emitter);
 
 		yaml_stream_emitter << YAML::Key << "Rotation";
 		yaml_stream_emitter << YAML::Value;
-		types_serializer::serialize_yaml_vec3(component.rotation, yaml_stream_emitter);
+		types_serializer::serialize_yaml_vec3(rotation_ptr, yaml_stream_emitter);
 
 		yaml_stream_emitter << YAML::Key << "Scale";
 		yaml_stream_emitter << YAML::Value;
-		types_serializer::serialize_yaml_vec3(component.scale, yaml_stream_emitter);
+		types_serializer::serialize_yaml_vec3(scale_ptr, yaml_stream_emitter);
 		
+		ImGuizmo::RecomposeMatrixFromComponents(
+			(const float*)&position_ptr,
+			(const float*)&rotation_ptr,
+			(const float*)&scale_ptr,
+			(float*)&component.get_model_matrix()
+		);
+
 		// End the
 		yaml_stream_emitter << YAML::EndMap;
 	}
@@ -206,9 +226,31 @@ namespace lumina
 		auto scale_node = yaml_component["Scale"];
 	
 		// Deserialize the component
-		ent_component.position = types_serializer::deserialize_yaml_vec3(position_node);
-		ent_component.rotation = types_serializer::deserialize_yaml_vec3(rotation_node);
-		ent_component.scale = types_serializer::deserialize_yaml_vec3(scale_node);
+		glm::vec3 position = types_serializer::deserialize_yaml_vec3(position_node);
+		glm::vec3 rotation = types_serializer::deserialize_yaml_vec3(rotation_node);
+		glm::vec3 scale = types_serializer::deserialize_yaml_vec3(scale_node);
+
+		glm::vec3 position_ptr;
+		glm::vec3 rotation_ptr;
+		glm::vec3 scale_ptr;
+
+		ImGuizmo::DecomposeMatrixToComponents(
+			(const float*)&ent_component.get_model_matrix(),
+			(float*)&position_ptr,
+			(float*)&rotation_ptr,
+			(float*)&scale_ptr
+		);
+
+		position_ptr = position;
+		rotation_ptr = rotation;
+		scale_ptr = scale;
+
+		ImGuizmo::RecomposeMatrixFromComponents(
+			(const float*)&position_ptr,
+			(const float*)&rotation_ptr,
+			(const float*)&scale_ptr,
+			(float*)&ent_component.get_model_matrix()
+		);
 	}
 
 	template<>

@@ -13,6 +13,10 @@ namespace lumina_editor
 		// Create's the camera
 		camera_ = std::make_shared<lumina::camera_component>();
 
+		// Replace the camera position and rotation
+		camera_->set_position({ 0.0f, 2.0f , 1.0f });
+		camera_->rotate(0.0f, -45.0f);
+
 		// Install the event callbacks
 		install_event_callbacks();
 	}
@@ -32,6 +36,14 @@ namespace lumina_editor
 			[&](const lumina::mouse_event_t& event) -> void
 			{
 				on_mouse_move(event);
+			}
+		);
+
+		// Register resize events
+		lumina::event_listener::get_singleton().submit_event_callback(
+			[&](const lumina::window_resize_event_t& event) -> void
+			{
+				on_resize(event);
 			}
 		);
 	}
@@ -101,5 +113,14 @@ namespace lumina_editor
 
 		if (lumina::event_state_handler_s::is_key_pressed(lumina::keyboard_keys_types_e::KEY_D))
 			camera_->move_position(lumina::camera_component::move_directions_e::RIGHT, movement_velocity);
+	}
+
+	void editor_camera::on_resize(const lumina::window_resize_event_t& event)
+	{
+		// Check that sizes aren't null
+		if (event.app_width <= 0 || event.app_height <= 0)
+			return;
+
+		camera_->recalculate_all_matricies();
 	}
 }

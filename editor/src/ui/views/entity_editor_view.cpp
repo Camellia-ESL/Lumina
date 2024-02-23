@@ -1,9 +1,11 @@
 #include "entity_editor_view.h"
 
+#include "scene/editor_camera.h"
 #include "ui/colors.h"
 #include "ui/ui_objects_lib/lumina_ui_drag_objects.h"
 
 #include "ImGui/imgui.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 namespace lumina_editor
 {
@@ -86,9 +88,16 @@ namespace lumina_editor
 		ImGui::Separator();
 		ImGui::PopStyleColor();
 
-		glm::vec3* position_ptr = &entity_.get_component<lumina::transform_component>().position;
-		glm::vec3* rotation_ptr = &entity_.get_component<lumina::transform_component>().rotation;
-		glm::vec3* scale_ptr = &entity_.get_component<lumina::transform_component>().scale;
+		glm::vec3 position_ptr;
+		glm::vec3 rotation_ptr;
+		glm::vec3 scale_ptr;
+
+		ImGuizmo::DecomposeMatrixToComponents(
+			(const float*)&entity_.get_component<lumina::transform_component>().get_model_matrix(),
+			(float*)&position_ptr,
+			(float*)&rotation_ptr,
+			(float*)&scale_ptr
+			);
 
 		// Position 
 		lumina_ui_drag_objects::drag_float_3_multi_text_colored(
@@ -96,7 +105,7 @@ namespace lumina_editor
 			editor_ui_colors::RED,
 			editor_ui_colors::GREEN,
 			editor_ui_colors::BLUE,
-			(float*)position_ptr,
+			(float*)&position_ptr,
 			0.01f
 		);
 
@@ -106,7 +115,7 @@ namespace lumina_editor
 			editor_ui_colors::RED,
 			editor_ui_colors::GREEN,
 			editor_ui_colors::BLUE,
-			(float*)rotation_ptr,
+			(float*)&rotation_ptr,
 			0.01f
 		);
 
@@ -116,8 +125,24 @@ namespace lumina_editor
 			editor_ui_colors::RED,
 			editor_ui_colors::GREEN,
 			editor_ui_colors::BLUE,
-			(float*)scale_ptr,
+			(float*)&scale_ptr,
 			0.01f
+		);
+
+		ImGuizmo::RecomposeMatrixFromComponents(
+			(const float*)&position_ptr,
+			(const float*)&rotation_ptr,
+			(const float*)&scale_ptr,
+			(float*)&entity_.get_component<lumina::transform_component>().get_model_matrix()
+		);
+
+		// Render Object Gizmos
+		ImGuizmo::Manipulate(
+			(const float*)&editor_camera::get_singleton().get_camera()->get_view_matrix(),
+			(const float*)&editor_camera::get_singleton().get_camera()->get_projection_matrix(),
+			ImGuizmo::OPERATION::TRANSLATE,
+			ImGuizmo::MODE::WORLD,
+			(float*)&entity_.get_component<lumina::transform_component>().get_model_matrix()
 		);
 	}
 

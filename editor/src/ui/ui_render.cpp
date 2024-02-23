@@ -6,6 +6,7 @@
 #include "views/profiler_view.h"
 #include "views/scenes_visualizer_view.h"
 #include "views/top_window_toolbar_view.h"
+#include "views/scene_grid_view.h"
 
 #include "../editor_compile_configs.h"
 
@@ -113,6 +114,7 @@ namespace lumina_editor
         view_register_s::register_view(std::make_shared<profiler_view>());
         view_register_s::register_view(std::make_shared<scenes_visualizer_view>());
         view_register_s::register_view(std::make_shared<top_window_toolbar_view>());
+        view_register_s::register_view(std::make_shared<scene_grid_view>());
 	}
 
 	void ui_render_s::on_render()
@@ -123,7 +125,12 @@ namespace lumina_editor
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        // Begin ImGuizmo frame
         ImGuizmo::BeginFrame();
+        ImGuizmo::SetOrthographic(false);
+        ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+        ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList());
 
         // Setup Dockspace for this frame
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_AutoHideTabBar;

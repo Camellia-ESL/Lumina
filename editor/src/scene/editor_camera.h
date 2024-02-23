@@ -36,8 +36,12 @@ namespace lumina_editor
 		// Called on mouse event
 		void on_mouse_move(const lumina::mouse_event_t& event);
 
+		// Called when the window resizes
+		void on_resize(const lumina::window_resize_event_t& event);
+		
 		// Called on update
 		void on_update();
+
 
 	private:
 
