@@ -5,6 +5,7 @@
 
 #include "event_system/event_system.h"
 #include "scene_system/scenes_system.h"
+#include "assets_system/asset_registry.h"
 
 #include "graphics/graphics_driver.h"
 #include "graphics/d3d11_api/d3d11_renderer.h"
@@ -51,6 +52,9 @@ namespace lumina
         spdlog::warn("Installing event callbacks...");
         install_events_handler();
         spdlog::info("Event callbacks installed.");
+
+        // Init the asset registry
+        asset_registry* asset_registry_instance = new asset_registry();
 
         // Init the scene system
         spdlog::warn("Instancing the scene system...");
@@ -106,6 +110,9 @@ namespace lumina
     {
         // Destroy scene system
         delete& scenes_system::get_singleton();
+
+        // Destroy the asset registry
+        delete& asset_registry::get_singleton();
 
         // Destroy event system
         delete& event_dispatcher::get_singleton();

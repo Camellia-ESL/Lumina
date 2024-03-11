@@ -310,9 +310,6 @@ namespace lumina
 		if (scene == nullptr)
 			return false;
 
-		// Log the save msg
-		spdlog::info("Importing scene: " + scene->get_name() + "...");
-
 		// Tries to load the file
 		YAML::Node scene_yaml;
 

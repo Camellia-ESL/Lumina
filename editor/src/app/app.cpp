@@ -4,12 +4,10 @@
 #include "ui/view_register.h"
 
 #include "scene/editor_camera.h"
-#include "app/projects.h"
+#include "project_handlers/projects.h"
 
 namespace lumina_editor
 {
-	std::vector<lumina::texture*> textures{};
-
 	void editor_app_player::on_init()
 	{
 		// Inits UI Rendering

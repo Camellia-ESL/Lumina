@@ -17,5 +17,6 @@ namespace lumina
 		// Note that this will not be used if there already is a texture
 		glm::vec4 color{ 1.0f, 1.0f, 0.0f, 1.0f };
 		texture* texture = nullptr;
+		std::string texture_asset_id = "";
 	};
 }

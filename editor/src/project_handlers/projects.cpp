@@ -86,6 +86,9 @@ namespace lumina_editor
 				loaded_project_->project_dir_path + "\\" + loaded_project_->scenes_dir_path
 			);
 
+		// Log the save msg
+		spdlog::info("Importing scenes...");
+
 		for (auto& path : scene_files_path)
 		{
 			lumina::scenes_system::get_singleton().create_scene("__importing_scene__");

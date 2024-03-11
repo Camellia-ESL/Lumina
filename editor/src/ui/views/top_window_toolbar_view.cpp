@@ -1,7 +1,7 @@
 #include "top_window_toolbar_view.h"
 
 #include "ui/ui_objects_lib/lumina_ui_input_text.h"
-#include "app/projects.h"
+#include "project_handlers/projects.h"
 
 #include "core/lumina_file_system.h"
 

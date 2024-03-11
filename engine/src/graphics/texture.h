@@ -4,6 +4,7 @@
 
 namespace lumina
 {
+	// Texture abstraction, should be instantly pushed as an asset in the asset registry when created
 	class texture
 	{
 	public:

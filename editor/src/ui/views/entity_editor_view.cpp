@@ -3,6 +3,7 @@
 #include "scene/editor_camera.h"
 #include "ui/colors.h"
 #include "ui/ui_objects_lib/lumina_ui_drag_objects.h"
+#include "ui/ui_shared_vars.h"
 
 #include "ImGui/imgui.h"
 #include "ImGuizmo/ImGuizmo.h"
@@ -140,7 +141,7 @@ namespace lumina_editor
 		ImGuizmo::Manipulate(
 			(const float*)&editor_camera::get_singleton().get_camera()->get_view_matrix(),
 			(const float*)&editor_camera::get_singleton().get_camera()->get_projection_matrix(),
-			ImGuizmo::OPERATION::TRANSLATE,
+			(ImGuizmo::OPERATION)ui_shared_vars::GIZMO_OPERATION_TYPE,
 			ImGuizmo::MODE::WORLD,
 			(float*)&entity_.get_component<lumina::transform_component>().get_model_matrix()
 		);

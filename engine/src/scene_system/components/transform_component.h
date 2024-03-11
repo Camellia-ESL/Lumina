@@ -10,7 +10,16 @@ namespace lumina
 {
 	struct transform_component : public component
 	{
+		// Set the position of the transform
+		transform_component& set_position(const glm::vec3& position);
 
+		// Rotate the transform by a given angle (in radians)
+		transform_component& rotate(const glm::vec3& rotation_axis_multiplier, float angle);
+		
+		// Set the scale of the transform
+		transform_component& set_scale(const glm::vec3& scale);
+
+		// Get the model matrix of the transform
 		const glm::mat4& get_model_matrix() { return model_matrix_; }
 		 
 	private:

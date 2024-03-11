@@ -23,6 +23,7 @@ namespace lumina_editor
 		static std::shared_ptr<scene_hierarchy_view> scene_hierarchy = nullptr;
 		static std::shared_ptr<scene_editor_view> scene_editor = nullptr;
 
+
 		const auto destroy_scene_view_context =
 			[&]() -> void
 			{

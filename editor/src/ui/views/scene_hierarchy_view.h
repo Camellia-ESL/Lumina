@@ -21,7 +21,7 @@ namespace lumina_editor
 		lumina::scene* scene_;
 		lumina::entity selected_entity_;
 		std::shared_ptr<entity_editor_view> entity_editor_view_;
-
+		
 		void render_properties_popup();
 		void render_entities();
 
