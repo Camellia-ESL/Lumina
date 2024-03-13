@@ -2,6 +2,8 @@
 
 #include "../editor_compile_configs.h"
 
+#include "spdlog/spdlog.h"
+
 int main()
 {
 	// Set app player options
@@ -18,7 +20,7 @@ int main()
 	{
 		lumina_editor::editor_app_player::get_singleton().run(app_player_config);
 	}
-	catch (const std::exception&) { return 0; }
+	catch (const std::exception& error) { spdlog::info(error.what()); return 0; }
 
 	lumina_editor::editor_app_player::get_singleton().exit();
 

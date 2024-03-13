@@ -8,6 +8,8 @@
 #include "views/top_window_toolbar_view.h"
 #include "views/scene_grid_view.h"
 #include "views/scene_toolbar_view.h"
+#include "views/content_browser_view.h"
+#include "views/assets_browser_view.h"
 
 #include "../editor_compile_configs.h"
 
@@ -59,7 +61,7 @@ namespace lumina_editor
         colors[ImGuiCol_SliderGrab] = ImVec4(0.34f, 0.34f, 0.34f, 0.54f);
         colors[ImGuiCol_SliderGrabActive] = ImVec4(0.56f, 0.56f, 0.56f, 0.54f);
         colors[ImGuiCol_Button] = ImVec4(0.05f, 0.05f, 0.05f, 0.54f);
-        colors[ImGuiCol_ButtonHovered] = ImVec4(0.19f, 0.19f, 0.19f, 0.54f);
+        colors[ImGuiCol_ButtonHovered] = ImVec4(0.19f, 0.19f, 0.19f, 0.74f);
         colors[ImGuiCol_ButtonActive] = ImVec4(0.20f, 0.22f, 0.23f, 1.00f);
         colors[ImGuiCol_Header] = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
         colors[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.00f, 0.00f, 0.36f);
@@ -130,6 +132,8 @@ namespace lumina_editor
         view_register_s::register_view(std::make_shared<top_window_toolbar_view>());
         view_register_s::register_view(std::make_shared<scene_grid_view>());
         view_register_s::register_view(std::make_shared<scene_toolbar_view>());
+        view_register_s::register_view(std::make_shared<content_browser_view>());
+        view_register_s::register_view(std::make_shared<assets_browser_view>());
 	}
 
 	void ui_render_s::on_render()

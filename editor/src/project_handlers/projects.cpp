@@ -27,6 +27,9 @@ namespace lumina_editor
 		loaded_project_->scenes_dir_path = LUMINA_EDITOR_PROJECT_SCENES_DEFAULT_PATH;
 		loaded_project_->project_dir_path = directory_path + "\\" + project_name;
 
+		// Set the content browser directory
+		content_browser_.set_content_directory(loaded_project_->project_dir_path);
+
 		// Create's the projects folders
 		lumina::lumina_file_system_s::create_folder(directory_path + "\\" + project_name);
 		lumina::lumina_file_system_s::create_folder(directory_path + "\\" + project_name + "\\" + LUMINA_EDITOR_PROJECT_SCENES_DEFAULT_PATH);
@@ -75,10 +78,14 @@ namespace lumina_editor
 		if (!scene_yaml || !scene_yaml["Project Name"] || !scene_yaml["Scenes Path"])
 			return false;
 
+		// Load project metadata
 		loaded_project_ = std::make_shared<project>();
 		loaded_project_->name = scene_yaml["Project Name"].as<std::string>();
 		loaded_project_->scenes_dir_path = scene_yaml["Scenes Path"].as<std::string>();
 		loaded_project_->project_dir_path = lumina::lumina_file_system_s::get_file_directory(project_file);
+
+		// Set the content browser directory
+		content_browser_.set_content_directory(loaded_project_->project_dir_path);
 
 		// Tries to deserialize scenes
 		std::vector<std::string> scene_files_path = 

@@ -53,9 +53,6 @@ namespace lumina
         install_events_handler();
         spdlog::info("Event callbacks installed.");
 
-        // Init the asset registry
-        asset_registry* asset_registry_instance = new asset_registry();
-
         // Init the scene system
         spdlog::warn("Instancing the scene system...");
         scenes_system* scene_system_instance = new scenes_system();
@@ -110,9 +107,6 @@ namespace lumina
     {
         // Destroy scene system
         delete& scenes_system::get_singleton();
-
-        // Destroy the asset registry
-        delete& asset_registry::get_singleton();
 
         // Destroy event system
         delete& event_dispatcher::get_singleton();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "project_content_browser.h"
+
 #include "lumina.h"
 
 namespace lumina_editor
@@ -35,9 +37,13 @@ namespace lumina_editor
 		// Wheter if there is an opened project or not
 		bool has_opened_project() { return loaded_project_ != nullptr; }
 
+		// Get's the content browser
+		project_content_browser& get_content_browser() { return content_browser_; }
+
 	private:
 
 		std::shared_ptr<project> loaded_project_ = nullptr;
+		project_content_browser content_browser_{};
 
 		// Saves project settins
 		void save_project_settings();

@@ -7,6 +7,9 @@
 // then instance the singleton somewhere in the application. You can the access it doing my_class::get_singleton() 
 #define LUMINA_SINGLETON_CLASS(class_type) class_type : public lumina_singleton_t<class_type>
 
+// Defines the singleton instance holding var declaration and assign's it with nullptr, it NEEDS to be called for every singleton class decleared once
+#define LUMINA_SINGLETON_DECL_INSTANCE(class_type_with_namespace) class_type_with_namespace* class_type_with_namespace::singleton_instance_ = nullptr
+
 template<class singleton_class_type>
 struct lumina_singleton_t
 {

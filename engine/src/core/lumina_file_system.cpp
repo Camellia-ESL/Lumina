@@ -118,7 +118,14 @@ namespace lumina
 	std::vector<std::string> lumina_file_system_s::get_files_in_directory(const std::string& dir_path)
 	{
 		std::vector<std::string> result_buffer{};
-		for (const auto& entry : std::filesystem::directory_iterator(dir_path))
+		
+		// Check if the directory does not exist
+		if (!std::filesystem::exists(dir_path))
+			return result_buffer;
+
+		// Iterate the directory
+		auto directory_iterator = std::filesystem::directory_iterator(dir_path);
+		for (const auto& entry : directory_iterator)
 			result_buffer.push_back(entry.path().string());
 
 		return result_buffer;

@@ -20,8 +20,11 @@ namespace lumina
 		// Wheter if the texture is loaded or not
 		const bool is_allocated() const { return texture_native_resource_handle_ != nullptr; }
 
-		// Get's the native resource handle that could be a (d3d11_texture, vk_texture or other gapis texture resource)
+		// Get's the native resource handle to the abstracted gapis that could be a (d3d11_texture, vk_texture or other gapis texture resource)
 		const void* get_native_resource() const { return texture_native_resource_handle_; }
+
+		// Get's the native resource buffer that contains the ptr to the native gapi resource (ID3D11ShaderResourceView, vk_texture or opengl texture)
+		void* get_native_resource_buffer() const;
 
 	private:
 
