@@ -153,13 +153,42 @@ namespace lumina_editor
 		if (!entity_.has_component<lumina::sprite_component>())
 			return;
 
+		lumina::sprite_component& sprite = entity_.get_component<lumina::sprite_component>();
+
 		ImGui::SeparatorText("Sprite");
 		ImGui::PushStyleColor(ImGuiCol_Separator, { 0.35f, 0.35f, 0.35f, 1.0f });
 		ImGui::Separator();
 		ImGui::PopStyleColor();
 
 		// Color edit 
-		ImGui::ColorEdit4("Color", (float*)&entity_.get_component<lumina::sprite_component>().color);
+		ImGui::ColorEdit4("Color", (float*)&sprite.color);
+
+		// Texture edit
+		if (sprite.has_texture())
+		{
+			if (ImGui::SmallButton("Unbind"))
+				sprite.unbind_texture();
+			else
+				ImGui::Image(sprite.texture->get_native_resource_buffer(), { 100.0f , 100.0f });
+		}
+		else
+		{
+			ImGui::Text("No texture binded");
+			ImGui::Button("##invisible_texture_binding_button", { 50.0f, 50.0f });
+
+			// Start accepting drag and drops
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* file_drag_and_drop_payload = ImGui::AcceptDragDropPayload(ui_shared_vars::TEXTURE_DAD_ID))
+				{
+					// Parse the data received in a texture pointer
+					std::shared_ptr<lumina::asset>* texture_asset = (std::shared_ptr<lumina::asset>*)file_drag_and_drop_payload->Data;
+
+					sprite.bind_texture(*(*texture_asset));
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}
 	}
 
 	void entity_editor_view::render_camera_component()

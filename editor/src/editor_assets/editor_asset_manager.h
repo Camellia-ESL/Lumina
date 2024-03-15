@@ -16,6 +16,7 @@ namespace lumina_editor
 		{
 			static constexpr const char* folder = "img_folder";
 			static constexpr const char* document = "img_document";
+			static constexpr const char* refresh = "img_refresh";
 		};
 
 	public:

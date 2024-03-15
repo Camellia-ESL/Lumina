@@ -15,6 +15,11 @@ namespace lumina_editor
 {
 	namespace ui_shared_vars
 	{
-		ui_shared_var_api uint32_t GIZMO_OPERATION_TYPE = 7; // Watch Imguizmo docs, 7 is translate operation by default
+		// Watch Imguizmo docs, 7 is translate operation by default
+		ui_shared_var_api uint32_t GIZMO_OPERATION_TYPE = 7; 
+		// The drag and drop ID for accepting file load drag and drop
+		ui_shared_var_api constexpr const char* FILE_TO_LOAD_DAD_ID = "file_to_load_dad"; 
+		// The drag and drop ID for accepting texture drag and drop
+		ui_shared_var_api constexpr const char* TEXTURE_DAD_ID = "texture_dad";
 	};
 }

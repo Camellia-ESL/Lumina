@@ -5,7 +5,7 @@
 
 #include "event_system/event_system.h"
 #include "scene_system/scenes_system.h"
-#include "assets_system/asset_registry.h"
+#include "assets_system/asset_atlas.h"
 
 #include "graphics/graphics_driver.h"
 #include "graphics/d3d11_api/d3d11_renderer.h"
@@ -52,6 +52,9 @@ namespace lumina
         spdlog::warn("Installing event callbacks...");
         install_events_handler();
         spdlog::info("Event callbacks installed.");
+
+        // Init the asset atlas
+        asset_atlas* asset_atlas_instance = new asset_atlas();
 
         // Init the scene system
         spdlog::warn("Instancing the scene system...");
@@ -105,6 +108,9 @@ namespace lumina
 
     void app_surface::on_destroy()
     {
+        // Destroy asset atlas
+        delete& asset_atlas::get_singleton();
+
         // Destroy scene system
         delete& scenes_system::get_singleton();
 

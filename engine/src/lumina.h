@@ -18,9 +18,11 @@
 #include "core/lumina_singleton.h"
 #include "core/lumina_containers.h"
 #include "core/lumina_file_system.h"
+#include "core/lumina_types.h"
 #include "serializers/scene_serializer.h"
 #include "event_system/event_system.h"
 #include "assets_system/asset_registry.h"
+#include "assets_system/asset_atlas.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,5 +31,5 @@
 // Lumina is the namespace containing the lumina engine
 namespace lumina
 {
-	constexpr const char* VERSION = "0.0.89";
+	constexpr const char* VERSION = "0.0.91";
 }

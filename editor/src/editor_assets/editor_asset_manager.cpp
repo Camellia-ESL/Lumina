@@ -11,7 +11,8 @@ namespace lumina_editor
 	static std::vector<std::string> textures_to_load =
 	{
 		editor_asset_manager::textures::folder,
-		editor_asset_manager::textures::document
+		editor_asset_manager::textures::document,
+		editor_asset_manager::textures::refresh
 	};
 
 	void editor_asset_manager::on_load()
