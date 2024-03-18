@@ -2,13 +2,14 @@
 
 #include "../editor_compile_configs.h"
 #include "ui/view_register.h"
+#include "assets_serializer.h"
 
 #include "core/lumina_file_system.h"
 
 #include "yaml-cpp/yaml.h"
 #include "spdlog/spdlog.h"
 
-lumina_editor::project_handler* lumina_editor::project_handler::singleton_instance_ = nullptr;
+LUMINA_SINGLETON_DECL_INSTANCE(lumina_editor::project_handler);
 
 namespace lumina_editor
 {
@@ -17,6 +18,11 @@ namespace lumina_editor
 		// If a project is already loaded unloads it first
 		if (has_opened_project())
 			unload_project();
+		else
+		{
+			destroy_scenes_context();
+			destroy_assets();
+		}
 
 		// Log the save msg
 		spdlog::warn("Creating new project...");
@@ -33,6 +39,7 @@ namespace lumina_editor
 		// Create's the projects folders
 		lumina::lumina_file_system_s::create_folder(directory_path + "\\" + project_name);
 		lumina::lumina_file_system_s::create_folder(directory_path + "\\" + project_name + "\\" + LUMINA_EDITOR_PROJECT_SCENES_DEFAULT_PATH);
+		lumina::lumina_file_system_s::create_folder(directory_path + "\\" + project_name + "\\" + LUMINA_EDITOR_PROJECT_ASSETS_DEFAULT_PATH);
 
 		// Create's an empty scene and loads it
 		lumina::scenes_system::get_singleton().create_scene("Untitled Scene");
@@ -50,6 +57,9 @@ namespace lumina_editor
 		// Save the project settings
 		save_project_settings();
 
+		// Serialize all the assets in the project
+		save_assets();
+
 		// Serialize all the scenes in the project
 		save_scenes();
 
@@ -61,6 +71,11 @@ namespace lumina_editor
 		// If a project is already loaded unloads it first
 		if (has_opened_project())
 			unload_project();
+		else
+		{
+			destroy_scenes_context();
+			destroy_assets();
+		}
 
 		// Tries first to deserialize project settings
 		YAML::Node scene_yaml;
@@ -87,23 +102,11 @@ namespace lumina_editor
 		// Set the content browser directory
 		content_browser_.set_content_directory(loaded_project_->project_dir_path);
 
+		// Tries to deserialize assets (assets must be deserialized first before scenes)
+		load_assets();
+
 		// Tries to deserialize scenes
-		std::vector<std::string> scene_files_path = 
-			lumina::lumina_file_system_s::get_files_in_directory(
-				loaded_project_->project_dir_path + "\\" + loaded_project_->scenes_dir_path
-			);
-
-		// Log the save msg
-		spdlog::info("Importing scenes...");
-
-		for (auto& path : scene_files_path)
-		{
-			lumina::scenes_system::get_singleton().create_scene("__importing_scene__");
-			lumina::scene_serializer::deserialize_yaml(
-				lumina::scenes_system::get_singleton().get_scene("__importing_scene__"), 
-				path
-			);
-		}
+		load_scenes();
 
 		return true;
 	}
@@ -117,11 +120,11 @@ namespace lumina_editor
 		// Save the project first
 		save_project();
 
-		// Destroy's all the scenes
-		lumina::scenes_system::get_singleton().destroy_all();
+		// Cleanup the scene context
+		destroy_scenes_context();
 
-		// Destroy's all the editor views that belongs to scenes
-		view_register_s::destroy_views("scene_view_type");
+		// Destroy's all the assets that belongs to the project
+		destroy_assets();
 
 		// Unloads the project
 		loaded_project_.reset();
@@ -136,6 +139,7 @@ namespace lumina_editor
 		yaml_stream_emitter << YAML::Value << loaded_project_->name;
 		yaml_stream_emitter << YAML::Key << "Scenes Path";
 		yaml_stream_emitter << YAML::Value << loaded_project_->scenes_dir_path;
+		yaml_stream_emitter << YAML::EndMap;
 
 		std::ofstream out_stream{ loaded_project_->project_dir_path + "\\" + loaded_project_->name + ".lmproj" };
 		out_stream << yaml_stream_emitter.c_str();
@@ -155,5 +159,56 @@ namespace lumina_editor
 				loaded_project_->project_dir_path + "\\" + loaded_project_->scenes_dir_path + "\\" + scene->get_name() + ".scene"
 			);
 		}
+	}
+
+	void project_handler::save_assets()
+	{
+		assets_serializer::serialize_assets_bundle(
+			lumina::asset_atlas::get_singleton().get_registry().get_registry(), 
+			loaded_project_->project_dir_path + "\\" + loaded_project_->name + ".lmbundle"
+		);
+	}
+
+	void project_handler::load_scenes()
+	{
+		std::vector<std::string> scene_files_path =
+			lumina::lumina_file_system_s::get_files_in_directory(
+				loaded_project_->project_dir_path + "\\" + loaded_project_->scenes_dir_path
+			);
+
+		// Log the save msg
+		spdlog::info("Importing scenes...");
+
+		for (auto& path : scene_files_path)
+		{
+			lumina::scenes_system::get_singleton().create_scene("__importing_scene__");
+			lumina::scene_serializer::deserialize_yaml(
+				lumina::scenes_system::get_singleton().get_scene("__importing_scene__"),
+				path
+			);
+		}
+	}
+
+	void project_handler::load_assets()
+	{
+		assets_serializer::deserialize_assets_bundle(
+			lumina::asset_atlas::get_singleton().get_registry(),
+			loaded_project_->project_dir_path + "\\" + loaded_project_->name + ".lmbundle"
+		);
+	}
+
+	void project_handler::destroy_scenes_context()
+	{
+		// Destroy's all the scenes
+		lumina::scenes_system::get_singleton().destroy_all();
+
+		// Destroy's all the editor views that belongs to scenes
+		view_register_s::destroy_views("scene_view_type");
+	}
+
+	void project_handler::destroy_assets()
+	{
+		// Destroy's all the loaded assets
+		lumina::asset_atlas::get_singleton().get_registry().clear();
 	}
 }

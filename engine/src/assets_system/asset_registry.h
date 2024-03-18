@@ -28,11 +28,18 @@ namespace lumina
 
 		// Add an asset to the registry by giving a resource type that an asset can handle
 		template<typename asset_resource_type>
-		asset& create_asset(asset_resource_type* resource_ptr);
+		asset& create_asset(asset_resource_type* resource_ptr, const std::string& file_path);
+
+		// Add an asset to the registry by giving a resource type that an asset can handle, NOTE the uuid must be a UNIQUE identifier
+		template<typename asset_resource_type>
+		asset& create_asset(asset_resource_type* resource_ptr, const std::string& file_path, const std::string& uuid);
 
 		// Destroy's an asset
 		bool destroy_asset(const std::string& asset_id);
 		bool destroy_asset(asset& asset);
+
+		// Destroy's the whole registry and clear everything
+		void clear() { registry_.clear(); }
 
 		// Get's the whole registry
 		const asset_registry_t& get_registry() const { return registry_; }
@@ -41,7 +48,7 @@ namespace lumina
 
 		asset_registry_t registry_;
 
-		asset& push_asset(void* resource_ptr, asset::resource_types_e type);
+		asset& push_asset(void* resource_ptr, asset::resource_types_e type, const std::string& file_path, const std::string& uuid = "");
 		bool free_asset(const std::string& asset_id);
 
 	};

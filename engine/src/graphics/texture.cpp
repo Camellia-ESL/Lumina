@@ -34,7 +34,7 @@ namespace lumina
 	void* texture::get_native_resource_buffer() const
 	{
 		graphics_api_e running_graphics_api = application_player::get_singleton().get_surface().get_graphics_driver().get_graphics_api_running();
-
+		
 		if (running_graphics_api == graphics_api_e::D3D11_API && is_allocated())
 			return reinterpret_cast<d3d11_texture*>(texture_native_resource_handle_)->get_texture_resource();
 

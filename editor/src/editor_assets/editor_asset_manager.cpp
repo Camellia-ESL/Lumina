@@ -28,7 +28,7 @@ namespace lumina_editor
 			if (!result)
 				throw std::runtime_error("Error loading vital editor texture asset: " + texture_name);
 			
-			lumina::asset& texture_asset = assets_registry_.create_asset<lumina::texture>(texture);
+			lumina::asset& texture_asset = assets_registry_.create_asset<lumina::texture>(texture, texture_file_path_complete);
 			texture_asset.set_name(texture_name);
 		}
 	}

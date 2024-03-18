@@ -2,6 +2,7 @@
 
 #include "scene_system/scenes_system.h"
 #include "types_serializer.h"
+#include "assets_system/asset_atlas.h"
 
 #include "spdlog/spdlog.h"
 #include "ImGui/imgui.h"
@@ -82,6 +83,9 @@ namespace lumina
 
 		yaml_stream_emitter << YAML::Key << "Shape";
 		yaml_stream_emitter << YAML::Value << (uint32_t)component.shape;
+
+		yaml_stream_emitter << YAML::Key << "TextureAssetId";
+		yaml_stream_emitter << YAML::Value << component.texture_asset_id;
 
 		yaml_stream_emitter << YAML::Key << "Color";
 		yaml_stream_emitter << YAML::Value;
@@ -267,6 +271,13 @@ namespace lumina
 		// Deserialize the component
 		ent_component.shape = (lumina::sprite_component::shapes)yaml_component["Shape"].as<uint32_t>();
 
+		// When deserializing the texture, it tries to search inside the asset atlas an asset that matches TextureAssetId of the sprite 
+		// if found loads it.
+		const std::string texture_asset_id = yaml_component["TextureAssetId"].as<std::string>();
+
+		if (asset_atlas::get_singleton().get_registry().has_asset(texture_asset_id))
+			ent_component.bind_texture(asset_atlas::get_singleton().get_registry().get_asset(texture_asset_id));
+		
 		auto color_node = yaml_component["Color"];
 		ent_component.color = types_serializer::deserialize_yaml_vec4(color_node);
 	}

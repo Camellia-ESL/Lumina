@@ -11,10 +11,10 @@ namespace lumina
 
         D3D11_SAMPLER_DESC sampler_descriptor;
         ZeroMemory(&sampler_descriptor, sizeof(sampler_descriptor));
-        sampler_descriptor.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        sampler_descriptor.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_descriptor.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampler_descriptor.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        sampler_descriptor.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        sampler_descriptor.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        sampler_descriptor.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        sampler_descriptor.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
         sampler_descriptor.ComparisonFunc = D3D11_COMPARISON_NEVER;
         sampler_descriptor.MinLOD = 0;
         sampler_descriptor.MaxLOD = D3D11_FLOAT32_MAX;

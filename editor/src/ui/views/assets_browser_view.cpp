@@ -64,7 +64,7 @@ namespace lumina_editor
 					// If import succeded load texture in the asset atlas
 					if (load_result)
 					{
-						lumina::asset& asset_loaded =  lumina::asset_atlas::get_singleton().get_registry().create_asset(texture_buffer);
+						lumina::asset& asset_loaded = lumina::asset_atlas::get_singleton().get_registry().create_asset(texture_buffer, dragged_file_path_);
 						asset_loaded.set_name(asset_name);
 						close_popup();
 					}

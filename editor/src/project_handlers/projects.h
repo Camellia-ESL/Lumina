@@ -50,5 +50,20 @@ namespace lumina_editor
 
 		// Saves scenes 
 		void save_scenes();
+
+		// Saves assets
+		void save_assets();
+
+		// Load scenes
+		void load_scenes();
+
+		// Load assets
+		void load_assets();
+
+		// Cleanup the scene context in a safe way
+		void destroy_scenes_context();
+
+		// Cleanp the assets 
+		void destroy_assets();
 	};
 }
