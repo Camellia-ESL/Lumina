@@ -112,6 +112,8 @@ namespace lumina
 
         viewport.TopLeftX = 0;
         viewport.TopLeftY = 0;
+        viewport.MinDepth = 0;
+        viewport.MaxDepth = 1;
         viewport.Width = width;
         viewport.Height = height;
 

@@ -37,8 +37,8 @@ namespace lumina
     void d3d11_renderer::clear_screen()
     {
         float clear_color_with_alpha[4] = { 0.12f, 0.12f, 0.12f, 1.0f };
-        depth_stencil_buffer_.clear_buffer(clear_color_with_alpha);
         depth_stencil_buffer_.enable();
+        depth_stencil_buffer_.clear_buffer(clear_color_with_alpha);
     }
 
     void d3d11_renderer::present()

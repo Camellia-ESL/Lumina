@@ -75,7 +75,16 @@ namespace lumina_editor
 
 				// If loaded correctly, loads the asset in the registry
 				if (result)
-					registry_to_load.create_asset(texture, asset_yaml["File Path"].as<std::string>(), asset_yaml["Id"].as<std::string>());
+				{
+					lumina::asset& asset_loaded = 
+						registry_to_load.create_asset(
+							texture, 
+							asset_yaml["File Path"].as<std::string>(), 
+							asset_yaml["Id"].as<std::string>()
+						);
+					
+					asset_loaded.set_name(asset_yaml["Name"].as<std::string>());
+				}
 			}
 		}
 	}

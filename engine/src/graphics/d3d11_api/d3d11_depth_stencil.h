@@ -18,14 +18,15 @@ namespace lumina
 		void clear_buffer(float* clear_color) const;
 
 		// Wheter if the depth stencil is allocated or not
-		const bool is_allocated() const { return depth_stencil_ != nullptr; }
+		const bool is_allocated() const { return depth_stencil_view_ != nullptr; }
 
 		// Destroy the depth stencil
-		void destroy() { if (is_allocated()) { depth_stencil_->Release(); depth_stencil_ = nullptr; } }
+		void destroy() { if (is_allocated()) { depth_stencil_state_->Release(); depth_stencil_view_->Release(); depth_stencil_state_ = nullptr; depth_stencil_view_ = nullptr; } }
 
 	private:
 
-		ID3D11DepthStencilView* depth_stencil_ = nullptr;
+		ID3D11DepthStencilView* depth_stencil_view_ = nullptr;
+		ID3D11DepthStencilState* depth_stencil_state_ = nullptr;
 
 	};
 }

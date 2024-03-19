@@ -18,6 +18,7 @@ namespace lumina
 			float4 color : COLOR;
 			float2 texture_coordinates : TEXTURE_COORDINATES;
 			uint texture_slot : TEXTURE_SLOT; 
+			bool is_textured : IS_TEXTURED;
 		};
 	
 		vertex_output v_main(
@@ -25,7 +26,8 @@ namespace lumina
 			float4x4 model : MODEL_TRANSFORM, 
 			float4 color : COLOR, 
 			float2 texture_coord : TEXTURE_COORDINATES,
-			uint texture_slot : TEXTURE_SLOT
+			uint texture_slot : TEXTURE_SLOT,
+			bool is_textured : IS_TEXTURED
 		)
 		{
 			vertex_output output;
@@ -33,6 +35,7 @@ namespace lumina
 			output.color = color;
 			output.texture_coordinates = texture_coord;
 			output.texture_slot = texture_slot;
+			output.is_textured = is_textured;
 
 			return output;
 		}
@@ -55,12 +58,13 @@ namespace lumina
 			float4 position : SV_POSITION, 
 			float4 color : COLOR, 
 			float2 texture_coord : TEXTURE_COORDINATES,
-			uint texture_slot : TEXTURE_SLOT
+			uint texture_slot : TEXTURE_SLOT,
+			bool is_textured : IS_TEXTURED
 		) : SV_Target
 		{
 			float4 color_output;
 
-			if(color.r == 0.0f && color.g == 0.0f && color.b == 0.0f && color.a == 0.0f)
+			if(is_textured)
 			{
 				if(texture_slot == 0)
 					color_output = obj_texture0.Sample(obj_sampler_state, texture_coord);
@@ -103,6 +107,9 @@ namespace lumina
 
 		// The texture slot
 		uint32_t texture_slot;
+
+		// Wheter if the quad is textured or not
+		bool is_textured;
 	};
 
 	struct alignas(16) generic_constant_buffer_t
@@ -204,10 +211,10 @@ namespace lumina
 
 		glm::mat4 transposed_transform = glm::transpose(quad_transform);
 
-		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Top left
-		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Top right
-		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Bottom right
-		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 }); // Bottom left
+		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 , false }); // Top left
+		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 , false }); // Top right
+		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 , false }); // Bottom right
+		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, color, { 0.0f, 0.0f }, 0 , false }); // Bottom left
 
 		rendered_quads_this_frame++;
 	}
@@ -238,10 +245,10 @@ namespace lumina
 
 		glm::mat4 transposed_transform = glm::transpose(quad_transform);
 
-		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 0.0f, 0.0f }, texture_slot }); // Top left
-		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 1.0f, 0.0f }, texture_slot }); // Top right
-		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 1.0f, 1.0f }, texture_slot }); // Bottom right
-		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 0.0f, 1.0f }, texture_slot }); // Bottom left
+		verticies.push_back({ { -0.5f,  0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 0.0f, 0.0f }, texture_slot, true }); // Top left
+		verticies.push_back({ {  0.5f,  0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 1.0f, 0.0f }, texture_slot, true }); // Top right
+		verticies.push_back({ {  0.5f, -0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 1.0f, 1.0f }, texture_slot, true }); // Bottom right
+		verticies.push_back({ { -0.5f, -0.5f }, transposed_transform, { 0.0f , 0.0f , 0.0f , 0.0f }, { 0.0f, 1.0f }, texture_slot, true }); // Bottom left
 
 		rendered_quads_this_frame++;
 	}
@@ -303,7 +310,8 @@ namespace lumina
 				{ "MODEL_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{ "TEXTURE_COORDINATES", 0, DXGI_FORMAT_R32G32_FLOAT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec4)), D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{ "TEXTURE_SLOT", 0, DXGI_FORMAT_R32_UINT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec2)), D3D11_INPUT_PER_VERTEX_DATA, 0}
+				{ "TEXTURE_SLOT", 0, DXGI_FORMAT_R32_UINT, 0, progressive_descriptor_memory_offset(sizeof(glm::vec2)), D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{ "IS_TEXTURED", 0, DXGI_FORMAT_R8_UINT, 0, progressive_descriptor_memory_offset(sizeof(uint32_t)), D3D11_INPUT_PER_VERTEX_DATA, 0}
 			}
 		);
 
