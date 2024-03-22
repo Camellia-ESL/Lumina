@@ -3,6 +3,9 @@
 #define LUMINA_EDITOR_RESOURCES_PATH "resources/"
 #define LUMINA_EDITOR_PROJECT_SCENES_DEFAULT_PATH "scenes"
 #define LUMINA_EDITOR_PROJECT_ASSETS_DEFAULT_PATH "assets"
+#define LUMINA_EDITOR_PROJECT_BUILD_DIR_PATH "temp_build"
+#define LUMINA_EDITOR_PROJECT_BUILD_CONTENT_DIR "content"
+#define LUMINA_EDITOR_PROJECT_ASSET_PACKAGE_NAME "compiled_resources.package"
 
 namespace lumina_editor_configs
 {

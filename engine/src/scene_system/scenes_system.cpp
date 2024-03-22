@@ -143,8 +143,8 @@ namespace lumina
 			transform_component& transform = sprite_entity.get_component<transform_component>();
 			sprite_component& sprite = sprite_entity.get_component<sprite_component>();
 
-			if(sprite.texture != nullptr && sprite.texture->is_allocated())
-				renderer_2d_s::draw_quad(transform.get_model_matrix(), *sprite.texture);
+			if(sprite.has_texture() && sprite.get_texture()->is_allocated())
+				renderer_2d_s::draw_quad(transform.get_model_matrix(), *sprite.get_texture());
 			else 
 				renderer_2d_s::draw_quad(transform.get_model_matrix(), sprite.color);
 		}

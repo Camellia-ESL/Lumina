@@ -23,6 +23,19 @@ namespace lumina
 		return false;
 	}
 
+	bool texture::load_from_memory(void* img_data, l_uint32 data_size)
+	{
+		graphics_api_e running_graphics_api = application_player::get_singleton().get_surface().get_graphics_driver().get_graphics_api_running();
+
+		if (running_graphics_api == graphics_api_e::D3D11_API && !is_allocated())
+		{
+			texture_native_resource_handle_ = new d3d11_texture();
+			return ((d3d11_texture*)texture_native_resource_handle_)->load_from_memory(img_data, data_size);
+		}
+
+		return false;
+	}
+
 	void texture::destroy()
 	{
 		graphics_api_e running_graphics_api = application_player::get_singleton().get_surface().get_graphics_driver().get_graphics_api_running();

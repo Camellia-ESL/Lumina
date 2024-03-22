@@ -17,6 +17,9 @@ namespace lumina_editor
 
 	void content_browser_view::on_render()
 	{
+		if (!ui_shared_vars::IS_CONTENT_BROWSER_VIEW_OPEN)
+			return;
+
 		ImGui::Begin("Content Browser");
 
 		// Get's an handle to the content browser

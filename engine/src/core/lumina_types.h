@@ -43,3 +43,9 @@ constexpr unsigned long long l_uint64_size = 0x8;
 // Represent a DOUBLE type (64 bit floating point 8 Byte)
 typedef double l_double64;
 constexpr double l_double64_size = 0x8;
+
+// Byte multipliers sizes
+constexpr l_uint32 l_kbyte8_size = l_byte8_size * 1000;
+constexpr l_uint32 l_mbyte8_size = l_kbyte8_size * 1000;
+constexpr l_uint32 l_gbyte8_size = l_mbyte8_size * 1000;
+constexpr l_uint32 l_tbyte8_size = l_gbyte8_size * 1000;

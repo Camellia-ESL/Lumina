@@ -15,7 +15,7 @@ namespace lumina
 	// Serialization
 
 	template<>
-	static void scene_serializer::serialize_component<identity_component>(identity_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
+	static void scene_serializer::serialize_component_yaml<identity_component>(identity_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
 	{
 		yaml_stream_emitter << YAML::Key << "Identity Component";
 		
@@ -32,7 +32,7 @@ namespace lumina
 	}
 
 	template<>
-	static void scene_serializer::serialize_component<transform_component>(transform_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
+	static void scene_serializer::serialize_component_yaml<transform_component>(transform_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
 	{
 		yaml_stream_emitter << YAML::Key << "Transform Component";
 
@@ -74,7 +74,7 @@ namespace lumina
 	}
 
 	template<>
-	static void scene_serializer::serialize_component<sprite_component>(sprite_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
+	static void scene_serializer::serialize_component_yaml<sprite_component>(sprite_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
 	{
 		yaml_stream_emitter << YAML::Key << "Sprite Component";
 
@@ -85,7 +85,7 @@ namespace lumina
 		yaml_stream_emitter << YAML::Value << (uint32_t)component.shape;
 
 		yaml_stream_emitter << YAML::Key << "TextureAssetId";
-		yaml_stream_emitter << YAML::Value << component.texture_asset_id;
+		yaml_stream_emitter << YAML::Value << component.get_texture_asset_id();
 
 		yaml_stream_emitter << YAML::Key << "Color";
 		yaml_stream_emitter << YAML::Value;
@@ -96,7 +96,7 @@ namespace lumina
 	}
 
 	template<>
-	static void scene_serializer::serialize_component<camera_component>(camera_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
+	static void scene_serializer::serialize_component_yaml<camera_component>(camera_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
 	{
 		yaml_stream_emitter << YAML::Key << "Camera Component";
 
@@ -176,16 +176,16 @@ namespace lumina
 			// Create's the entity map
 			yaml_stream_emitter << YAML::BeginMap;
 
-			serialize_component(entity.get_component<identity_component>(), yaml_stream_emitter, scene);
+			serialize_component_yaml(entity.get_component<identity_component>(), yaml_stream_emitter, scene);
 			
 			if(entity.has_component<transform_component>())
-				serialize_component(entity.get_component<transform_component>(), yaml_stream_emitter, scene);
+				serialize_component_yaml(entity.get_component<transform_component>(), yaml_stream_emitter, scene);
 
 			if (entity.has_component<sprite_component>())
-				serialize_component(entity.get_component<sprite_component>(), yaml_stream_emitter, scene);
+				serialize_component_yaml(entity.get_component<sprite_component>(), yaml_stream_emitter, scene);
 
 			if (entity.has_component<camera_component>())
-				serialize_component(entity.get_component<camera_component>(), yaml_stream_emitter, scene);
+				serialize_component_yaml(entity.get_component<camera_component>(), yaml_stream_emitter, scene);
 
 			// Save the entity map
 			yaml_stream_emitter << YAML::EndMap;
@@ -204,7 +204,7 @@ namespace lumina
 	// Deserialization
 
 	template<>
-	static void scene_serializer::deserialize_component<identity_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
+	static void scene_serializer::deserialize_component_yaml<identity_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
 	{
 		auto yaml_identity_component = yaml_entity["Identity Component"];
 		identity_component& ent_identity_component = entity.get_component<identity_component>();
@@ -215,7 +215,7 @@ namespace lumina
 	}
 
 	template<>
-	static void scene_serializer::deserialize_component<transform_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
+	static void scene_serializer::deserialize_component_yaml<transform_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
 	{
 		auto yaml_component = yaml_entity["Transform Component"];
 		
@@ -258,7 +258,7 @@ namespace lumina
 	}
 
 	template<>
-	static void scene_serializer::deserialize_component<sprite_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
+	static void scene_serializer::deserialize_component_yaml<sprite_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
 	{
 		auto yaml_component = yaml_entity["Sprite Component"];
 
@@ -283,7 +283,7 @@ namespace lumina
 	}
 
 	template<>
-	static void scene_serializer::deserialize_component<camera_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
+	static void scene_serializer::deserialize_component_yaml<camera_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
 	{
 		auto yaml_component = yaml_entity["Camera Component"];
 
@@ -346,13 +346,13 @@ namespace lumina
 		{
 			entity new_entity = scene->create_entity();
 
-			deserialize_component<identity_component>(new_entity, ent, scene);
+			deserialize_component_yaml<identity_component>(new_entity, ent, scene);
 
-			deserialize_component<transform_component>(new_entity, ent, scene);
+			deserialize_component_yaml<transform_component>(new_entity, ent, scene);
 
-			deserialize_component<sprite_component>(new_entity, ent, scene);
+			deserialize_component_yaml<sprite_component>(new_entity, ent, scene);
 
-			deserialize_component<camera_component>(new_entity, ent, scene);
+			deserialize_component_yaml<camera_component>(new_entity, ent, scene);
 		}
 
 		return true;

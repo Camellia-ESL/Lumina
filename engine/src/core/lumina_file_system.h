@@ -31,7 +31,9 @@ namespace lumina
 		static out_file_dialog_t open_output_file_dialog(std::string file_name);
 		static bool create_folder(const std::string& path);
 		static std::string get_file_directory(const std::string& file_path);
+		static std::string get_process_directory();
 		static std::vector<std::string> get_files_in_directory(const std::string& dir_path);
+		static void execute_process(const std::string& exe_path, const std::string& starting_dir = "");
 
 	};
 }

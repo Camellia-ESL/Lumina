@@ -21,5 +21,11 @@ namespace lumina_editor
 		ui_shared_var_api constexpr const char* FILE_TO_LOAD_DAD_ID = "file_to_load_dad"; 
 		// The drag and drop ID for accepting texture drag and drop
 		ui_shared_var_api constexpr const char* TEXTURE_DAD_ID = "texture_dad";
+		// Wheter if the performance view should be open or not
+		ui_shared_var_api bool IS_PROFILER_VIEW_OPEN = true;
+		// Wheter if the content browser view should be open or not
+		ui_shared_var_api bool IS_CONTENT_BROWSER_VIEW_OPEN = true;
+		// Wheter if the assets browser view should be open or not
+		ui_shared_var_api bool IS_ASSETS_BROWSER_VIEW_OPEN = true;
 	};
 }

@@ -142,7 +142,7 @@ namespace lumina_editor
 			(const float*)&editor_camera::get_singleton().get_camera()->get_view_matrix(),
 			(const float*)&editor_camera::get_singleton().get_camera()->get_projection_matrix(),
 			(ImGuizmo::OPERATION)ui_shared_vars::GIZMO_OPERATION_TYPE,
-			ImGuizmo::MODE::WORLD,
+			(ImGuizmo::OPERATION)ui_shared_vars::GIZMO_OPERATION_TYPE == ImGuizmo::OPERATION::SCALE ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD,
 			(float*)&entity_.get_component<lumina::transform_component>().get_model_matrix()
 		);
 	}
@@ -169,7 +169,7 @@ namespace lumina_editor
 			if (ImGui::SmallButton("Unbind"))
 				sprite.unbind_texture();
 			else
-				ImGui::Image(sprite.texture->get_native_resource_buffer(), { 100.0f , 100.0f });
+				ImGui::Image(sprite.get_texture()->get_native_resource_buffer(), {100.0f , 100.0f});
 		}
 		else
 		{

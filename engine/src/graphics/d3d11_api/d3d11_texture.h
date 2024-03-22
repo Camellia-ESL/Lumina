@@ -1,7 +1,8 @@
 #pragma once
 
-#include "d3d11.h"
+#include "core/lumina_types.h"
 
+#include <d3d11.h>
 #include <string>
 
 namespace lumina
@@ -12,6 +13,9 @@ namespace lumina
 
 		// Load a texture from file (BMP, JPEG, PNG, TIFF, GIF are supported)
 		bool load_from_file(const std::string& file_path);
+
+		// Load a texture from memory (BMP, JPEG, PNG, TIFF, GIF are supported)
+		bool load_from_memory(void* img_data, l_uint32 data_size);
 
 		// Enable the texture for the current render pass
 		bool enable(const uint32_t slot) const;

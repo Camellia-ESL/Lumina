@@ -1,0 +1,105 @@
+Scene Name: World
+Is Active Scene: true
+Entities:
+  - Identity Component:
+      Entity Name: Main Camera
+      Entity UUID: 5e224ba4-0a6d-4a1b-adaa-bd04ed6b1db8
+    Camera Component:
+      Is Active: true
+      Fov: 90
+      Far View: 100
+      Near View: 0.100000001
+      Yaw: -90
+      Pitch: 0
+      Position:
+        - 0
+        - 0
+        - 1
+      Front:
+        - -4.37113883e-08
+        - 0
+        - -1
+      Up:
+        - 0
+        - 1
+        - 0
+      Right:
+        - 1
+        - 0
+        - -4.37113883e-08
+      World Up:
+        - 0
+        - 1
+        - 0
+  - Identity Component:
+      Entity Name: Wall
+      Entity UUID: aaf94880-223c-42c3-b690-11865c0b08ed
+    Transform Component:
+      Position:
+        - -1.75695133
+        - 0.489870131
+        - 0
+      Rotation:
+        - -179.999893
+        - 89.8924255
+        - -179.999893
+      Scale:
+        - 3.48000002
+        - 2.79999995
+        - 0.999829113
+    Sprite Component:
+      Shape: 0
+      TextureAssetId: c5d0cfdf-c586-4b4e-87a8-dd17e26c3c17
+      Color:
+        - 1
+        - 1
+        - 0
+        - 1
+  - Identity Component:
+      Entity Name: Floor
+      Entity UUID: abf5b482-8a41-4a63-893b-eb7738c70919
+    Transform Component:
+      Position:
+        - 0
+        - 0
+        - 0
+      Rotation:
+        - -90
+        - -0
+        - 0
+      Scale:
+        - 3.49937558
+        - 3.5
+        - 1
+    Sprite Component:
+      Shape: 0
+      TextureAssetId: e4ac8b52-ce82-405c-98c2-cf94223c42c4
+      Color:
+        - 1
+        - 1
+        - 0
+        - 1
+  - Identity Component:
+      Entity Name: Wall
+      Entity UUID: 05c339cd-4b05-4bbb-b630-dac4e5a7686f
+    Transform Component:
+      Position:
+        - 0
+        - 1.00015748
+        - -0.264664143
+      Rotation:
+        - 0
+        - -0
+        - 0
+      Scale:
+        - 1
+        - 1
+        - 1
+    Sprite Component:
+      Shape: 0
+      TextureAssetId: c5d0cfdf-c586-4b4e-87a8-dd17e26c3c17
+      Color:
+        - 1
+        - 1
+        - 0
+        - 1

@@ -15,7 +15,7 @@ namespace lumina_editor
 		// Get's all the files and directories inside the current given path
 		const auto content = lumina::lumina_file_system_s::get_files_in_directory(dir_path);
 
-		for (auto path : content)
+		for (auto& path : content)
 		{
 			// Parse string in a file system path
 			const std::filesystem::path fs_path{ path };

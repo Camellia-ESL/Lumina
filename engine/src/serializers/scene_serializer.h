@@ -19,10 +19,10 @@ namespace lumina
 	private:
 
 		template<typename component_type>
-		static void serialize_component(component_type& component, YAML::Emitter& yaml_stream_emitter, scene* scene);
+		static void serialize_component_yaml(component_type& component, YAML::Emitter& yaml_stream_emitter, scene* scene);
 
 		template<typename component_type>
-		static void deserialize_component(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene);
+		static void deserialize_component_yaml(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene);
 
 	};
 }

@@ -1,6 +1,7 @@
 #include "top_window_toolbar_view.h"
 
 #include "ui/ui_objects_lib/lumina_ui_input_text.h"
+#include "ui/ui_shared_vars.h"
 #include "project_handlers/projects.h"
 
 #include "core/lumina_file_system.h"
@@ -9,6 +10,33 @@
 
 namespace lumina_editor
 {
+	void top_window_toolbar_view::on_create()
+	{
+		// Install the shortcuts callbacks
+		lumina::event_listener::get_singleton().submit_event_callback(
+			[&](const lumina::keyboard_event_t& event) -> void
+			{
+				if (
+					event.key == lumina::keyboard_keys_types_e::KEY_N &&
+					event.is_keyboard_mod_pressed(lumina::keyboard_key_mods_types_e::KEY_MOD_CONTROL) &&
+					event.action_type == lumina::input_action_types_e::ACTION_PRESS)
+					is_new_project_keybind_pressed_ = true;
+
+				if (
+					event.key == lumina::keyboard_keys_types_e::KEY_L &&
+					event.is_keyboard_mod_pressed(lumina::keyboard_key_mods_types_e::KEY_MOD_CONTROL) &&
+					event.action_type == lumina::input_action_types_e::ACTION_PRESS)
+					is_load_project_keybind_pressed_ = true;
+
+				if (
+					event.key == lumina::keyboard_keys_types_e::KEY_S &&
+					event.is_keyboard_mod_pressed(lumina::keyboard_key_mods_types_e::KEY_MOD_CONTROL) &&
+					event.action_type == lumina::input_action_types_e::ACTION_PRESS)
+					is_save_project_keybind_pressed_ = true;
+			}
+		);
+	}
+
 	void top_window_toolbar_view::on_render()
 	{
 		bool open_popup = false;
@@ -29,11 +57,51 @@ namespace lumina_editor
 
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("View"))
+			{
+				ImGui::Checkbox("Show Profiler", &ui_shared_vars::IS_PROFILER_VIEW_OPEN);
+				ImGui::Checkbox("Show Content Browser", &ui_shared_vars::IS_CONTENT_BROWSER_VIEW_OPEN);
+				ImGui::Checkbox("Show Assets Browser", &ui_shared_vars::IS_ASSETS_BROWSER_VIEW_OPEN);
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Edit Project Settings"))
+					is_build_settings_editor_open_ = true;
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
+		}
+
+		// Check for shortcuts for being pressed
+		if (is_new_project_keybind_pressed_)
+		{
+			open_popup = true;
+			is_new_project_keybind_pressed_ = false;
+		}
+
+		if (is_save_project_keybind_pressed_)
+		{
+			open_popup = !on_project_save();
+			is_save_project_keybind_pressed_ = false;
+		}
+
+		if (is_load_project_keybind_pressed_)
+		{
+			on_project_load();
+			is_load_project_keybind_pressed_ = false;
 		}
 
 		// Render eventual opened popus
 		render_new_project_popup(open_popup);
+
+		// Render eventual opened editor windows
+		render_build_settings_editor();
 	}
 
 	bool top_window_toolbar_view::on_project_save()
@@ -108,5 +176,43 @@ namespace lumina_editor
 
 			ImGui::EndPopup();
 		}
+	}
+
+	void top_window_toolbar_view::render_build_settings_editor()
+	{
+		static bool first_opening = true;
+		if (!is_build_settings_editor_open_ || !project_handler::get_singleton().has_opened_project())
+		{
+			// Prevent crash for changing to a different project
+			first_opening = true;
+			// Prevent the window being instantly opened on project load if the button to open the editor was previously clicked
+			is_build_settings_editor_open_ = false;
+			return;
+		}
+
+		ImGui::Begin("Build Settings", &is_build_settings_editor_open_);
+
+		static lumina_ui_input_text build_production_name_input_text{};
+		static lumina_ui_input_text runtime_player_name_input_text{};
+		static lumina_ui_input_text runtime_player_process_name_input_text{};
+		static lumina_ui_input_text runtime_player_window_name_input_text{};
+
+		if (first_opening)
+		{
+			project& project = project_handler::get_singleton().get_project();
+			build_production_name_input_text.bind_text_buffer(&project.build_info.build_production_name);
+			runtime_player_name_input_text.bind_text_buffer(&project.build_info.runtime_player_name);
+			runtime_player_process_name_input_text.bind_text_buffer(&project.build_info.runtime_player_process_name);
+			runtime_player_window_name_input_text.bind_text_buffer(&project.build_info.runtime_player_window_name);
+			first_opening = false;
+		}
+
+		// Render the input texts
+		build_production_name_input_text.render("Build Production Name");
+		runtime_player_name_input_text.render("Runtime Player Name");
+		runtime_player_process_name_input_text.render("Runtime Player Process Name");
+		runtime_player_window_name_input_text.render("Runtime Player Window Name");
+
+		ImGui::End();
 	}
 }

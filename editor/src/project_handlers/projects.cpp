@@ -2,7 +2,7 @@
 
 #include "../editor_compile_configs.h"
 #include "ui/view_register.h"
-#include "assets_serializer.h"
+#include "serializers/assets_serializer.h"
 
 #include "core/lumina_file_system.h"
 
@@ -10,6 +10,9 @@
 #include "spdlog/spdlog.h"
 
 LUMINA_SINGLETON_DECL_INSTANCE(lumina_editor::project_handler);
+
+#define LUMINA_EDITOR_BIN_DIR_PATH "\\resources\\bin"
+#define LUMINA_EDITOR_RUNTIME_PLAYER_DEFAULT_NAME "lumina_runtime_player.exe"
 
 namespace lumina_editor
 {
@@ -78,11 +81,11 @@ namespace lumina_editor
 		}
 
 		// Tries first to deserialize project settings
-		YAML::Node scene_yaml;
+		YAML::Node project_yaml;
 
 		try
 		{
-			scene_yaml = YAML::LoadFile(project_file);
+			project_yaml = YAML::LoadFile(project_file);
 		}
 		catch (const std::exception&)
 		{
@@ -90,14 +93,11 @@ namespace lumina_editor
 		}
 
 		// Check if the file isn't good
-		if (!scene_yaml || !scene_yaml["Project Name"] || !scene_yaml["Scenes Path"])
+		if (!project_yaml || !project_yaml["Project Name"] || !project_yaml["Scenes Path"])
 			return false;
 
 		// Load project metadata
-		loaded_project_ = std::make_shared<project>();
-		loaded_project_->name = scene_yaml["Project Name"].as<std::string>();
-		loaded_project_->scenes_dir_path = scene_yaml["Scenes Path"].as<std::string>();
-		loaded_project_->project_dir_path = lumina::lumina_file_system_s::get_file_directory(project_file);
+		load_project_settings(project_yaml, project_file);
 
 		// Set the content browser directory
 		content_browser_.set_content_directory(loaded_project_->project_dir_path);
@@ -131,6 +131,111 @@ namespace lumina_editor
 		loaded_project_ = nullptr;
 	}
 
+	bool project_handler::build_project()
+	{
+		//@enhancement-[projects]: Implement more safety checks.
+		const std::string build_path =
+			loaded_project_->project_dir_path 
+			+ "\\" 
+			+ LUMINA_EDITOR_PROJECT_BUILD_DIR_PATH 
+			+ "\\" 
+			+ loaded_project_->build_info.build_production_name;
+
+		const std::string content_path = 
+			build_path + "\\" + LUMINA_EDITOR_PROJECT_BUILD_CONTENT_DIR;
+
+		// Creates the temp build folder
+		lumina::lumina_file_system_s::create_folder(
+			loaded_project_->project_dir_path
+			+ "\\"
+			+ LUMINA_EDITOR_PROJECT_BUILD_DIR_PATH
+		);
+
+		// Creates the folder that will contain the project build
+		lumina::lumina_file_system_s::create_folder(
+			build_path
+		);
+
+		// Creates the folder that will contain the build content
+		lumina::lumina_file_system_s::create_folder(
+			content_path
+		);
+
+		// Save Runtime Player settings
+		YAML::Emitter yaml_stream_emitter;
+		yaml_stream_emitter << YAML::BeginMap;
+		yaml_stream_emitter << YAML::Key << "Build Production Name";
+		yaml_stream_emitter << YAML::Value << loaded_project_->build_info.build_production_name;
+		yaml_stream_emitter << YAML::Key << "Runtime Player Name";
+		yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_name;
+		yaml_stream_emitter << YAML::Key << "Runtime Player Process Name";
+		yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_process_name;
+		yaml_stream_emitter << YAML::Key << "Runtime Player Window Name";
+		yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_window_name;
+		yaml_stream_emitter << YAML::EndMap;
+
+		std::ofstream out_stream{ build_path + "\\" + "runtime.config" };
+		out_stream << yaml_stream_emitter.c_str();
+
+		// Pack assets
+		lumina::assets_serializer::serialize_assets_package(
+			lumina::asset_atlas::get_singleton().get_registry().get_registry(),
+			content_path + "\\" + LUMINA_EDITOR_PROJECT_ASSET_PACKAGE_NAME
+		);
+
+		// Pack scenes
+		lumina::scenes_system& scene_system = lumina::scenes_system::get_singleton();
+
+		for (auto& scene : scene_system.get_all_scenes())
+		{
+			if (scene == nullptr)
+				continue;
+
+			lumina::scene_serializer::serialize_yaml(
+				scene.get(),
+				content_path + "\\" + scene->get_name() + ".scene"
+			);
+		}
+
+		// Copy the runtime_player distribution with the selected and correct platform and architecture build
+		// NOTE that the file format should be changed based on the arch and platform build selected.
+		std::filesystem::path sourceFile = 
+			lumina::lumina_file_system_s::get_process_directory() 
+			+ LUMINA_EDITOR_BIN_DIR_PATH 
+			+ "\\" 
+			+ LUMINA_EDITOR_RUNTIME_PLAYER_DEFAULT_NAME;
+		
+		std::filesystem::path targetParent = build_path;
+		auto target = targetParent / std::filesystem::path(loaded_project_->build_info.runtime_player_name + ".exe");
+
+		try 
+		{
+			bool copy_result = std::filesystem::copy_file(sourceFile, target, std::filesystem::copy_options::overwrite_existing);
+			return true;
+		}
+		catch (std::exception& e) 
+		{
+			spdlog::error("Error packing runtime_player.");
+		}
+
+		return false;
+	}
+
+	void project_handler::launch_runtime_player()
+	{
+		const std::string build_path =
+			loaded_project_->project_dir_path
+			+ "\\"
+			+ LUMINA_EDITOR_PROJECT_BUILD_DIR_PATH
+			+ "\\"
+			+ loaded_project_->build_info.build_production_name;
+
+		lumina::lumina_file_system_s::execute_process(
+			build_path + "\\" + loaded_project_->build_info.runtime_player_name + ".exe",
+			build_path
+		);
+	}
+
 	void project_handler::save_project_settings()
 	{
 		YAML::Emitter yaml_stream_emitter;
@@ -139,6 +244,22 @@ namespace lumina_editor
 		yaml_stream_emitter << YAML::Value << loaded_project_->name;
 		yaml_stream_emitter << YAML::Key << "Scenes Path";
 		yaml_stream_emitter << YAML::Value << loaded_project_->scenes_dir_path;
+		
+		// Build informations
+		{
+			yaml_stream_emitter << YAML::Key << "Build Info";
+			yaml_stream_emitter << YAML::Value << YAML::BeginMap;
+			yaml_stream_emitter << YAML::Key << "Build Production Name";
+			yaml_stream_emitter << YAML::Value << loaded_project_->build_info.build_production_name;
+			yaml_stream_emitter << YAML::Key << "Runtime Player Name";
+			yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_name;
+			yaml_stream_emitter << YAML::Key << "Runtime Player Process Name";
+			yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_process_name;
+			yaml_stream_emitter << YAML::Key << "Runtime Player Window Name";
+			yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_window_name;
+			yaml_stream_emitter << YAML::EndMap;
+		}
+		
 		yaml_stream_emitter << YAML::EndMap;
 
 		std::ofstream out_stream{ loaded_project_->project_dir_path + "\\" + loaded_project_->name + ".lmproj" };
@@ -163,10 +284,22 @@ namespace lumina_editor
 
 	void project_handler::save_assets()
 	{
-		assets_serializer::serialize_assets_bundle(
+		lumina::assets_serializer::serialize_assets_bundle(
 			lumina::asset_atlas::get_singleton().get_registry().get_registry(), 
 			loaded_project_->project_dir_path + "\\" + loaded_project_->name + ".lmbundle"
 		);
+	}
+
+	void project_handler::load_project_settings(const YAML::Node& project_node_yaml, const std::string& project_file)
+	{
+		loaded_project_ = std::make_shared<project>();
+		loaded_project_->name = project_node_yaml["Project Name"].as<std::string>();
+		loaded_project_->scenes_dir_path = project_node_yaml["Scenes Path"].as<std::string>();
+		loaded_project_->project_dir_path = lumina::lumina_file_system_s::get_file_directory(project_file);
+		loaded_project_->build_info.build_production_name = project_node_yaml["Build Info"]["Build Production Name"].as<std::string>();
+		loaded_project_->build_info.runtime_player_name = project_node_yaml["Build Info"]["Runtime Player Name"].as<std::string>();
+		loaded_project_->build_info.runtime_player_process_name = project_node_yaml["Build Info"]["Runtime Player Process Name"].as<std::string>();
+		loaded_project_->build_info.runtime_player_window_name = project_node_yaml["Build Info"]["Runtime Player Window Name"].as<std::string>();
 	}
 
 	void project_handler::load_scenes()
@@ -191,7 +324,7 @@ namespace lumina_editor
 
 	void project_handler::load_assets()
 	{
-		assets_serializer::deserialize_assets_bundle(
+		lumina::assets_serializer::deserialize_assets_bundle(
 			lumina::asset_atlas::get_singleton().get_registry(),
 			loaded_project_->project_dir_path + "\\" + loaded_project_->name + ".lmbundle"
 		);

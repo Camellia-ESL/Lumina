@@ -115,6 +115,17 @@ namespace lumina
 		return file_path.substr(0, last_slash_idx);
 	}
 
+	std::string lumina_file_system_s::get_process_directory()
+	{
+		char path_buffer[256];
+		
+#ifdef LUMINA_WIN32_PLATFORM
+		int bytes_read = GetModuleFileName(NULL, path_buffer, sizeof(path_buffer));
+#endif 
+
+		return get_file_directory(path_buffer);
+	}
+
 	std::vector<std::string> lumina_file_system_s::get_files_in_directory(const std::string& dir_path)
 	{
 		std::vector<std::string> result_buffer{};
@@ -129,5 +140,35 @@ namespace lumina
 			result_buffer.push_back(entry.path().string());
 
 		return result_buffer;
+	}
+
+	void lumina_file_system_s::execute_process(const std::string& exe_path, const std::string& starting_dir)
+	{
+#ifdef LUMINA_WIN32_PLATFORM
+		// additional information
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		// set the size of the structures
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory(&pi, sizeof(pi));
+
+		// start the program up
+		CreateProcess(exe_path.c_str(),								// The path to the exe
+			(char*)"",												// Command line
+			NULL,													// Process handle not inheritable
+			NULL,													// Thread handle not inheritable
+			TRUE,													// Set handle inheritance to FALSE
+			CREATE_NEW_CONSOLE,										// Flags
+			NULL,													// Use parent's environment block
+			!starting_dir.empty() ? starting_dir.c_str() : nullptr, // Use parent's starting directory 
+			&si,													// Pointer to STARTUPINFO structure
+			&pi														// Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
+		);
+		// Close process and thread handles. 
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+#endif 
 	}
 }

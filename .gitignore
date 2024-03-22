@@ -1,6 +1,7 @@
 # Directories
 .vs/
 Binaries/
+temp_build/
 
 # Files
 *.vcxproj

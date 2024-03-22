@@ -13,3 +13,4 @@ OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 -- Build files of Lumina containing every project
 include "engine/build_engine.lua"
 include "editor/build_editor.lua"
+include "runtime_player/build_runtime_player.lua"

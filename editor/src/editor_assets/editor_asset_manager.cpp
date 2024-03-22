@@ -12,7 +12,9 @@ namespace lumina_editor
 	{
 		editor_asset_manager::textures::folder,
 		editor_asset_manager::textures::document,
-		editor_asset_manager::textures::refresh
+		editor_asset_manager::textures::refresh,
+		editor_asset_manager::textures::play_button,
+		editor_asset_manager::textures::stop_button
 	};
 
 	void editor_asset_manager::on_load()

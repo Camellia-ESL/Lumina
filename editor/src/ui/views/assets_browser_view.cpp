@@ -128,6 +128,9 @@ namespace lumina_editor
 
 	void assets_browser_view::on_render()
 	{
+		if (!ui_shared_vars::IS_ASSETS_BROWSER_VIEW_OPEN)
+			return;
+
 		ImGui::Begin("Assets");
 
 		// Render a child to accept the drag and drop of files to load (IMPORTANT: everything inside the asset browser goes inside this child)

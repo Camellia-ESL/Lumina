@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/lumina_types.h"
+
 #include <string>
 
 namespace lumina
@@ -13,6 +15,9 @@ namespace lumina
 
 		// Load a texture from file
 		bool load_from_file(const std::string& file_path);
+
+		// Load a texture from memory
+		bool load_from_memory(void* img_data, l_uint32 data_size);
 
 		// Destroy and free the texture holded
 		void destroy();
