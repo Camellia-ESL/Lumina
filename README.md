@@ -3,6 +3,7 @@
 An attempt to make a simple usable game engine that actually produces playable games.
 
 ### Building on Windows
+- Make sure to install the relative graphics sdk needed to build the engine (d3d11, vulkan is not yet supported)
 - Clone repository
 - Open project_scripts and run Setup-Windows.bat
 - Go back in the main folder, open the generated solution.
