@@ -22,6 +22,9 @@ namespace lumina
 		// Create's an entity
 		entity create_entity();
 
+		// Duplicate an existing entity
+		entity duplicate_entity(entity src_entity);
+
 		// Destroy's an entity
 		void destroy_entity(entt::entity entity);
 

@@ -25,6 +25,9 @@ namespace lumina_editor
 		// Destroy's all the views that match the given tag
 		static void destroy_views(const std::string& tag);
 
+		// Get's a view that match the given tag (the first one found), nullptr if finds nothing
+		static std::shared_ptr<view> get_view_by_tag(const std::string& tag);
+
 	private:
 
 		// Render every view

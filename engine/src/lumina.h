@@ -9,6 +9,7 @@
 
 #include "application/app.h"
 #include "application/surface.h"
+#include "application/logger.h"
 #include "graphics/d3d11_api/d3d11_api.h"
 #include "graphics/renderer_2d.h"
 #include "scene_system/scenes_system.h"
@@ -32,5 +33,5 @@
 // Lumina is the namespace containing the lumina engine
 namespace lumina
 {
-	constexpr const char* VERSION = "0.1.0";
+	constexpr const char* VERSION = "0.1.16";
 }

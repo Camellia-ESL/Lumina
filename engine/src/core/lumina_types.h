@@ -44,6 +44,12 @@ constexpr unsigned long long l_uint64_size = 0x8;
 typedef double l_double64;
 constexpr double l_double64_size = 0x8;
 
+// Represent a UTF-8 string/charsequence pointer
+typedef const char* l_cstr8;
+
+// Represent a UTF-16 string/charsequence pointer (wide string)
+typedef const wchar_t* l_cwstr8;
+
 // Byte multipliers sizes
 constexpr l_uint32 l_kbyte8_size = l_byte8_size * 1000;
 constexpr l_uint32 l_mbyte8_size = l_kbyte8_size * 1000;

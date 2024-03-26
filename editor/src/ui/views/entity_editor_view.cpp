@@ -7,6 +7,7 @@
 
 #include "ImGui/imgui.h"
 #include "ImGuizmo/ImGuizmo.h"
+#include "spdlog/spdlog.h"
 
 namespace lumina_editor
 {
@@ -75,7 +76,7 @@ namespace lumina_editor
 		ImGui::Separator();
 		ImGui::PopStyleColor();
 
-		view_instance_data_.entity_name_input_text.render("Name");
+		view_instance_data_.entity_name_input_text.render("Name");	
 	}
 
 	void entity_editor_view::render_transform_component()

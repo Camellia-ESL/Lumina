@@ -2,6 +2,8 @@
 
 #include "../editor_compile_configs.h"
 #include "ui/view_register.h"
+#include "ui/ui_shared_vars.h"
+#include "ui/views/content_browser_view.h"
 #include "serializers/assets_serializer.h"
 
 #include "core/lumina_file_system.h"
@@ -107,6 +109,13 @@ namespace lumina_editor
 
 		// Tries to deserialize scenes
 		load_scenes();
+
+		// Refresh the content browser view
+		content_browser_.reload_content();
+		reinterpret_cast<content_browser_view*>(
+			view_register_s::get_view_by_tag(ui_shared_vars::CONTENT_BROWSER_VIEW_TAG).get())->set_selected_directory_id(
+				content_browser_.get_content().get_root_node().id
+			);
 
 		return true;
 	}

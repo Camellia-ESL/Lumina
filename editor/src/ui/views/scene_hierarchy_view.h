@@ -19,11 +19,14 @@ namespace lumina_editor
 	private:
 
 		lumina::scene* scene_;
-		lumina::entity selected_entity_;
+		lumina::entity selected_entity_{};
+		lumina::entity right_clicked_entity_{};
 		std::shared_ptr<entity_editor_view> entity_editor_view_;
 		
 		void render_properties_popup();
+		void render_entity_actions_popup();
 		void render_entities();
+		void destroy_selected_entity_context();
 
 	};
 }

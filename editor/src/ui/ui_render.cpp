@@ -1,6 +1,7 @@
 #include "ui_render.h"
 
 #include "view_register.h"
+#include "ui/ui_shared_vars.h"
 
 // Editor views (always visible views, editor panels, scene panels, etc..)
 #include "views/profiler_view.h"
@@ -10,6 +11,7 @@
 #include "views/scene_toolbar_view.h"
 #include "views/content_browser_view.h"
 #include "views/assets_browser_view.h"
+#include "views/console_view.h"
 
 #include "../editor_compile_configs.h"
 
@@ -132,8 +134,9 @@ namespace lumina_editor
         view_register_s::register_view(std::make_shared<top_window_toolbar_view>());
         view_register_s::register_view(std::make_shared<scene_grid_view>());
         view_register_s::register_view(std::make_shared<scene_toolbar_view>());
-        view_register_s::register_view(std::make_shared<content_browser_view>());
+        view_register_s::register_view(std::make_shared<content_browser_view>())->tag = ui_shared_vars::CONTENT_BROWSER_VIEW_TAG;
         view_register_s::register_view(std::make_shared<assets_browser_view>());
+        view_register_s::register_view(std::make_shared<console_view>());
 	}
 
 	void ui_render_s::on_render()

@@ -119,7 +119,9 @@ namespace lumina_editor
 		lumina::lumina_file_system_s::in_file_dialog_t project_directory = 
 			lumina::lumina_file_system_s::open_input_file_dialog();
 
-		project_handler::get_singleton().load_project(project_directory.path);
+		// Tries to load the project, if the project loads successfully logs it
+		if (project_handler::get_singleton().load_project(project_directory.path))
+			LUMINA_LOG_INFO("Project -> " + project_handler::get_singleton().get_project().name + " successfully loaded!");
 	}
 
 	void top_window_toolbar_view::render_new_project_popup(bool open_popup)

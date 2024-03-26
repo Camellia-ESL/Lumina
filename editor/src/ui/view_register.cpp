@@ -55,6 +55,15 @@ namespace lumina_editor
 				view_register_s::destroy_view(view);
 	}
 
+	std::shared_ptr<view> view_register_s::get_view_by_tag(const std::string& tag)
+	{
+		for (auto& view : views)
+			if (view != nullptr && view->tag == tag)
+				return view;
+
+		return nullptr;
+	}
+
 	void view_register_s::render_views()
 	{
 		// Render views
