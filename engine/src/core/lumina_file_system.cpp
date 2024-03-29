@@ -171,4 +171,28 @@ namespace lumina
 		CloseHandle(pi.hThread);
 #endif 
 	}
+
+	static l_byte8* read_file(const std::string& file_path, l_uint32* file_size_out)
+	{
+		std::ifstream stream(file_path, std::ios::binary | std::ios::ate);
+
+		// Failed to load file
+		if (!stream)
+			return nullptr;
+
+		std::streampos end = stream.tellg();
+		stream.seekg(0, std::ios::beg);
+		uint32_t size = end - stream.tellg();
+
+		// File empty
+		if (size == 0)
+			return nullptr;
+
+		unsigned char* buffer = new unsigned char[size];
+		stream.read((char*)buffer, size);
+		stream.close();
+
+		*file_size_out = size;
+		return buffer;
+	}
 }

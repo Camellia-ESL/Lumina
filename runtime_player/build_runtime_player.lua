@@ -22,7 +22,15 @@ project "lumina_runtime_player"
    links
    {
       "lumina_engine",
-      "glfw3.lib"
+      "glfw3.lib",
+      "eglib.lib",
+      "libgcmonosgen.lib",
+      "libmini-sgen.lib",
+      "libmonoruntime-sgen.lib",
+      "libmono-static-sgen.lib",
+      "libmonoutils.lib",
+      "mono-2.0-sgen.lib",
+      "MonoPosixHelper.lib"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
@@ -31,7 +39,7 @@ project "lumina_runtime_player"
    filter "system:windows"
        systemversion "latest"
        defines { "WINDOWS" }
-       links { "d3d11.lib", "d3dx11.lib", "D3DCompiler.lib" }
+       links { "d3d11.lib", "d3dx11.lib", "Ws2_32.lib", "Version.lib", "Winmm.lib", "Bcrypt.lib" }
 
    filter "configurations:Debug"
        defines { "DEBUG" }

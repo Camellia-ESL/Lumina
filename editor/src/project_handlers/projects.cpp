@@ -11,6 +11,8 @@
 #include "yaml-cpp/yaml.h"
 #include "spdlog/spdlog.h"
 
+#include <future>
+
 LUMINA_SINGLETON_DECL_INSTANCE(lumina_editor::project_handler);
 
 #define LUMINA_EDITOR_BIN_DIR_PATH "\\resources\\bin"
@@ -187,24 +189,35 @@ namespace lumina_editor
 		out_stream << yaml_stream_emitter.c_str();
 
 		// Pack assets
-		lumina::assets_serializer::serialize_assets_package(
+		std::future<void> asset_serialization_promise = std::async(
+			std::launch::async,
+			lumina::assets_serializer::serialize_assets_package,
 			lumina::asset_atlas::get_singleton().get_registry().get_registry(),
-			content_path + "\\" + LUMINA_EDITOR_PROJECT_ASSET_PACKAGE_NAME
-		);
+			content_path + "\\" + LUMINA_EDITOR_PROJECT_ASSET_PACKAGE_NAME);
 
 		// Pack scenes
-		lumina::scenes_system& scene_system = lumina::scenes_system::get_singleton();
+		std::future<void> scenes_serialization_promise = std::async(
+			std::launch::async,
+			[&]() -> void 
+			{
+				lumina::scenes_system& scene_system = lumina::scenes_system::get_singleton();
 
-		for (auto& scene : scene_system.get_all_scenes())
-		{
-			if (scene == nullptr)
-				continue;
+				for (auto& scene : scene_system.get_all_scenes())
+				{
+					if (scene == nullptr)
+						continue;
 
-			lumina::scene_serializer::serialize_yaml(
-				scene.get(),
-				content_path + "\\" + scene->get_name() + ".scene"
-			);
-		}
+					lumina::scene_serializer::serialize_yaml(
+						scene.get(),
+						content_path + "\\" + scene->get_name() + ".scene"
+					);
+				}
+			}
+		);
+
+		// Wait for asset serialization to finish
+		asset_serialization_promise.get();
+		scenes_serialization_promise.get();
 
 		// Copy the runtime_player distribution with the selected and correct platform and architecture build
 		// NOTE that the file format should be changed based on the arch and platform build selected.

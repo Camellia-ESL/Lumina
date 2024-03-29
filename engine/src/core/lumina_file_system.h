@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lumina_strings.h"
+#include "lumina_types.h"
 
 #include <fstream>
 #include <filesystem>
@@ -34,6 +35,7 @@ namespace lumina
 		static std::string get_process_directory();
 		static std::vector<std::string> get_files_in_directory(const std::string& dir_path);
 		static void execute_process(const std::string& exe_path, const std::string& starting_dir = "");
+		static l_byte8* read_file(const std::string& file_path, l_uint32* file_size_out);
 
 	};
 }
