@@ -3,6 +3,7 @@
 An attempt to make a simple usable game engine that actually produces playable games.
 
 ### Building on Windows
+- Install Vistual Studio with c++ desktop development
 - Make sure to install the relative graphics sdk needed to build the engine (d3d11, vulkan is not yet supported)
 - Clone repository
 - Open project_scripts and run Setup-Windows.bat
