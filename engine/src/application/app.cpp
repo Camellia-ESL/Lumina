@@ -18,7 +18,7 @@ namespace lumina
 		is_running_ = true;
 
 		// Init the application logger register
-		lumina_logger* lumina_logger_instance = new lumina_logger();
+		LUMINA_SINGLETON_INIT_INSTANCE(lumina_logger);
 
 		// Init surface
 		surface_.get_graphics_driver().set_graphics_api(app_info.graphics_api);
@@ -54,7 +54,7 @@ namespace lumina
 		surface_.destroy();
 
 		// Cleanup the logger
-		delete &lumina_logger::get_singleton();
+		LUMINA_SINGLETON_DESTROY_INSTANCE(lumina_logger);
 	}
 
 	void application_player::exit()

@@ -172,7 +172,7 @@ namespace lumina
 #endif 
 	}
 
-	static l_byte8* read_file(const std::string& file_path, l_uint32* file_size_out)
+	l_byte8* lumina_file_system_s::read_file(const std::string& file_path, l_uint32* file_size_out)
 	{
 		std::ifstream stream(file_path, std::ios::binary | std::ios::ate);
 

@@ -10,6 +10,12 @@
 // Defines the singleton instance holding var declaration and assign's it with nullptr, it NEEDS to be called for every singleton class decleared once
 #define LUMINA_SINGLETON_DECL_INSTANCE(class_type_with_namespace) class_type_with_namespace* class_type_with_namespace::singleton_instance_ = nullptr
 
+// Creates the singleton instance
+#define LUMINA_SINGLETON_INIT_INSTANCE(class_type) class_type* class_type##_instance = new class_type();
+
+// Destroys the singleton instance
+#define LUMINA_SINGLETON_DESTROY_INSTANCE(class_type) delete& class_type::get_singleton();
+
 template<class singleton_class_type>
 struct lumina_singleton_t
 {

@@ -6,6 +6,7 @@
 #include "event_system/event_system.h"
 #include "scene_system/scenes_system.h"
 #include "assets_system/asset_atlas.h"
+#include "script_engine/script_engine.h"
 
 #include "graphics/graphics_driver.h"
 #include "graphics/d3d11_api/d3d11_renderer.h"
@@ -54,12 +55,16 @@ namespace lumina
         spdlog::info("Event callbacks installed.");
 
         // Init the asset atlas
-        asset_atlas* asset_atlas_instance = new asset_atlas();
+        LUMINA_SINGLETON_INIT_INSTANCE(asset_atlas);
 
         // Init the scene system
         spdlog::warn("Instancing the scene system...");
-        scenes_system* scene_system_instance = new scenes_system();
+        LUMINA_SINGLETON_INIT_INSTANCE(scenes_system);
         spdlog::info("Scene system created.");
+
+        // Init the script engine
+        spdlog::warn("Instancing scripting engine...");
+        LUMINA_SINGLETON_INIT_INSTANCE(script_engine);
 
         glfwSetWindowPos(
             window_,
@@ -92,11 +97,11 @@ namespace lumina
     void app_surface::install_events_handler()
     {
         // Init the event system
-        event_dispatcher* event_dispatcher_instance = new event_dispatcher();
+        LUMINA_SINGLETON_INIT_INSTANCE(event_dispatcher);
         event_dispatcher_instance->init();
 
-        event_listener* event_listener_instance = new event_listener();
-
+        LUMINA_SINGLETON_INIT_INSTANCE(event_listener);
+        
         // Register a callback to handle surface resize
         event_listener_instance->submit_event_callback(
             [&](const window_resize_event_t& resize_event) -> void 
@@ -108,15 +113,18 @@ namespace lumina
 
     void app_surface::on_destroy()
     {
+        // Destroy script engine
+        LUMINA_SINGLETON_DESTROY_INSTANCE(script_engine);
+
         // Destroy asset atlas
-        delete& asset_atlas::get_singleton();
+        LUMINA_SINGLETON_DESTROY_INSTANCE(asset_atlas);
 
         // Destroy scene system
-        delete& scenes_system::get_singleton();
+        LUMINA_SINGLETON_DESTROY_INSTANCE(scenes_system);
 
         // Destroy event system
-        delete& event_dispatcher::get_singleton();
-        delete& event_listener::get_singleton();
+        LUMINA_SINGLETON_DESTROY_INSTANCE(event_dispatcher);
+        LUMINA_SINGLETON_DESTROY_INSTANCE(event_listener);
 
         // Destroy graphics 
         graphics_driver_.on_destroy();

@@ -9,10 +9,6 @@
 
 #include "../editor_compile_configs.h"
 
-// TESTING ONLY
-#include "mono/jit/jit.h"
-#include "mono/metadata/assembly.h"
-
 namespace lumina_editor
 {
 	void editor_app_player::on_init()

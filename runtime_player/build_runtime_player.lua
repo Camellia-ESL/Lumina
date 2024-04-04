@@ -33,13 +33,13 @@ project "lumina_runtime_player"
       "MonoPosixHelper.lib"
    }
 
-   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
+   targetdir ("../Binaries/" .. EditorResourceDir.. "/bin")
    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
    filter "system:windows"
        systemversion "latest"
        defines { "WINDOWS" }
-       links { "d3d11.lib", "d3dx11.lib", "Ws2_32.lib", "Version.lib", "Winmm.lib", "Bcrypt.lib" }
+       links { "d3d11.lib", "d3dx11.lib", "Ws2_32.lib", "Version.lib", "Winmm.lib", "Bcrypt.lib", "D3DCompiler.lib" }
 
    filter "configurations:Debug"
        defines { "DEBUG" }

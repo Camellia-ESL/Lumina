@@ -25,6 +25,7 @@
 #include "event_system/event_system.h"
 #include "assets_system/asset_registry.h"
 #include "assets_system/asset_atlas.h"
+#include "script_engine/script_engine.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -33,5 +34,5 @@
 // Lumina is the namespace containing the lumina engine
 namespace lumina
 {
-	constexpr const char* VERSION = "0.1.18";
+	constexpr const char* VERSION = "0.1.5";
 }

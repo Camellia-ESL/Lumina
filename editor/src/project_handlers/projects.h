@@ -95,5 +95,11 @@ namespace lumina_editor
 
 		// Cleanp the assets 
 		void destroy_assets();
+
+		// Generates scripting project
+		void generate_scripting_proj();
+
+		// Opens the editor to edit scripts
+		void open_script_editor();
 	};
 }

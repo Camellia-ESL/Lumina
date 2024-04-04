@@ -9,6 +9,10 @@ namespace lumina
 	template<>
 	lumina_logger::log_t& lumina_logger::log<std::string>(std::string log_data, log_types_e log_level)
 	{
+		// Lock the function for vector thread safety
+		log_safety_mutex_.lock();
+		
+		// Push the new log
 		std::time_t time = std::time(0);
 		std::tm* local_time_now = std::localtime(&time);
 		logs_.push_back(
@@ -21,7 +25,13 @@ namespace lumina
 			}
 		);
 
-		return logs_[logs_.size() - 1];
+		// Get's a ref to the return value before unlocking, thats made for safety purpose
+		log_t& ret_val_ref = logs_[logs_.size() - 1];
+
+		// Unlock the function
+		log_safety_mutex_.unlock();
+
+		return ret_val_ref;
 	}
 
 	template<>

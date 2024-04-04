@@ -1,10 +1,18 @@
 #pragma once
 
+/*
+  This header contains a thread safe logger made my Vanity.
+
+  Lumina Engine made by https://github.com/VanityEmptiness/
+*/
+
 #include "core/lumina_singleton.h"
 #include "core/lumina_types.h"
 
 #include <vector>
 #include <string>
+#include <mutex>
+#include <thread>
 
 // Logs a simple msg (msg can be various types not only string are supported)
 #define LUMINA_LOG_INFO(msg) lumina::lumina_logger::get_singleton().log_info(msg)
@@ -61,6 +69,7 @@ namespace lumina
 	private:
 
 		std::vector<log_t> logs_;
+		std::mutex log_safety_mutex_;
 
 	};
 }

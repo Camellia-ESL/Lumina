@@ -2,6 +2,8 @@
 
 #include "../runtime_player_compile_configs.h"
 
+#include "script_assemblies/runtime_script_manager.h"
+
 #include "lumina.h"
 
 #include "spdlog/spdlog.h"
@@ -44,5 +46,11 @@ namespace lumina_runtime_player
 		}
 
 		spdlog::info("Scenes loaded.");
+	}
+
+	void resource_loader::load_assemblies()
+	{
+		LUMINA_SINGLETON_INIT_INSTANCE(runtime_script_manager);
+		runtime_script_manager_instance->call_on_start();
 	}
 }

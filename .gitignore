@@ -2,6 +2,7 @@
 .vs/
 Binaries/
 temp_build/
+obj/
 
 # Files
 *.vcxproj
@@ -11,6 +12,7 @@ temp_build/
 *.log
 Makefile
 imgui.ini
+*.csproj
 
 # Exclude
 !vendors/bin
