@@ -19,11 +19,89 @@ namespace lumina
 
 			struct methods
 			{
-				// public static extern bool CreateScene(string name);
-				static constexpr const char* CREATE_SCENE = "CreateScene";
+				// private static extern bool CreateSceneImpl(string name);
+				static constexpr const char* CREATE_SCENE = "CreateSceneImpl";
 
-				// public static extern Scene GetScene(string name);
-				static constexpr const char* GET_SCENE = "GetScene";
+				// private static extern Scene GetSceneImpl(string name, ref Scene sceneOut);
+				static constexpr const char* GET_SCENE = "GetSceneImpl";
+			};
+		};
+
+		struct scene_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Scene";
+
+			struct methods
+			{
+				// private static extern bool CreateEntityImpl(string sceneName, ref Entity entityOut);
+				static constexpr const char* CREATE_ENTITY = "CreateEntityImpl";
+				// private static extern bool GetEntityByNameImpl(string sceneName, string entityName, ref Entity entityOut);
+				static constexpr const char* GET_ENTITY_BY_NAME = "GetEntityByNameImpl";
+				// private static extern void DestroyEntityImpl(string sceneName, Entity entity);
+				static constexpr const char* DESTROY_ENTITY = "DestroyEntityImpl";
+			};
+
+			struct properties
+			{
+				static constexpr const char* NAME = "Name";
+			};
+		};
+
+		struct entity_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Entity";
+
+			struct methods
+			{
+				// private static extern bool GetComponentImpl(uint entityId, ulong entityRegPtr, ref object componentOut);
+				static constexpr const char* GET_COMPONENT = "GetComponentImpl";
+			};
+
+			struct properties
+			{
+				static constexpr const char* ID = "Id";
+			};
+
+			struct fields
+			{
+				static constexpr const char* _REGISTRY_PTR = "_registryPtr";
+				static constexpr const char* _ID = "_id";
+			};
+		};
+
+		struct identifier_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Identifier";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+				static constexpr const char* ID = "Id";
+				static constexpr const char* NAME = "Name";
+			};
+
+			struct fields
+			{
+			};
+		};
+
+		struct transform_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Transform";
+
+			struct methods
+			{	
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{	
 			};
 		};
 

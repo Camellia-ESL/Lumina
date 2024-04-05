@@ -24,6 +24,8 @@ namespace lumina
 		// Create's a class instance (object) given a class name, by default the namespace is set as global
 		MonoObject* create_class_obj(const std::string& class_name, const std::string& class_namespace = "");
 		MonoObject* create_class_obj(MonoClass* class_def);
+		MonoString* create_mono_str(const char* str);
+		MonoString* create_mono_str(const std::string& str);
 
 	private:
 		

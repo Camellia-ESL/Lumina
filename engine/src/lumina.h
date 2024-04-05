@@ -34,5 +34,5 @@
 // Lumina is the namespace containing the lumina engine
 namespace lumina
 {
-	constexpr const char* VERSION = "0.1.5";
+	constexpr const char* VERSION = "0.1.7";
 }

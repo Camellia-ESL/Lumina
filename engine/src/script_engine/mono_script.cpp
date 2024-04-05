@@ -75,4 +75,14 @@ namespace lumina
 
         return class_instance;
     }
+
+    MonoString* mono_script::create_mono_str(const char* str)
+    {
+        return mono_string_new(script_engine::get_singleton().get_app_domain(), str);
+    }
+
+    MonoString* mono_script::create_mono_str(const std::string& str)
+    {
+        return create_mono_str(str.c_str());
+    }
 }

@@ -9,15 +9,30 @@ namespace Lumina
         /// </summary>
         /// <param name="name">The scene name</param>
         /// <returns>The scene instance</returns>
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern Scene GetScene(string name);
+        public static Scene GetScene(string name)
+        {
+            Scene sceneBuffer = new Scene();
+
+            if(!GetSceneImpl(name, ref sceneBuffer))
+                return null;
+
+            return sceneBuffer;
+        }
 
         /// <summary>
         /// Creates a Scene with a given name (NOTE: If a scene with this name already exist it get's not created and return false)
         /// </summary>
         /// <param name="name">name</param>
         /// <returns>Wheter if the scene was created or not</returns>
+        public static bool CreateScene(string name)
+        {
+            return CreateSceneImpl(name);
+        }
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern bool CreateScene(string name);
+        private static extern bool GetSceneImpl(string name, ref Scene sceneOut);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private static extern bool CreateSceneImpl(string name);
     }
 }
