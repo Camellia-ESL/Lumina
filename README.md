@@ -8,7 +8,10 @@ An attempt to make a simple usable game engine that actually produces playable g
 - Clone repository
 - Open project_scripts and run Setup-Windows.bat
 - Go back in the main folder, open the generated solution.
-- Build and run.
+- Build.
+- Once built make sure to copy the resources folder, from the lumina_editor folder to Binaries/(%platform)/(%buildconfig)/lumina_editor (this is a one time step)
+- Build the engine script core
+- Build lumina again and run.
 
 ### Engine architecture
 The engine it's a simple library (.lib) that is used from the editor (the actual engine editor) and the runtime_app_player (the player that execute the exported game/application).
