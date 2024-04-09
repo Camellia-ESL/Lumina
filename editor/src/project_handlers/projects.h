@@ -101,5 +101,8 @@ namespace lumina_editor
 
 		// Opens the editor to edit scripts
 		void open_script_editor();
+
+		// Update's the script core assemblies of a project with the latest version of the editor
+		void update_script_core_assemblies();
 	};
 }

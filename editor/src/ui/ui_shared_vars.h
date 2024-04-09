@@ -30,5 +30,7 @@ namespace lumina_editor
 		ui_shared_var_api bool IS_CONTENT_BROWSER_VIEW_OPEN = true;
 		// Wheter if the assets browser view should be open or not
 		ui_shared_var_api bool IS_ASSETS_BROWSER_VIEW_OPEN = true;
+		// Wheter if the scene grid should be open or not
+		ui_shared_var_api bool IS_SCENE_GRID_ENABLED = true;
 	};
 }

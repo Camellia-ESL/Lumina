@@ -59,10 +59,21 @@ namespace lumina_editor
 			}
 
 			if (ImGui::BeginMenu("View"))
-			{
+			{ 
+				ImGui::SeparatorText("Views");
+				ImGui::PushStyleColor(ImGuiCol_Separator, { 0.35f, 0.35f, 0.35f, 1.0f });
+				ImGui::Separator();
+				ImGui::PopStyleColor();
+				
 				ImGui::Checkbox("Show Profiler", &ui_shared_vars::IS_PROFILER_VIEW_OPEN);
 				ImGui::Checkbox("Show Content Browser", &ui_shared_vars::IS_CONTENT_BROWSER_VIEW_OPEN);
 				ImGui::Checkbox("Show Assets Browser", &ui_shared_vars::IS_ASSETS_BROWSER_VIEW_OPEN);
+				
+				ImGui::SeparatorText("Scene");
+				ImGui::PushStyleColor(ImGuiCol_Separator, { 0.35f, 0.35f, 0.35f, 1.0f });
+				ImGui::Separator();
+				ImGui::PopStyleColor();
+				ImGui::Checkbox("Show Grid", &ui_shared_vars::IS_SCENE_GRID_ENABLED);
 
 				ImGui::EndMenu();
 			}
@@ -71,6 +82,18 @@ namespace lumina_editor
 			{
 				if (ImGui::MenuItem("Edit Project Settings"))
 					is_build_settings_editor_open_ = true;
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Build"))
+			{
+				if (ImGui::MenuItem("Build Project"))
+					project_handler::get_singleton().build_project();
+
+				if (ImGui::MenuItem("Build And Run"))
+					if (project_handler::get_singleton().build_project())
+						project_handler::get_singleton().launch_runtime_player();
 
 				ImGui::EndMenu();
 			}

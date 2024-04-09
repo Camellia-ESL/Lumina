@@ -8,6 +8,16 @@
 
 #include "spdlog/spdlog.h"
 
+// Security checks disabled (fastest execution)
+#define LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_DISABLED 0
+// Security checks slightly decreased (fast execution)
+#define LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_FAST 1
+// Security checks on (normal execution)
+#define LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX 2
+
+// Defines the level of security checks inside the code, this can slightly increase or decrease performance * safety
+#define LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
 namespace lumina
 {
 	mono_script* core_script_ref = nullptr;
@@ -18,6 +28,7 @@ namespace lumina
 		bind_scene_manager(script_to_forward_binds);
 		bind_scene(script_to_forward_binds);
 		bind_entity(script_to_forward_binds);
+		bind_transform(script_to_forward_binds);
 		bind_logger(script_to_forward_binds);
 	}
 
@@ -40,16 +51,40 @@ namespace lumina
 			return false;
 
 		MonoClass* scene_class = mono_object_get_class(*scene_out);
-		MonoProperty* scene_name_prop = mono_class_get_property_from_name(
-			scene_class, 
-			lumina_csharp_namespace::scene_csharp_type::properties::NAME
+		MonoClassField* scene_name_field = mono_class_get_field_from_name(
+			scene_class,
+			lumina_csharp_namespace::scene_csharp_type::fields::_NAME
 		);
 
 		// Assign the Scene Name
 		MonoString* scene_name_value = core_script_ref->create_mono_str(scene_res->get_name());
-		mono_property_set_value(scene_name_prop, *scene_out, (void**)&scene_name_value, nullptr);
+		mono_field_set_value(*scene_out, scene_name_field, scene_name_value);
 
 		return true;
+	}
+
+	static bool scene_manager_switch_scene_func(MonoString* scene_name)
+	{
+		// Switch the scene
+		scenes_system::get_singleton().activate_scene(
+			mono_type_utils::mono_str_to_utf8_str(scene_name)
+		);
+
+		return true;
+	}
+
+	static bool scene_manager_destroy_scene_func(MonoString* scene_name)
+	{
+		// Destroy the scene
+		return scenes_system::get_singleton().destroy_scene(
+			mono_type_utils::mono_str_to_utf8_str(scene_name)
+		);
+	}
+
+	static void scene_manager_destroy_all_func()
+	{
+		// Destroy all the scenes
+		scenes_system::get_singleton().destroy_all();
 	}
 
 	void script_binder::bind_scene_manager(mono_script* script_to_forward_binds)
@@ -65,6 +100,27 @@ namespace lumina
 			lumina_csharp_namespace::scene_manager_csharp_type::methods::GET_SCENE,
 			lumina_csharp_namespace::scene_manager_csharp_type::TYPE_NAME,
 			scene_manager_get_scene_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::scene_manager_csharp_type::methods::SWITCH_SCENE,
+			lumina_csharp_namespace::scene_manager_csharp_type::TYPE_NAME,
+			scene_manager_switch_scene_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::scene_manager_csharp_type::methods::DESTROY_SCENE,
+			lumina_csharp_namespace::scene_manager_csharp_type::TYPE_NAME,
+			scene_manager_destroy_scene_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::scene_manager_csharp_type::methods::DESTROY_ALL,
+			lumina_csharp_namespace::scene_manager_csharp_type::TYPE_NAME,
+			scene_manager_destroy_all_func,
 			lumina_csharp_namespace::NAMESPACE_NAME
 		);
 	}
@@ -218,25 +274,31 @@ namespace lumina
 		if (component_class_name == lumina_csharp_namespace::identifier_csharp_type::TYPE_NAME)
 		{
 			// Get entity out fields and properties to assign
-			MonoProperty* component_id_prop = mono_class_get_property_from_name(
+			MonoClassField* component_id_field = mono_class_get_field_from_name(
 				component_class,
-				"Id"
+				lumina_csharp_namespace::identifier_csharp_type::fields::_ID
 			);
 
-			MonoProperty* component_name_prop = mono_class_get_property_from_name(
+			MonoClassField* component_name_field = mono_class_get_field_from_name(
 				component_class,
-				"Name"
+				lumina_csharp_namespace::identifier_csharp_type::fields::_NAME
 			);
 
 			identity_component& identifier = entity_req.get_component<identity_component>();
 
 			// Assign the Component Id
 			MonoString* component_id_value = core_script_ref->create_mono_str(identifier.id);
-			mono_property_set_value(component_id_prop, component_out_ref, (void**)&component_id_value, nullptr);
+			mono_field_set_value(*component_out, component_id_field, component_id_value);
 
 			// Assign the Component Name
 			MonoString* component_name_value = core_script_ref->create_mono_str(identifier.name);
-			mono_property_set_value(component_name_prop, component_out_ref, (void**)&component_name_value, nullptr);
+			mono_field_set_value(*component_out, component_name_field, component_name_value);
+		}
+
+		// *Transform Class*
+		if (component_class_name == lumina_csharp_namespace::transform_csharp_type::TYPE_NAME)
+		{
+			
 		}
 
 		return true;
@@ -253,6 +315,94 @@ namespace lumina
 	}
 
 #pragma endregion
+
+#pragma region Vectors
+
+	static void set_vec3_xyz_fields(MonoObject* vectorInstance, float x, float y, float z)
+	{
+		MonoClass* vec_out_class = mono_object_get_class(vectorInstance);
+		MonoClassField* vec_out_x_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_X
+		);
+
+		MonoClassField* vec_out_y_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Y
+		);
+
+		MonoClassField* vec_out_z_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Z
+		);
+
+		mono_field_set_value(vectorInstance, vec_out_x_field, &x);
+		mono_field_set_value(vectorInstance, vec_out_y_field, &y);
+		mono_field_set_value(vectorInstance, vec_out_z_field, &z);
+	}
+
+#pragma endregion
+
+#pragma region Transform
+
+	static void transform_get_position_func(MonoObject* ownerEntity, MonoObject** vecOut)
+	{
+		
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_FAST
+
+		// Check if the entity is valid and has a transform attached
+		if (ownerEntity == nullptr)
+			return;
+
+#endif 
+
+		// Get's the entity id and reg ptr
+		MonoClass* owner_entity_class = mono_object_get_class(ownerEntity);
+		
+		MonoClassField* owner_entity_id_field = mono_class_get_field_from_name(
+			owner_entity_class, 
+			lumina_csharp_namespace::entity_csharp_type::fields::_ID
+		);
+
+		MonoClassField* owner_entity_reg_ptr_field = mono_class_get_field_from_name(
+			owner_entity_class,
+			lumina_csharp_namespace::entity_csharp_type::fields::_REGISTRY_PTR
+		);
+
+		entt::entity entity_id;
+		mono_field_get_value(ownerEntity, owner_entity_id_field, &entity_id);
+
+		entt::registry* entity_reg_ptr;
+		mono_field_get_value(ownerEntity, owner_entity_reg_ptr_field, &entity_reg_ptr);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity(entity_reg_ptr, entity_id).has_component<transform_component>())
+			return;
+
+#endif 
+
+		// Set the value of the out vector
+		transform_component& transform = entity_reg_ptr->get<transform_component>(entity_id);
+		glm::vec3 position = glm::vec3(transform.get_model_matrix()[3]);
+
+		set_vec3_xyz_fields(*vecOut, position.x, position.y, position.z);
+	}
+
+	void script_binder::bind_transform(mono_script* script_to_forward_binds)
+	{
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::transform_csharp_type::methods::GET_POSITION,
+			lumina_csharp_namespace::transform_csharp_type::TYPE_NAME,
+			transform_get_position_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+	}
+
+#pragma endregion
+
 
 #pragma region Logger
 

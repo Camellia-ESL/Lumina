@@ -11,11 +11,11 @@ namespace Lumina
         public uint Id { get => _id; }
 
         /// <summary>
-        /// The registry this entity belongs to (mostly useless, shouldn't be accessed)
+        /// The registry this entity belongs to
         /// </summary>
         public ulong RegistryPtr { get => _registryPtr; }
 
-        public ComponentType GetComponent<ComponentType>() where ComponentType : new()
+        public ComponentType GetComponent<ComponentType>() where ComponentType : Component, new()
         {
             // Creates a buffer for the result component and packs everything for the request
             ComponentType componentBuffer = new ComponentType();
@@ -23,10 +23,11 @@ namespace Lumina
 
             // Execute the internal request
             if (!GetComponentImpl(Id, _registryPtr, ref componentPackage))
-                return default;
+                return null;
 
             // Unpacks the package sent in the internal request
             componentBuffer = (ComponentType)componentPackage;
+            componentBuffer.OwnerEntity = this;
 
             return componentBuffer;
         }

@@ -115,6 +115,10 @@ namespace lumina
 
 	void assets_serializer::serialize_assets_package(const assets_registry::asset_registry_t& assets, const std::string& file_path_out)
 	{
+		// Before opening the file tries to delete it if exist
+		std::filesystem::remove(file_path_out);
+
+		// Opens the file
 		std::ofstream asset_package_file(file_path_out, std::ios::out | std::ios::binary | std::ios::app);
 
 		l_uint32 mask_usage_size = 0;

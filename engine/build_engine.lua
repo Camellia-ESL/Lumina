@@ -7,6 +7,11 @@ project "lumina_engine"
 
    files { "src/**.h", "src/**.cpp", "vendors/**.h", "vendors/**.cpp" }
 
+   disablewarnings
+   {
+       "4006"
+   }
+
    includedirs
    {
       "src",

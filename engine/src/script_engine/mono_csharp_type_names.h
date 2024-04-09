@@ -24,6 +24,16 @@ namespace lumina
 
 				// private static extern Scene GetSceneImpl(string name, ref Scene sceneOut);
 				static constexpr const char* GET_SCENE = "GetSceneImpl";
+
+				// private static extern bool SwitchSceneImpl(string name);
+				static constexpr const char* SWITCH_SCENE = "SwitchSceneImpl";
+
+				// private static extern bool DestroySceneImpl(string name);
+				static constexpr const char* DESTROY_SCENE = "DestroySceneImpl";
+
+				// private static extern bool DestroyAllImpl();
+				static constexpr const char* DESTROY_ALL = "DestroyAllImpl";
+
 			};
 		};
 
@@ -44,6 +54,11 @@ namespace lumina
 			struct properties
 			{
 				static constexpr const char* NAME = "Name";
+			};
+
+			struct fields
+			{
+				static constexpr const char* _NAME = "_name";
 			};
 		};
 
@@ -69,6 +84,25 @@ namespace lumina
 			};
 		};
 
+		struct component_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Component";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+				static constexpr const char* OWNER_ENTITY = "OwnerEntity";
+			};
+
+			struct fields
+			{
+				static constexpr const char* _OWNER_ENTITY = "_ownerEntity";
+			};
+		};
+
 		struct identifier_csharp_type
 		{
 			static constexpr const char* TYPE_NAME = "Identifier";
@@ -85,6 +119,8 @@ namespace lumina
 
 			struct fields
 			{
+				static constexpr const char* _ID = "_id";
+				static constexpr const char* _NAME = "_name";
 			};
 		};
 
@@ -94,14 +130,63 @@ namespace lumina
 
 			struct methods
 			{	
+				// private static extern void GetPositionImpl(Entity ownerEntity, ref Vec3 outVec);
+				static constexpr const char* GET_POSITION = "GetPositionImpl";
 			};
 
 			struct properties
 			{
+				static constexpr const char* POSITION = "Position";
+				static constexpr const char* ROTATION = "Rotation";
+				static constexpr const char* SCALE = "Scale";
 			};
 
 			struct fields
 			{	
+			};
+		};
+
+		struct vec2_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Vec2";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+				static constexpr const char* X = "X";
+				static constexpr const char* Y = "Y";
+			};
+
+			struct fields
+			{
+				static constexpr const char* _X = "_x";
+				static constexpr const char* _Y = "_y";
+			};
+		};
+
+		struct vec3_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Vec3";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+				static constexpr const char* X = "X";
+				static constexpr const char* Y = "Y";
+				static constexpr const char* Z = "Z";
+			};
+
+			struct fields
+			{
+				static constexpr const char* _X = "_x";
+				static constexpr const char* _Y = "_y";
+				static constexpr const char* _Z = "_z";
 			};
 		};
 

@@ -134,12 +134,27 @@ namespace lumina_editor
 		// Tries to deserialize scenes
 		load_scenes();
 
+		// As last passage force copy the latest scripting core assembly
+		try
+		{
+			update_script_core_assemblies();
+		}
+		catch (const std::exception&)
+		{
+			LUMINA_LOG_ERROR("An error occured trying to update lumina script core assemblies.");
+			spdlog::error("Error copying lumina script core assemblies in the project script directory");
+			return false;
+		}
+		
 		// Refresh the content browser view
 		content_browser_.reload_content();
 		reinterpret_cast<content_browser_view*>(
 			view_register_s::get_view_by_tag(ui_shared_vars::CONTENT_BROWSER_VIEW_TAG).get())->set_selected_directory_id(
 				content_browser_.get_content().get_root_node().id
 			);
+
+		// Automatically opens the scripting project solution
+		open_script_editor();
 
 		return true;
 	}
@@ -166,6 +181,10 @@ namespace lumina_editor
 
 	bool project_handler::build_project()
 	{
+		// Check if there is not an opened project
+		if (!has_opened_project())
+			return false;
+
 		LUMINA_LOG_INFO("Build Started.");
 
 		//@enhancement-[projects]: Implement more safety checks.
@@ -288,7 +307,7 @@ namespace lumina_editor
 					);
 
 					std::filesystem::copy(
-						"mono_res",
+						lumina::lumina_file_system_s::get_process_directory() + "\\" + LUMINA_EDITOR_PROJECT_MONO_BINS_DIR,
 						build_path + "\\" + LUMINA_EDITOR_PROJECT_MONO_BINS_DIR,
 						std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing
 					);
@@ -299,7 +318,8 @@ namespace lumina_editor
 				}
 				catch (std::exception& e)
 				{
-					spdlog::error("Error packing script assemblies!");
+					LUMINA_LOG_ERROR("Error packing script assemblies!");
+					spdlog::error((std::string)"Error packing script assemblies -> " + e.what());
 					return false;
 				}
 
@@ -310,7 +330,8 @@ namespace lumina_editor
 		// Wait for asset serialization to finish
 		asset_serialization_promise.get();
 		scenes_serialization_promise.get();
-		script_assemblies_packing_promise.get();
+		if (!script_assemblies_packing_promise.get())
+			return false;
 
 		LUMINA_LOG_WARNING("Finishing build packaging...");
 
@@ -329,6 +350,7 @@ namespace lumina_editor
 		{
 			bool copy_result = std::filesystem::copy_file(sourceFile, target, std::filesystem::copy_options::overwrite_existing);
 
+			LUMINA_LOG_INFO("Project build files has been built in: " + build_path);
 			LUMINA_LOG_INFO("Build has been successfully completed.");
 
 			return true;
@@ -552,6 +574,16 @@ namespace lumina_editor
 		lumina::lumina_file_system_s::execute_process(
 			script_dir + "\\" + LUMINA_EDITOR_SLN_STARTUP_BATCH_DEFAULT_NAME,
 			script_dir
+		);
+	}
+
+	void project_handler::update_script_core_assemblies()
+	{
+		std::filesystem::copy_file(
+			lumina::lumina_file_system_s::get_process_directory() + LUMINA_EDITOR_SCRIPT_CORE_DIR_PATH + "\\" + LUMINA_EDITOR_SCRIPT_CORE_DEFAULT_NAME,
+			std::filesystem::path(loaded_project_->project_dir_path + "\\" + LUMINA_EDITOR_PROJECT_SCRIPTS_DEFAULT_PATH) /
+			std::filesystem::path(LUMINA_EDITOR_SCRIPT_CORE_DEFAULT_NAME),
+			std::filesystem::copy_options::overwrite_existing
 		);
 	}
 }

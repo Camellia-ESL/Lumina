@@ -1,4 +1,57 @@
 Scene Name: Untitled Scene
-Is Active Scene: false
+Is Active Scene: true
 Entities:
-  []
+  - Identity Component:
+      Entity Name: Test Entity
+      Entity UUID: 5a203b4a-2bfd-4a73-909a-7e4802e7f7b5
+    Transform Component:
+      Position:
+        - 0
+        - 0
+        - 0
+      Rotation:
+        - 0
+        - -0
+        - 0
+      Scale:
+        - 1
+        - 1
+        - 1
+    Sprite Component:
+      Shape: 0
+      TextureAssetId: 41b91f6a-fdf0-4484-bf04-1c4dd67b9790
+      Color:
+        - 1
+        - 1
+        - 0
+        - 1
+  - Identity Component:
+      Entity Name: Camera
+      Entity UUID: d05e749b-e203-4e17-8f86-341c753b71ac
+    Camera Component:
+      Is Active: true
+      Fov: 90
+      Far View: 100
+      Near View: 0.100000001
+      Yaw: -90
+      Pitch: 0
+      Position:
+        - 0
+        - 0
+        - 1
+      Front:
+        - -4.37113883e-08
+        - 0
+        - -1
+      Up:
+        - 0
+        - 1
+        - 0
+      Right:
+        - 1
+        - 0
+        - -4.37113883e-08
+      World Up:
+        - 0
+        - 1
+        - 0

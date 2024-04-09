@@ -11,6 +11,9 @@ namespace lumina
 	{
 		const glm::vec2 surface_dim = application_player::get_singleton().get_surface().get_dimensions();
 
+		if (surface_dim.x == 0.0f || surface_dim.y == 0.0f)
+			return false;
+
 		// Create's depth stencil view
 		D3D11_TEXTURE2D_DESC depth_texture_descriptor{};
 		depth_texture_descriptor.Width = surface_dim.x;

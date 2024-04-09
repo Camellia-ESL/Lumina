@@ -83,9 +83,14 @@ namespace lumina_editor
 	void assets_browser_view::render_assets()
 	{
 		auto& asset_registry = lumina::asset_atlas::get_singleton().get_registry().get_registry();
+		int assets_ith = 0;
 
 		for (auto& [asset_id, asset] : asset_registry)
 		{
+			// Check if it is not the first element being rendered and inlines them
+			if(assets_ith > 0)
+				ImGui::SameLine();
+
 			// If the type is texture simply shows it as a image button with the description
 			if (asset->get_type() == lumina::asset::resource_types_e::TEXTURE)
 			{
@@ -123,6 +128,8 @@ namespace lumina_editor
 					ImGui::EndDragDropSource();
 				}
 			}
+
+			assets_ith++;
 		}
 	}
 

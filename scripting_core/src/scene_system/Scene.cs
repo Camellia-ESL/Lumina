@@ -4,7 +4,10 @@ namespace Lumina
 {
     public class Scene
     {
-        public string Name { get; set; } = "";
+        /// <summary>
+        /// The Scene name
+        /// </summary>
+        public string Name { get => _name; }
 
         /// <summary>
         /// Add's a new entity into the scene
@@ -43,6 +46,8 @@ namespace Lumina
         {
             DestroyEntityImpl(Name, entity);
         }
+
+        private string _name = "";
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern bool CreateEntityImpl(string sceneName, ref Entity entityOut);
