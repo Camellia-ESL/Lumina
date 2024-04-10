@@ -7,11 +7,6 @@ project "lumina_engine"
 
    files { "src/**.h", "src/**.cpp", "vendors/**.h", "vendors/**.cpp" }
 
-   disablewarnings
-   {
-       "4006"
-   }
-
    includedirs
    {
       "src",
@@ -45,6 +40,8 @@ project "lumina_engine"
        systemversion "latest"
        defines { "LUMINA_WIN32_PLATFORM" }
        links { "d3d11.lib", "d3dx11.lib", "Ws2_32.lib", "Version.lib", "Winmm.lib", "Bcrypt.lib" }
+       disablewarnings { "4005", "4356", "4244", "4267", "4996" }
+       linkoptions { "-IGNORE:4006" }
 
    filter "configurations:Debug"
        defines { "DEBUG" }

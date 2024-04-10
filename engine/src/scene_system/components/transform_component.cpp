@@ -1,5 +1,12 @@
 #include "transform_component.h"
 
+#ifndef GLM_ENABLE_EXPERIMENTAL
+#define GLM_ENABLE_EXPERIMENTAL
+#endif
+
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 namespace lumina
 {
 	transform_component& transform_component::set_position(const glm::vec3& position)
@@ -18,5 +25,28 @@ namespace lumina
 	{
 		model_matrix_ = glm::scale(model_matrix_, scale);
 		return *this;
+	}
+
+	const glm::vec3 transform_component::get_position() const
+	{
+		return glm::vec3(model_matrix_[3]);
+	}
+
+	const glm::vec3 transform_component::get_euler_angles() const
+	{
+		return glm::degrees(
+			glm::eulerAngles(
+				glm::toQuat(glm::mat3(model_matrix_))
+			)
+		);
+	}
+
+	const glm::vec3 transform_component::get_scale() const
+	{
+		return glm::vec3(
+			glm::length(glm::vec3(model_matrix_[0])),
+			glm::length(glm::vec3(model_matrix_[1])),
+			glm::length(glm::vec3(model_matrix_[2]))
+		); 
 	}
 }

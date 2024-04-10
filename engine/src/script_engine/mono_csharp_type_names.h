@@ -13,6 +13,17 @@ namespace lumina
 	{
 		static constexpr const char* NAMESPACE_NAME = "Lumina";
 
+		struct application_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Application";
+
+			struct methods
+			{
+				// private static extern float GetDeltaTimeImpl();
+				static constexpr const char* GET_DELTA_TIME = "GetDeltaTimeImpl";
+			};
+		};
+
 		struct scene_manager_csharp_type
 		{
 			static constexpr const char* TYPE_NAME = "SceneManager";
@@ -70,6 +81,10 @@ namespace lumina
 			{
 				// private static extern bool GetComponentImpl(uint entityId, ulong entityRegPtr, ref object componentOut);
 				static constexpr const char* GET_COMPONENT = "GetComponentImpl";
+				// private static extern bool AddComponentImpl(uint entityId, ulong entityRegPtr, ref object componentOut);
+				static constexpr const char* ADD_COMPONENT = "AddComponentImpl";
+				// private static extern bool HasComponentImpl(uint entityId, ulong entityRegPtr, object componentOut);
+				static constexpr const char* HAS_COMPONENT = "HasComponentImpl";
 			};
 
 			struct properties
@@ -132,6 +147,16 @@ namespace lumina
 			{	
 				// private static extern void GetPositionImpl(Entity ownerEntity, ref Vec3 outVec);
 				static constexpr const char* GET_POSITION = "GetPositionImpl";
+				// private static extern void GetEulerAnglesRotationImpl(Entity ownerEntity, ref Vec3 outVec);
+				static constexpr const char* GET_EULER_ANGLES_ROTATION = "GetEulerAnglesRotationImpl";
+				// private static extern void GetScaleImpl(Entity ownerEntity, ref Vec3 outVec);
+				static constexpr const char* GET_SCALE = "GetScaleImpl";
+				// private static extern void SetPositionImpl(Entity ownerEntity, Vec3 outVec);
+				static constexpr const char* SET_POSITION = "SetPositionImpl";
+				// private static extern void RotateImpl(Entity ownerEntity, Vec3 outVec, float angle);
+				static constexpr const char* ROTATE = "RotateImpl";
+				// private static extern void SetScaleImpl(Entity ownerEntity, Vec3 outVec);
+				static constexpr const char* SET_SCALE = "SetScaleImpl";
 			};
 
 			struct properties
@@ -143,6 +168,25 @@ namespace lumina
 
 			struct fields
 			{	
+			};
+		};
+
+		struct sprite_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Sprite";
+
+			struct methods
+			{
+				// private static extern void GetColorImpl(Entity ownerEntity, ref Vec4 outVec);
+				static constexpr const char* GET_COLOR = "GetColorImpl";
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{
 			};
 		};
 
@@ -187,6 +231,31 @@ namespace lumina
 				static constexpr const char* _X = "_x";
 				static constexpr const char* _Y = "_y";
 				static constexpr const char* _Z = "_z";
+			};
+		};
+
+		struct vec4_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "Vec4";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+				static constexpr const char* X = "X";
+				static constexpr const char* Y = "Y";
+				static constexpr const char* Z = "Z";
+				static constexpr const char* W = "W";
+			};
+
+			struct fields
+			{
+				static constexpr const char* _X = "_x";
+				static constexpr const char* _Y = "_y";
+				static constexpr const char* _Z = "_z";
+				static constexpr const char* _W = "_w";
 			};
 		};
 

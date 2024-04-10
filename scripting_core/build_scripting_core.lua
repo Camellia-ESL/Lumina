@@ -15,7 +15,3 @@ project "lumina_scripting_core"
    filter "configurations:Release"
        optimize "On"
        symbols "Default"
-
-   filter "configurations:Dist"
-       optimize "Full"
-       symbols "Off"

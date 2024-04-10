@@ -44,7 +44,7 @@ namespace lumina
 			surface_.present();
 
 			// Calculate the delta time
-			float current_frame = glfwGetTime();
+			float current_frame = (float)glfwGetTime();
 			delta_time_ = current_frame - last_frame_time;
 			last_frame_time = current_frame;
         }

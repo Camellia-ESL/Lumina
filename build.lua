@@ -17,7 +17,7 @@ include "editor/build_editor.lua"
 include "runtime_player/build_runtime_player.lua"
 
 workspace "lumina_scripting"
-   configurations { "Debug", "Release", "Dist" }
+   configurations { "Debug", "Release" }
 
 OutputDirCs = "%{cfg.system}-x86_64/%{cfg.buildcfg}"
 

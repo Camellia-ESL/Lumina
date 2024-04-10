@@ -19,6 +19,15 @@ namespace lumina
 		// Set the scale of the transform
 		transform_component& set_scale(const glm::vec3& scale);
 
+		// Get the position of the transform
+		const glm::vec3 get_position() const;
+
+		// Get's the euler angles for each axis of the transform
+		const glm::vec3 get_euler_angles() const;
+
+		// Get's the scale of the transform
+		const glm::vec3 get_scale() const;
+
 		// Get the model matrix of the transform
 		const glm::mat4& get_model_matrix() { return model_matrix_; }
 		 

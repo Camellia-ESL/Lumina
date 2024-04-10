@@ -40,6 +40,7 @@ project "lumina_runtime_player"
        systemversion "latest"
        defines { "WINDOWS" }
        links { "d3d11.lib", "d3dx11.lib", "Ws2_32.lib", "Version.lib", "Winmm.lib", "Bcrypt.lib", "D3DCompiler.lib" }
+       disablewarnings { "4005", "4356", "4244", "4267", "4996" }
 
    filter "configurations:Debug"
        defines { "DEBUG" }

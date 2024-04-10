@@ -43,5 +43,7 @@ namespace lumina
             return false;
 
         d3d11_instance::get_singleton().get_device_context()->PSSetShaderResources(slot, 1, &texture_);
+
+        return true;
     }
 }

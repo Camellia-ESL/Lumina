@@ -16,11 +16,13 @@ namespace lumina
 
 		using asset_registry_t = std::unordered_map<std::string, std::shared_ptr<asset>>;
 
-		// Gets an asset by is a id (unique), NOTE you must check if it exist before with has_asset
+		// Gets an asset by is a id (unique) or the first element if none was found
+		// IMPORTANT you must check if it exist before with has_asset
 		asset& get_asset(const std::string& asset_id) { return *registry_[asset_id]; }
 		
-		// Gets an asset by a given asset name (not that there may be more assets with the same name in that case it returns the first one)
-		// NOTE you must check if it exist before with has_asset
+		// Gets an asset by a given asset name or the first element if none was found 
+		// (NOTE that there may be more assets with the same name in that case it returns the first one)
+		// IMPORTANT you must check if it exist before with has_asset
 		asset& get_asset_by_name(const std::string& asset_name);
 		
 		// Wheter if it contains a certain asset or not

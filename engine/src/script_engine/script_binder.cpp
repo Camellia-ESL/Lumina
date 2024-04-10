@@ -25,12 +25,33 @@ namespace lumina
 	void script_binder::bind_all(mono_script* script_to_forward_binds)
 	{
 		core_script_ref = script_to_forward_binds;
+		bind_application(script_to_forward_binds);
 		bind_scene_manager(script_to_forward_binds);
 		bind_scene(script_to_forward_binds);
 		bind_entity(script_to_forward_binds);
 		bind_transform(script_to_forward_binds);
+		bind_sprite(script_to_forward_binds);
 		bind_logger(script_to_forward_binds);
 	}
+
+#pragma region Application
+
+	static float application_get_delta_time_func()
+	{
+		return application_player::get_singleton().get_delta_time();
+	}
+
+	void script_binder::bind_application(mono_script* script_to_forward_binds)
+	{
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::application_csharp_type::methods::GET_DELTA_TIME,
+			lumina_csharp_namespace::application_csharp_type::TYPE_NAME,
+			application_get_delta_time_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+	}
+
+#pragma endregion
 
 #pragma region SceneManager
 
@@ -256,6 +277,46 @@ namespace lumina
 
 #pragma region Entity
 
+	template<typename component_type>
+	static void init_component_class_from_internal_component(MonoObject* obj, MonoClass* obj_class, entity entity_req);
+
+	template<>
+	static void init_component_class_from_internal_component<identity_component>(MonoObject* obj, MonoClass* obj_class, entity entity_req)
+	{
+		// Get entity out fields and properties to assign
+		MonoClassField* component_id_field = mono_class_get_field_from_name(
+			obj_class,
+			lumina_csharp_namespace::identifier_csharp_type::fields::_ID
+		);
+
+		MonoClassField* component_name_field = mono_class_get_field_from_name(
+			obj_class,
+			lumina_csharp_namespace::identifier_csharp_type::fields::_NAME
+		);
+
+		identity_component& identifier = entity_req.get_component<identity_component>();
+
+		// Assign the Component Id
+		MonoString* component_id_value = core_script_ref->create_mono_str(identifier.id);
+		mono_field_set_value(obj, component_id_field, component_id_value);
+
+		// Assign the Component Name
+		MonoString* component_name_value = core_script_ref->create_mono_str(identifier.name);
+		mono_field_set_value(obj, component_name_field, component_name_value);
+	}
+
+	template<>
+	static void init_component_class_from_internal_component<transform_component>(MonoObject* obj, MonoClass* obj_class, entity entity_req)
+	{
+		// Nothing to implement here for now
+	}
+
+	template<>
+	static void init_component_class_from_internal_component<sprite_component>(MonoObject* obj, MonoClass* obj_class, entity entity_req)
+	{
+		// Nothing to implement here for now
+	}
+
 	static bool entity_get_component_func(entt::entity entity_id, entt::registry* entity_reg_ptr, MonoObject** component_out)
 	{
 		MonoObject* component_out_ref = *component_out;
@@ -272,36 +333,79 @@ namespace lumina
 
 		// *Identifier Class*
 		if (component_class_name == lumina_csharp_namespace::identifier_csharp_type::TYPE_NAME)
-		{
-			// Get entity out fields and properties to assign
-			MonoClassField* component_id_field = mono_class_get_field_from_name(
-				component_class,
-				lumina_csharp_namespace::identifier_csharp_type::fields::_ID
-			);
+			init_component_class_from_internal_component<identity_component>(component_out_ref, component_class, entity_req);
 
-			MonoClassField* component_name_field = mono_class_get_field_from_name(
-				component_class,
-				lumina_csharp_namespace::identifier_csharp_type::fields::_NAME
-			);
+		// *Transform Class*
+		if (component_class_name == lumina_csharp_namespace::transform_csharp_type::TYPE_NAME)
+			init_component_class_from_internal_component<transform_component>(component_out_ref, component_class, entity_req);
 
-			identity_component& identifier = entity_req.get_component<identity_component>();
+		// *Sprite Class*
+		if (component_class_name == lumina_csharp_namespace::sprite_csharp_type::TYPE_NAME)
+			init_component_class_from_internal_component<sprite_component>(component_out_ref, component_class, entity_req);
 
-			// Assign the Component Id
-			MonoString* component_id_value = core_script_ref->create_mono_str(identifier.id);
-			mono_field_set_value(*component_out, component_id_field, component_id_value);
+		return true;
+	}
 
-			// Assign the Component Name
-			MonoString* component_name_value = core_script_ref->create_mono_str(identifier.name);
-			mono_field_set_value(*component_out, component_name_field, component_name_value);
-		}
+	static bool entity_add_component_func(entt::entity entity_id, entt::registry* entity_reg_ptr, MonoObject** component_out)
+	{
+		MonoObject* component_out_ref = *component_out;
+
+		if (entity_reg_ptr == nullptr)
+			return false;
+
+		// Construct the requested entity
+		entity entity_req = entity(entity_reg_ptr, entity_id);
+
+		// Get the component class
+		MonoClass* component_class = mono_object_get_class(component_out_ref);
+		std::string component_class_name = mono_class_get_name(component_class);
 
 		// *Transform Class*
 		if (component_class_name == lumina_csharp_namespace::transform_csharp_type::TYPE_NAME)
 		{
-			
+			if(!entity_req.has_component<transform_component>())
+				entity_req.add_component<transform_component>();
+
+			init_component_class_from_internal_component<transform_component>(component_out_ref, component_class, entity_req);
+		}
+
+		// *Sprite Class*
+		if (component_class_name == lumina_csharp_namespace::sprite_csharp_type::TYPE_NAME)
+		{
+			if (!entity_req.has_component<sprite_component>())
+				entity_req.add_component<sprite_component>();
+
+			init_component_class_from_internal_component<sprite_component>(component_out_ref, component_class, entity_req);
 		}
 
 		return true;
+	}
+
+	static bool entity_has_component_func(entt::entity entity_id, entt::registry* entity_reg_ptr, MonoObject* component_out)
+	{
+		if (entity_reg_ptr == nullptr)
+			return false;
+
+		// Construct the requested entity
+		entity entity_req = entity(entity_reg_ptr, entity_id);
+
+		// Get the component class
+		MonoClass* component_class = mono_object_get_class(component_out);
+		std::string component_class_name = mono_class_get_name(component_class);
+
+		// *Identifier Class*
+		if (component_class_name == lumina_csharp_namespace::identifier_csharp_type::TYPE_NAME)
+			return entity_req.has_component<identity_component>();
+
+		// *Transform Class*
+		if (component_class_name == lumina_csharp_namespace::transform_csharp_type::TYPE_NAME)
+			return entity_req.has_component<transform_component>();
+
+		// *Sprite Class*
+		if (component_class_name == lumina_csharp_namespace::sprite_csharp_type::TYPE_NAME)
+			return entity_req.has_component<sprite_component>();
+
+		return false;
 	}
 
 	void script_binder::bind_entity(mono_script* script_to_forward_binds)
@@ -312,13 +416,27 @@ namespace lumina
 			entity_get_component_func,
 			lumina_csharp_namespace::NAMESPACE_NAME
 		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::entity_csharp_type::methods::ADD_COMPONENT,
+			lumina_csharp_namespace::entity_csharp_type::TYPE_NAME,
+			entity_add_component_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::entity_csharp_type::methods::HAS_COMPONENT,
+			lumina_csharp_namespace::entity_csharp_type::TYPE_NAME,
+			entity_has_component_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
 	}
 
 #pragma endregion
 
 #pragma region Vectors
 
-	static void set_vec3_xyz_fields(MonoObject* vectorInstance, float x, float y, float z)
+	static void set_vec3_xyz_fields(MonoObject* vectorInstance, l_float32 x, l_float32 y, l_float32 z)
 	{
 		MonoClass* vec_out_class = mono_object_get_class(vectorInstance);
 		MonoClassField* vec_out_x_field = mono_class_get_field_from_name(
@@ -341,54 +459,236 @@ namespace lumina
 		mono_field_set_value(vectorInstance, vec_out_z_field, &z);
 	}
 
+	static void set_vec4_xyzw_fields(MonoObject* vectorInstance, l_float32 x, l_float32 y, l_float32 z, l_float32 w)
+	{
+		MonoClass* vec_out_class = mono_object_get_class(vectorInstance);
+		MonoClassField* vec_out_x_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec4_csharp_type::fields::_X
+		);
+
+		MonoClassField* vec_out_y_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec4_csharp_type::fields::_Y
+		);
+
+		MonoClassField* vec_out_z_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec4_csharp_type::fields::_Z
+		);
+
+		MonoClassField* vec_out_w_field = mono_class_get_field_from_name(
+			vec_out_class,
+			lumina_csharp_namespace::vec4_csharp_type::fields::_W
+		);
+
+		mono_field_set_value(vectorInstance, vec_out_x_field, &x);
+		mono_field_set_value(vectorInstance, vec_out_y_field, &y);
+		mono_field_set_value(vectorInstance, vec_out_z_field, &z);
+		mono_field_set_value(vectorInstance, vec_out_w_field, &w);
+	}
+
 #pragma endregion
 
 #pragma region Transform
 
-	static void transform_get_position_func(MonoObject* ownerEntity, MonoObject** vecOut)
+	static entity fetch_entity_from_mono_obj(MonoObject* ownerEntity)
 	{
-		
+
 #if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_FAST
 
 		// Check if the entity is valid and has a transform attached
 		if (ownerEntity == nullptr)
-			return;
+			return entity();
 
 #endif 
 
 		// Get's the entity id and reg ptr
 		MonoClass* owner_entity_class = mono_object_get_class(ownerEntity);
-		
-		MonoClassField* owner_entity_id_field = mono_class_get_field_from_name(
-			owner_entity_class, 
-			lumina_csharp_namespace::entity_csharp_type::fields::_ID
-		);
 
-		MonoClassField* owner_entity_reg_ptr_field = mono_class_get_field_from_name(
-			owner_entity_class,
-			lumina_csharp_namespace::entity_csharp_type::fields::_REGISTRY_PTR
-		);
+		return {
+			core_script_ref->get_field_value<entt::registry*>(
+				ownerEntity,
+				owner_entity_class,
+				lumina_csharp_namespace::entity_csharp_type::fields::_REGISTRY_PTR
+			),
+			core_script_ref->get_field_value<entt::entity>(
+				ownerEntity,
+				owner_entity_class,
+				lumina_csharp_namespace::entity_csharp_type::fields::_ID
+			)
+		};
+	}
 
-		entt::entity entity_id;
-		mono_field_get_value(ownerEntity, owner_entity_id_field, &entity_id);
-
-		entt::registry* entity_reg_ptr;
-		mono_field_get_value(ownerEntity, owner_entity_reg_ptr_field, &entity_reg_ptr);
+	static void transform_get_position_func(MonoObject* ownerEntity, MonoObject** vecOut)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
 
 #if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
 
 		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
 		// but a security check is added as a plus.
-		if (!entity(entity_reg_ptr, entity_id).has_component<transform_component>())
+		if (!entity_fetched.has_component<transform_component>())
 			return;
 
 #endif 
 
 		// Set the value of the out vector
-		transform_component& transform = entity_reg_ptr->get<transform_component>(entity_id);
-		glm::vec3 position = glm::vec3(transform.get_model_matrix()[3]);
+		glm::vec3 position = entity_fetched.get_component<transform_component>().get_position();
 
 		set_vec3_xyz_fields(*vecOut, position.x, position.y, position.z);
+	}
+
+	static void transform_get_euler_angles_rotation_func(MonoObject* ownerEntity, MonoObject** vecOut)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity_fetched.has_component<transform_component>())
+			return;
+
+#endif 
+
+		// Set the value of the out vector
+		glm::vec3 euler_angles_rot = entity_fetched.get_component<transform_component>().get_euler_angles();
+
+		set_vec3_xyz_fields(*vecOut, euler_angles_rot.x, euler_angles_rot.y, euler_angles_rot.z);
+	}
+
+	static void transform_get_scale_func(MonoObject* ownerEntity, MonoObject** vecOut)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity_fetched.has_component<transform_component>())
+			return;
+
+#endif 
+
+		// Set the value of the out vector
+		glm::vec3 scale = entity_fetched.get_component<transform_component>().get_scale();
+
+		set_vec3_xyz_fields(*vecOut, scale.x, scale.y, scale.z);
+	}
+
+	static void transform_set_position_func(MonoObject* ownerEntity, MonoObject* vecToSet)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity_fetched.has_component<transform_component>())
+			return;
+
+#endif 
+
+		// Get's the vector x,y,z 
+		MonoClass* vec_class = mono_object_get_class(vecToSet);
+
+		l_float32 x = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_X
+		);
+
+		l_float32 y = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Y
+		);
+
+		l_float32 z = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Z
+		);
+
+		// Set the value of the out vector
+		entity_fetched.get_component<transform_component>().set_position({ x , y , z });
+	}
+
+	static void transform_rotate_func(MonoObject* ownerEntity, MonoObject* vecToSet, float angleDeg)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity_fetched.has_component<transform_component>())
+			return;
+
+#endif 
+
+		// Get's the vector x,y,z 
+		MonoClass* vec_class = mono_object_get_class(vecToSet);
+
+		l_float32 x = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_X
+		);
+
+		l_float32 y = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Y
+		);
+
+		l_float32 z = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Z
+		);
+
+		// Set the value of the out vector
+		entity_fetched.get_component<transform_component>().rotate({ x , y , z }, glm::radians(angleDeg));
+	}
+
+	static void transform_set_scale_func(MonoObject* ownerEntity, MonoObject* vecToSet)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity_fetched.has_component<transform_component>())
+			return;
+
+#endif 
+
+		// Get's the vector x,y,z 
+		MonoClass* vec_class = mono_object_get_class(vecToSet);
+
+		l_float32 x = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_X
+		);
+
+		l_float32 y = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Y
+		);
+
+		l_float32 z = core_script_ref->get_field_value<l_float32>(
+			vecToSet,
+			vec_class,
+			lumina_csharp_namespace::vec3_csharp_type::fields::_Z
+		);
+
+		// Set the value of the out vector
+		entity_fetched.get_component<transform_component>().set_scale({ x , y , z });
 	}
 
 	void script_binder::bind_transform(mono_script* script_to_forward_binds)
@@ -399,10 +699,80 @@ namespace lumina
 			transform_get_position_func,
 			lumina_csharp_namespace::NAMESPACE_NAME
 		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::transform_csharp_type::methods::GET_EULER_ANGLES_ROTATION,
+			lumina_csharp_namespace::transform_csharp_type::TYPE_NAME,
+			transform_get_euler_angles_rotation_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::transform_csharp_type::methods::GET_SCALE,
+			lumina_csharp_namespace::transform_csharp_type::TYPE_NAME,
+			transform_get_scale_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::transform_csharp_type::methods::SET_POSITION,
+			lumina_csharp_namespace::transform_csharp_type::TYPE_NAME,
+			transform_set_position_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::transform_csharp_type::methods::ROTATE,
+			lumina_csharp_namespace::transform_csharp_type::TYPE_NAME,
+			transform_rotate_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::transform_csharp_type::methods::SET_SCALE,
+			lumina_csharp_namespace::transform_csharp_type::TYPE_NAME,
+			transform_set_scale_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
 	}
 
 #pragma endregion
 
+#pragma region Sprite
+
+	static void sprite_get_color_func(MonoObject* ownerEntity, MonoObject** vecOut)
+	{
+		entity entity_fetched = fetch_entity_from_mono_obj(ownerEntity);
+
+#if LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_LEVELS >= LUMINA_INTERNAL_CALLS_SECURITY_CHECKS_MAX
+
+		// Check if the entity has the trasnform component attached, this is supposed to be always true for the code flow safety
+		// but a security check is added as a plus.
+		if (!entity_fetched.has_component<sprite_component>())
+			return;
+
+#endif 
+
+		set_vec4_xyzw_fields(
+			*vecOut, 
+			entity_fetched.get_component<sprite_component>().color.x, 
+			entity_fetched.get_component<sprite_component>().color.y, 
+			entity_fetched.get_component<sprite_component>().color.z,
+			entity_fetched.get_component<sprite_component>().color.w
+		);
+	}
+
+	void script_binder::bind_sprite(mono_script* script_to_forward_binds)
+	{
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::sprite_csharp_type::methods::GET_COLOR,
+			lumina_csharp_namespace::sprite_csharp_type::TYPE_NAME,
+			sprite_get_color_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+	}
+
+#pragma endregion
 
 #pragma region Logger
 

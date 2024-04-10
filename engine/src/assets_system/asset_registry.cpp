@@ -9,6 +9,8 @@ namespace lumina
 		for (auto& [id, asset] : registry_)
 			if (asset->get_asset_name() == asset_name)
 				return *registry_[id];
+
+		return *registry_[0];
 	}
 
 	template<>

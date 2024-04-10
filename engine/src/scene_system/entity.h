@@ -44,16 +44,16 @@ namespace lumina
 
 		// Copies a component in another entity
 		template<typename component_type>
-		component_type& copy_component(entity dst_entity)
+		component_type* copy_component(entity dst_entity)
 		{
 			component_type generic_component{};
 
-			// Check if src entity has the component to copy and if the dst doesn't already have it
+			// Check if src entity has the component to copy or if the dst doesn't already have it
 			if (!entity_registry_->all_of<component_type>(entity_) || entity_registry_->all_of<component_type>(dst_entity.get_entity()))
-				return generic_component;
+				return nullptr;
 
 			// Copies the src component in the dst entity calling the copy constructor of the given component
-			return entity_registry_->emplace<component_type>(
+			return &entity_registry_->emplace<component_type>(
 				dst_entity.get_entity(),
 				entity_registry_->get<component_type>(entity_)
 			);
