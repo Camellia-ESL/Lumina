@@ -9,7 +9,7 @@ An attempt to make a simple usable game engine that actually produces playable g
 - Open project_scripts and run Setup-Windows.bat
 - Go back in the main folder, open the generated solution.
 - Build.
-- Once built make sure to copy the resources folder, from the lumina_editor folder to Binaries/(%platform)/(%buildconfig)/lumina_editor (this is a one time step)
+- Once built make sure to copy the resources folder and mono_res, from the lumina_editor folder to Binaries/(%platform)/(%buildconfig)/lumina_editor (this is a one time step)
 - Build the engine script core
 - Build lumina again and run.
 
