@@ -24,6 +24,21 @@ namespace lumina
 			};
 		};
 
+		struct event_handler_csharp_type
+		{
+			static constexpr const char* TYPE_NAME = "EventHandler";
+
+			struct methods
+			{
+				// private static extern bool IsKeyPressedImpl(KeyboardKeyType key);
+				static constexpr const char* IS_KEY_PRESSED = "IsKeyPressedImpl";
+				// private static extern bool IsKeyReleasedImpl(KeyboardKeyType key);
+				static constexpr const char* IS_KEY_RELEASED = "IsKeyReleasedImpl";
+				// private static extern bool IsKeyHeldImpl(KeyboardKeyType key);
+				static constexpr const char* IS_KEY_HELD = "IsKeyHeldImpl";
+			};
+		};
+
 		struct scene_manager_csharp_type
 		{
 			static constexpr const char* TYPE_NAME = "SceneManager";

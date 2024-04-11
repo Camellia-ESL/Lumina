@@ -2,8 +2,14 @@
 
 namespace Lumina
 {
+    /// <summary>
+    /// The sprite component that handles 2D picture rendering in Lumina for every entity
+    /// </summary>
     public class Sprite : Component
     {
+        /// <summary>
+        /// The default color used when no assets are applied to the sprite
+        /// </summary>
         public Vec4 Color { get => GetColor(); }
 
         private Vec4 GetColor()

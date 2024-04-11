@@ -11,7 +11,7 @@ namespace lumina
 {
 	transform_component& transform_component::set_position(const glm::vec3& position)
 	{
-		model_matrix_ = glm::translate(model_matrix_, position);
+		model_matrix_[3] = glm::vec4(position, 1.0f);
 		return *this;
 	}
 
@@ -23,7 +23,9 @@ namespace lumina
 
 	transform_component& transform_component::set_scale(const glm::vec3& scale)
 	{
-		model_matrix_ = glm::scale(model_matrix_, scale);
+		model_matrix_[0][0] = scale.x; 
+		model_matrix_[1][1] = scale.y; 
+		model_matrix_[2][2] = scale.z;
 		return *this;
 	}
 

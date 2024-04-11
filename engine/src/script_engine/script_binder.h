@@ -11,6 +11,7 @@ namespace lumina
 
 		static void bind_all(mono_script* script_to_forward_binds);
 		static void bind_application(mono_script* script_to_forward_binds);
+		static void bind_event_handler(mono_script* script_to_forward_binds);
 		static void bind_scene_manager(mono_script* script_to_forward_binds);
 		static void bind_scene(mono_script* script_to_forward_binds);
 		static void bind_entity(mono_script* script_to_forward_binds);

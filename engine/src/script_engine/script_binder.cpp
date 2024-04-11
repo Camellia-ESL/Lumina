@@ -26,6 +26,7 @@ namespace lumina
 	{
 		core_script_ref = script_to_forward_binds;
 		bind_application(script_to_forward_binds);
+		bind_event_handler(script_to_forward_binds);
 		bind_scene_manager(script_to_forward_binds);
 		bind_scene(script_to_forward_binds);
 		bind_entity(script_to_forward_binds);
@@ -47,6 +48,49 @@ namespace lumina
 			lumina_csharp_namespace::application_csharp_type::methods::GET_DELTA_TIME,
 			lumina_csharp_namespace::application_csharp_type::TYPE_NAME,
 			application_get_delta_time_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+	}
+
+#pragma endregion
+
+#pragma region Event Handler
+
+	static bool event_handler_is_key_pressed_func(keyboard_keys_types_e key)
+	{
+		return event_state_handler_s::is_key_pressed(key);
+	}
+
+	static bool event_handler_is_key_released_func(keyboard_keys_types_e key)
+	{
+		return event_state_handler_s::is_key_released(key);
+	}
+
+	static bool event_handler_is_key_held_func(keyboard_keys_types_e key)
+	{
+		return event_state_handler_s::is_key_held(key);
+	}
+
+	void script_binder::bind_event_handler(mono_script* script_to_forward_binds)
+	{
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::event_handler_csharp_type::methods::IS_KEY_PRESSED,
+			lumina_csharp_namespace::event_handler_csharp_type::TYPE_NAME,
+			event_handler_is_key_pressed_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::event_handler_csharp_type::methods::IS_KEY_RELEASED,
+			lumina_csharp_namespace::event_handler_csharp_type::TYPE_NAME,
+			event_handler_is_key_released_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::event_handler_csharp_type::methods::IS_KEY_HELD,
+			lumina_csharp_namespace::event_handler_csharp_type::TYPE_NAME,
+			event_handler_is_key_held_func,
 			lumina_csharp_namespace::NAMESPACE_NAME
 		);
 	}

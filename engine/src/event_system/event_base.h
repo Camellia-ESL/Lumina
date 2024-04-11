@@ -5,7 +5,8 @@ namespace lumina
 	enum class event_types_e
 	{
 		MOUSE_EVENT_,
-		KEYBOARD_EVENT_
+		KEYBOARD_EVENT_,
+		WINDOW_RESIZE_EVENT_
 	};
 
 	enum class input_action_types_e

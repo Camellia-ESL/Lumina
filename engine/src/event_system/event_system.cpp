@@ -147,6 +147,7 @@ namespace lumina
 	void event_dispatcher::on_window_resize(int width, int height)
 	{
 		window_resize_event_t window_resize_event{};
+		window_resize_event.event_type = event_types_e::WINDOW_RESIZE_EVENT_;
 		window_resize_event.app_width = width;
 		window_resize_event.app_height = height;
 
