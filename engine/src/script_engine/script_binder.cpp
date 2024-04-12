@@ -71,6 +71,151 @@ namespace lumina
 		return event_state_handler_s::is_key_held(key);
 	}
 
+	static void event_handler_register_event_callback_func(MonoObject* callback)
+	{
+		// Get the component class
+		MonoClass* callback_class = mono_object_get_class(callback);
+		std::string callback_class_name = mono_class_get_name(callback_class);
+
+		// Submit the event registration
+		
+		// *KeyboardEventCallback Class*
+		if (callback_class_name == lumina_csharp_namespace::keyboard_event_callback_type::TYPE_NAME)
+		{
+			event_listener::get_singleton().submit_event_callback(
+				[=](const keyboard_event_t& e) -> void
+				{
+					// Get the keyboard event callback event holder
+					MonoClassField* event_field = mono_class_get_field_from_name(
+						callback_class,
+						lumina_csharp_namespace::keyboard_event_callback_type::fields::_EVENT
+					);
+
+					// Get's the event object
+					MonoObject* event_object;
+					mono_field_get_value(callback, event_field, &event_object);
+					MonoClass* event_object_class = mono_object_get_class(event_object);
+
+					MonoClassField* event_type_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::event_base_type::fields::_EVENT_TYPE
+					);
+
+					MonoClassField* event_action_type_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::keyboard_event_type::fields::_ACTION_TYPE
+					);
+
+					MonoClassField* event_key_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::keyboard_event_type::fields::_KEY
+					);
+
+					MonoClassField* event_key_mod_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::keyboard_event_type::fields::_KEY_MOD
+					);
+
+					// Set the values for the current event happened in the event object
+					mono_field_set_value(event_object, event_type_field, (void*)&e.event_type);
+					mono_field_set_value(event_object, event_action_type_field, (void*)&e.action_type);
+					mono_field_set_value(event_object, event_key_field, (void*)&e.key);
+					mono_field_set_value(event_object, event_key_mod_field, (void*)&e.key_mod);
+
+					// Finally execute the callback callee
+					MonoMethod* callback_mtd = mono_class_get_method_from_name(
+						callback_class, 
+						lumina_csharp_namespace::keyboard_event_callback_type::methods::DISPATCH_MTD,
+						0
+					);
+
+					MonoObject* exception = nullptr;
+					mono_runtime_invoke(callback_mtd, callback, nullptr, &exception);
+				}
+			);
+		}
+
+		// *MouseEventCallback Class*
+		if (callback_class_name == lumina_csharp_namespace::mouse_event_callback_type::TYPE_NAME)
+		{
+			event_listener::get_singleton().submit_event_callback(
+				[=](const mouse_event_t& e) -> void
+				{
+					// Get the keyboard event callback event holder
+					MonoClassField* event_field = mono_class_get_field_from_name(
+						callback_class,
+						lumina_csharp_namespace::mouse_event_callback_type::fields::_EVENT
+					);
+
+					// Get's the event object
+					MonoObject* event_object;
+					mono_field_get_value(callback, event_field, &event_object);
+					MonoClass* event_object_class = mono_object_get_class(event_object);
+
+					MonoClassField* event_type_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::event_base_type::fields::_EVENT_TYPE
+					);
+
+					MonoClassField* event_action_type_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_ACTION_TYPE
+					);
+
+					MonoClassField* event_mouse_event_type_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_MOUSE_EVENT_TYPE
+					);
+
+					MonoClassField* event_button_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_BUTTON
+					);
+
+					MonoClassField* event_cursor_pos_x_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_CURSOR_POS_X
+					);
+
+					MonoClassField* event_cursor_pox_y_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_CURSOR_POS_Y
+					);
+
+					MonoClassField* event_mouse_wheel_x_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_MOUSE_WHEEL_X
+					);
+
+					MonoClassField* event_mouse_wheel_y_field = mono_class_get_field_from_name(
+						event_object_class,
+						lumina_csharp_namespace::mouse_event_type::fields::_MOUSE_WHEEL_Y
+					);
+					
+					// Set the values for the current event happened in the event object
+					mono_field_set_value(event_object, event_type_field, (void*)&e.event_type);
+					mono_field_set_value(event_object, event_action_type_field, (void*)&e.action_type);
+					mono_field_set_value(event_object, event_mouse_event_type_field, (void*)&e.mouse_event_subtype);
+					mono_field_set_value(event_object, event_button_field, (void*)&e.mouse_button);
+					mono_field_set_value(event_object, event_cursor_pos_x_field, (void*)&e.cursor_pos_x);
+					mono_field_set_value(event_object, event_cursor_pox_y_field, (void*)&e.cursor_pos_y);
+					mono_field_set_value(event_object, event_mouse_wheel_x_field, (void*)&e.mouse_wheel_x);
+					mono_field_set_value(event_object, event_mouse_wheel_y_field, (void*)&e.mouse_wheel_y);
+
+					// Finally execute the callback callee
+					MonoMethod* callback_mtd = mono_class_get_method_from_name(
+						callback_class,
+						lumina_csharp_namespace::mouse_event_callback_type::methods::DISPATCH_MTD,
+						0
+					);
+
+					MonoObject* exception = nullptr;
+					mono_runtime_invoke(callback_mtd, callback, nullptr, &exception);
+				}
+			);
+		}
+	}
+
 	void script_binder::bind_event_handler(mono_script* script_to_forward_binds)
 	{
 		cs_t_ref_eval::mtd_internal_call(
@@ -91,6 +236,13 @@ namespace lumina
 			lumina_csharp_namespace::event_handler_csharp_type::methods::IS_KEY_HELD,
 			lumina_csharp_namespace::event_handler_csharp_type::TYPE_NAME,
 			event_handler_is_key_held_func,
+			lumina_csharp_namespace::NAMESPACE_NAME
+		);
+
+		cs_t_ref_eval::mtd_internal_call(
+			lumina_csharp_namespace::event_handler_csharp_type::methods::REGISTER_EVENT_CALLBACK,
+			lumina_csharp_namespace::event_handler_csharp_type::TYPE_NAME,
+			event_handler_register_event_callback_func,
 			lumina_csharp_namespace::NAMESPACE_NAME
 		);
 	}

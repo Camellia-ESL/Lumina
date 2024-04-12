@@ -1,4 +1,7 @@
-﻿namespace Lumina
+﻿using System.Security.Cryptography;
+using System;
+
+namespace Lumina
 {
 	/// <summary>
 	/// The key mod types
@@ -174,4 +177,20 @@
 		private KeyboardKeyType _key;
 		private KeyboardKeyMod _keyMod;
 	};
+
+    /// <summary>
+    /// Represent a Keyboard Event callback called every time a keyboard event has been fired
+    /// </summary>
+    public class KeyboardEventCallback : EventCallback<KeyboardEvent>
+    {
+        public KeyboardEventCallback(CallbackFunc callback) : base(callback)
+        {
+        }
+
+        // The event caller (called from internal when a keyboard event is fired)
+        private void Dispatch()
+        {
+            _callbackHolder(_event);
+        }
+    }
 }

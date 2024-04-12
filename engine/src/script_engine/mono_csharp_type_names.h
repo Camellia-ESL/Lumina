@@ -36,6 +36,112 @@ namespace lumina
 				static constexpr const char* IS_KEY_RELEASED = "IsKeyReleasedImpl";
 				// private static extern bool IsKeyHeldImpl(KeyboardKeyType key);
 				static constexpr const char* IS_KEY_HELD = "IsKeyHeldImpl";
+				// private static extern void RegisterEventCallbackImpl(object callback);
+				static constexpr const char* REGISTER_EVENT_CALLBACK = "RegisterEventCallbackImpl";
+			};
+		};
+
+		struct keyboard_event_callback_type
+		{
+			static constexpr const char* TYPE_NAME = "KeyboardEventCallback";
+
+			struct methods
+			{
+				// private void Dispatch()
+				static constexpr const char* DISPATCH_MTD = "Dispatch";
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{
+				static constexpr const char* _CALLBACK_HOLDER = "_callbackHolder";
+				static constexpr const char* _EVENT = "_event";
+			};
+		};
+
+		struct mouse_event_callback_type
+		{
+			static constexpr const char* TYPE_NAME = "MouseEventCallback";
+
+			struct methods
+			{
+				// private void Dispatch()
+				static constexpr const char* DISPATCH_MTD = "Dispatch";
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{
+				static constexpr const char* _CALLBACK_HOLDER = "_callbackHolder";
+				static constexpr const char* _EVENT = "_event";
+			};
+		};
+
+		struct event_base_type
+		{
+			static constexpr const char* TYPE_NAME = "EventBase";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{
+				static constexpr const char* _EVENT_TYPE = "_eventType";
+			};
+		};
+
+		struct keyboard_event_type
+		{
+			static constexpr const char* TYPE_NAME = "KeyboardEvent";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{
+				static constexpr const char* _ACTION_TYPE = "_actionType";
+				static constexpr const char* _KEY = "_key";
+				static constexpr const char* _KEY_MOD = "_keyMod";
+			};
+		};
+
+		struct mouse_event_type
+		{
+			static constexpr const char* TYPE_NAME = "MouseEvent";
+
+			struct methods
+			{
+			};
+
+			struct properties
+			{
+			};
+
+			struct fields
+			{
+				static constexpr const char* _MOUSE_EVENT_TYPE = "_mouseEventType";
+				static constexpr const char* _BUTTON = "_button";
+				static constexpr const char* _ACTION_TYPE = "_actionType";
+				static constexpr const char* _CURSOR_POS_X = "_cursorPosX";
+				static constexpr const char* _CURSOR_POS_Y = "_cursorPosY";
+				static constexpr const char* _MOUSE_WHEEL_X = "_mouseWheelX";
+				static constexpr const char* _MOUSE_WHEEL_Y = "_mouseWheelY";
 			};
 		};
 

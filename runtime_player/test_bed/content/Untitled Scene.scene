@@ -6,25 +6,25 @@ Entities:
       Entity UUID: 5a203b4a-2bfd-4a73-909a-7e4802e7f7b5
     Transform Component:
       Position:
-        - 0
-        - 0
-        - 0
+        - -0.281864136
+        - 0.237281755
+        - -0.237266496
       Rotation:
         - 0
-        - -0
+        - 45
         - 0
       Scale:
+        - 0.999999881
         - 1
-        - 1
-        - 1
+        - 0.999999881
     Sprite Component:
       Shape: 0
-      TextureAssetId: 41b91f6a-fdf0-4484-bf04-1c4dd67b9790
+      TextureAssetId: ""
       Color:
         - 1
         - 1
         - 0
-        - 1
+        - 0.0666666701
   - Identity Component:
       Entity Name: Camera
       Entity UUID: d05e749b-e203-4e17-8f86-341c753b71ac
