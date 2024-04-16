@@ -23,6 +23,7 @@
 #define LUMINA_RUNTIME_PLAYER_ASSET_PACKAGE_NAME "compiled_resources.package"
 #define LUMINA_RUNTIME_PLAYER_SCRIPT_CORE_NAME "lumina_scripting_core.dll"
 #define LUMINA_RUNTIME_PLAYER_SCRIPT_BUILD_NAME "LuminaScript.dll"
+#define LUMINA_RUNTIME_PLAYER_CONFIGS_DEFAULT_NAME "runtime.config"
 
 namespace lumina_editor_configs
 {

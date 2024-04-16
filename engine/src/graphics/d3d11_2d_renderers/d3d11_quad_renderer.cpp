@@ -129,6 +129,7 @@ namespace lumina
 	d3d11_blend_state blend_state{};
 	d3d11_constant_buffer generic_constant_buffer{};	
 	d3d11_sampler texture_sampler{};
+	d3d11_rasterizer rasterizer{};
 
 	std::vector<quad_vertex_t> verticies{};
 	std::vector<d3d11_texture*> textures_submitted{};
@@ -187,6 +188,7 @@ namespace lumina
 		blend_state.enable();
 		generic_constant_buffer.enable();
 		texture_sampler.enable();
+		rasterizer.enable();
 
 		for (size_t i = 0; i < textures_submitted.size(); i++)
 			textures_submitted[i]->enable(i);
@@ -323,6 +325,9 @@ namespace lumina
 
 		// Allocate the texture sampler
 		texture_sampler.allocate();
+
+		// Allocate the default rasterizer
+		rasterizer.allocate();
 	}
 
 	void d3d11_quad_renderer_s::destroy()
@@ -330,5 +335,6 @@ namespace lumina
 		vertex_buffer.destroy();
 		index_buffer.destroy();
 		input_layout_descriptor.destroy();
+		rasterizer.destroy();
 	}
 }

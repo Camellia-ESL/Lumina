@@ -9,6 +9,7 @@
 
 namespace lumina
 {
+	// Represent the abstracted surface of the application on a desktop environment it would be the "Window"
 	class app_surface
 	{
 	public:
@@ -27,6 +28,9 @@ namespace lumina
 
 		// Get's the surface width and height
 		const glm::vec2 get_dimensions() const { int width, height; glfwGetWindowSize(window_, &width, &height); return { width, height }; }
+
+		// Change the surface name
+		void set_name(const std::string& name) const { glfwSetWindowTitle(window_, name.c_str()); }
 
 	private:
 

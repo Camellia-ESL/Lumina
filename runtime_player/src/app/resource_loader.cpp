@@ -10,6 +10,33 @@
 
 namespace lumina_runtime_player
 {
+	void resource_loader::load_configs()
+	{
+		spdlog::warn("Loading configs...");
+
+		// Load all the configs of the application
+
+		// Tries first to deserialize project settings
+		YAML::Node app_configs_yaml;
+
+		try
+		{
+			app_configs_yaml = YAML::LoadFile(LUMINA_RUNTIME_PLAYER_CONFIGS_DEFAULT_NAME);
+		}
+		catch (const std::exception& e)
+		{
+			spdlog::error((std::string)"Error loading application configs -> " + e.what());
+			return;
+		}
+
+		// Set's the application surface name
+		lumina::application_player::get_singleton()
+			.get_surface()
+			.set_name(app_configs_yaml["Runtime Player Window Name"].as<std::string>());
+
+		spdlog::info("Configs loaded.");
+	}
+
 	void resource_loader::load_assets()
 	{
 		spdlog::warn("Loading assets...");

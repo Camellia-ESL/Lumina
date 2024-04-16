@@ -7,6 +7,9 @@ namespace lumina_runtime_player
 {
 	void runtime_player_app_player::on_init()
 	{
+		// Loads the application configs
+		resource_loader::load_configs();
+
 		// Load assets **NOTE** -> assets must be loaded BEFORE loading scenes or any other type of resource
 		resource_loader::load_assets();
 

@@ -9,6 +9,7 @@ namespace lumina_runtime_player
 	{
 	public:
 
+		static void load_configs();
 		static void load_assets();
 		static void load_scenes();
 		static void load_assemblies();

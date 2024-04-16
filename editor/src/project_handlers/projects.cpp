@@ -28,6 +28,7 @@ LUMINA_SINGLETON_DECL_INSTANCE(lumina_editor::project_handler);
 #define LUMINA_EDITOR_SLN_STARTUP_BATCH_DEFAULT_NAME "run_sln.bat"
 #define LUMINA_EDITOR_GENERATION_SCRIPT_DEFAULT_NAME "proj_solution_gen.lua"
 #define LUMINA_EDITOR_APP_SCRIPT_DEFAULT_NAME "app.cs"
+#define LUMINA_EDITOR_RUNTIME_PLAYER_CONFIGS_DEFAULT_NAME "runtime.config"
 
 namespace lumina_editor
 {
@@ -239,7 +240,7 @@ namespace lumina_editor
 		yaml_stream_emitter << YAML::Value << loaded_project_->build_info.runtime_player_window_name;
 		yaml_stream_emitter << YAML::EndMap;
 
-		std::ofstream out_stream{ build_path + "\\" + "runtime.config" };
+		std::ofstream out_stream{ build_path + "\\" + LUMINA_EDITOR_RUNTIME_PLAYER_CONFIGS_DEFAULT_NAME };
 		out_stream << yaml_stream_emitter.c_str();
 
 		// Pack assets

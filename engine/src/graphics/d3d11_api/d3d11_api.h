@@ -15,3 +15,4 @@
 #include "d3d11_constant_buffer.h"
 #include "d3d11_sampler.h"
 #include "d3d11_texture.h"
+#include "d3d11_rasterizer.h"
