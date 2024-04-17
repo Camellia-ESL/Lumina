@@ -3,7 +3,7 @@
 A little 2D focused game engine developed by Francesco Crocioni "Vanity".
 
 ### Lumina Presentation
-####Lumina lists a small list of features for now, it currently supports:
+#### Lumina lists a small list of features for now, it currently supports:
 - Projects creation, save and load.
 - A game/app production builder, essentially a compiler that builds the whole project in a final production ready application.
 - Scripting in c#
