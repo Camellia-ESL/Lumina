@@ -1,9 +1,15 @@
 # Lumina Engine
 
-An attempt to make a simple usable game engine that actually produces playable games.
+A little 2D focused game engine developed by Francesco Crocioni "Vanity".
 
 ### Lumina Presentation
 #### A photo of a pretty clean project in lumina
+Lumina lists a small list of features for now, it currently supports:
+- Projects creation, save and load.
+- A game/app production builder, essentially a compiler that builds the whole project in a final production ready application.
+- Scripting in c#
+- A full entity system with various components
+- An asset system that currently only support textures as assets.
 ![image](https://github.com/VanityEmptiness/Lumina/assets/85369525/2e96f4d9-20ac-4427-8848-63bedd59b5f4)
 
 ### Building on Windows
