@@ -24,6 +24,12 @@ namespace lumina
 		// Draw a textured quad
 		static void draw_quad(const glm::mat4& model_transform, const texture& texture);
 
+		// Draw a colored line
+		static void draw_line(const glm::mat4& model_transform, const glm::vec4& color);
+
+		// Draw a colored grid
+		static void draw_grid(const glm::mat4& model_transform, const glm::vec4& color, float grid_size);
+
 	private:
 
 	};

@@ -23,6 +23,9 @@ namespace lumina
 		// Set the graphics api used to render
 		void set_graphics_api(graphics_api_e api) { graphics_api_running_ = api; }
 
+		// Set wheter if the vsync should be enabled or not
+		void set_vsync(bool on) { vsync_ = on; }
+
 		// Get's the graphics api used for rendering
 		const graphics_api_e get_graphics_api_running() const { return graphics_api_running_; }
 

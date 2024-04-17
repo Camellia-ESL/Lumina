@@ -86,6 +86,19 @@ namespace lumina_editor
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Settings"))
+			{
+				ImGui::SeparatorText("Graphics");
+				ImGui::PushStyleColor(ImGuiCol_Separator, { 0.35f, 0.35f, 0.35f, 1.0f });
+				ImGui::Separator();
+				ImGui::PopStyleColor();
+
+				ImGui::Checkbox("Editor Vsync", &ui_shared_vars::IS_VSYNC_ENABLED);
+				lumina::application_player::get_singleton().get_surface().get_graphics_driver().set_vsync(ui_shared_vars::IS_VSYNC_ENABLED);
+
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Build"))
 			{
 				if (ImGui::MenuItem("Build Project"))

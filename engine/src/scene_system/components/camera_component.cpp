@@ -37,25 +37,40 @@ namespace lumina
     void camera_component::set_rotation(float yaw, float pitch)
     {
         this->yaw_ = yaw;
-        this->pitch_ = pitch;
-
+       
         // make sure that when pitch is out of bounds, screen doesn't get flipped
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
+        if (pitch >= 89.0f)
+        {
+            this->pitch_ = 89.0f;
+            return;
+        }
+        if (pitch <= -89.0f)
+        {
+            this->pitch_ = -89.0f;
+            return;
+        }
+
+        this->pitch_ = pitch;
     }
 
     void camera_component::rotate(float yaw, float pitch)
     {
         this->yaw_ += yaw;
-        this->pitch_ += pitch;
 
         // make sure that when pitch is out of bounds, screen doesn't get flipped
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
+        if ((this->pitch_ + pitch) >= 89.0f)
+        {
+            this->pitch_ = 89.0f;
+            return;
+        }
+        if ((this->pitch_ + pitch) <= -89.0f)
+        {
+            this->pitch_ = -89.0f;
+            return;
+        }
+
+        this->pitch_ += pitch;
     }
 
     void camera_component::calculate_vectors()

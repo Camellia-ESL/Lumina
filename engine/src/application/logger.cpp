@@ -39,4 +39,34 @@ namespace lumina
 	{
 		return log<std::string>(log_data, log_level);
 	}
+
+	template<>
+	lumina_logger::log_t& lumina_logger::log<l_int32>(l_int32 log_data, log_types_e log_level)
+	{
+		return log<std::string>(std::to_string(log_data), log_level);
+	}
+
+	template<>
+	lumina_logger::log_t& lumina_logger::log<l_float32>(l_float32 log_data, log_types_e log_level)
+	{
+		return log<std::string>(std::to_string(log_data), log_level);
+	}
+
+	template<>
+	lumina_logger::log_t& lumina_logger::log<l_uint32>(l_uint32 log_data, log_types_e log_level)
+	{
+		return log<std::string>(std::to_string(log_data), log_level);
+	}
+
+	template<>
+	lumina_logger::log_t& lumina_logger::log<l_uint64>(l_uint64 log_data, log_types_e log_level)
+	{
+		return log<std::string>(std::to_string(log_data), log_level);
+	}
+
+	template<>
+	lumina_logger::log_t& lumina_logger::log<l_int64>(l_int64 log_data, log_types_e log_level)
+	{
+		return log<std::string>(std::to_string(log_data), log_level);
+	}
 }

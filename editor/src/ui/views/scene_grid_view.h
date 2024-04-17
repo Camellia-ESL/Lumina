@@ -10,13 +10,13 @@ namespace lumina_editor
 	{
 	public:
 
-		void on_create() override;
 		void on_render() override;
 
 	private:
 
-		glm::mat4 grid_matrix_{ 1.0f };
-		float grid_size_ = 3000.0f;
+		lumina::transform_component grid_transform_{};
+		float grid_size_ = 500.0f;
+		glm::vec4 grid_color_ = { 1.0f , 1.0f , 1.0f , 0.4f };
 
 	};
 }

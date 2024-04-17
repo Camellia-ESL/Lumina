@@ -4,12 +4,13 @@
 
 #include "d3d11_instance.h"
 #include "../d3d11_2d_renderers/d3d11_quad_renderer.h"
+#include "../d3d11_2d_renderers/d3d11_lines_renderer.h"
 
 #include "spdlog/spdlog.h"
 
 #include <Windows.h>
 
-lumina::d3d11_renderer* lumina::d3d11_renderer::singleton_instance_ = nullptr;
+LUMINA_SINGLETON_DECL_INSTANCE(lumina::d3d11_renderer);
 
 namespace lumina
 {
@@ -17,7 +18,7 @@ namespace lumina
 	{
         spdlog::warn("Creating a d3d11 instance.");
 
-        d3d11_instance* instance = new d3d11_instance();
+        LUMINA_SINGLETON_INIT_INSTANCE(d3d11_instance);
 
         if (!d3d11_instance::get_singleton().create_device(window))
         {
@@ -30,6 +31,7 @@ namespace lumina
 
         // Init shapes batch renderers
         d3d11_quad_renderer_s::init();
+        d3d11_lines_renderer_s::init();
 
         spdlog::info("D3D11 Renderer initialized.");
 	}

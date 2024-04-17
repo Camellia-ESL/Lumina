@@ -15,17 +15,29 @@ namespace lumina
 		return *this;
 	}
 
+	transform_component& transform_component::set_scale(const glm::vec3& scale)
+	{
+		model_matrix_[0][0] = scale.x; 
+		model_matrix_[1][1] = scale.y; 
+		model_matrix_[2][2] = scale.z;
+		return *this;
+	}
+
+	transform_component& transform_component::translate(const glm::vec3& translation)
+	{
+		model_matrix_ = glm::translate(model_matrix_, translation);
+		return *this;
+	}
+
 	transform_component& transform_component::rotate(const glm::vec3& rotation_axis_multiplier, float angle)
 	{
 		model_matrix_ = glm::rotate(model_matrix_, angle, rotation_axis_multiplier);
 		return *this;
 	}
 
-	transform_component& transform_component::set_scale(const glm::vec3& scale)
+	transform_component& transform_component::scale(const glm::vec3& scale)
 	{
-		model_matrix_[0][0] = scale.x; 
-		model_matrix_[1][1] = scale.y; 
-		model_matrix_[2][2] = scale.z;
+		model_matrix_ = glm::scale(model_matrix_, scale);
 		return *this;
 	}
 

@@ -32,7 +32,7 @@ namespace lumina_editor
 		// Update the editor camera
 		editor_camera::get_singleton().on_update();
 	}
-
+	
 	void editor_app_player::on_render()
 	{
 		// Renders Scene
