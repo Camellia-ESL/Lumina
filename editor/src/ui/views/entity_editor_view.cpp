@@ -85,6 +85,10 @@ namespace lumina_editor
 		if (!entity_.has_component<lumina::transform_component>())
 			return;
 
+		lumina::transform_component& entity_transform = entity_.get_component<lumina::transform_component>();
+		lumina::entity_hierarchy_component& entity_hierarchy = entity_.get_component<lumina::entity_hierarchy_component>();
+		glm::mat4 pre_transformation_matrix = entity_transform.get_model_matrix();
+
 		ImGui::SeparatorText("Transform");
 		ImGui::PushStyleColor(ImGuiCol_Separator, { 0.35f, 0.35f, 0.35f, 1.0f });
 		ImGui::Separator();
@@ -95,7 +99,7 @@ namespace lumina_editor
 		glm::vec3 scale_ptr;
 
 		ImGuizmo::DecomposeMatrixToComponents(
-			(const float*)&entity_.get_component<lumina::transform_component>().get_model_matrix(),
+			(const float*)&entity_transform.get_model_matrix(),
 			(float*)&position_ptr,
 			(float*)&rotation_ptr,
 			(float*)&scale_ptr
@@ -135,7 +139,7 @@ namespace lumina_editor
 			(const float*)&position_ptr,
 			(const float*)&rotation_ptr,
 			(const float*)&scale_ptr,
-			(float*)&entity_.get_component<lumina::transform_component>().get_model_matrix()
+			(float*)&entity_transform.get_model_matrix()
 		);
 
 		// Render Object Gizmos
@@ -144,8 +148,27 @@ namespace lumina_editor
 			(const float*)&editor_camera::get_singleton().get_camera()->get_projection_matrix(),
 			(ImGuizmo::OPERATION)ui_shared_vars::GIZMO_OPERATION_TYPE,
 			(ImGuizmo::OPERATION)ui_shared_vars::GIZMO_OPERATION_TYPE == ImGuizmo::OPERATION::SCALE ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD,
-			(float*)&entity_.get_component<lumina::transform_component>().get_model_matrix()
+			(float*)&entity_transform.get_model_matrix()
 		);
+
+		// Check if the entity has not childs to apply transformation
+		if (!entity_hierarchy.has_childs())
+			return;
+
+		// Decompose the matrices into translation, rotation, and scale components
+		entity_hierarchy.dispatch_func_to_childs(
+			[&](lumina::entity& ent_iterated) -> void
+			{
+				if (!ent_iterated.has_component<lumina::transform_component>())
+					return;
+
+				lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
+				ent_ith_transform.set_model(
+					lumina::transform_component::compute_models_difference(pre_transformation_matrix, entity_transform.get_model_matrix()) *
+					ent_ith_transform.get_model_matrix()
+				);
+			}
+		);	
 	}
 
 	void entity_editor_view::render_sprite_component()

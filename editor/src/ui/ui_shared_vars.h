@@ -22,6 +22,8 @@ namespace lumina_editor
 		ui_shared_const_api char* FILE_TO_LOAD_DAD_ID = "file_to_load_dad";
 		// The drag and drop ID for accepting texture drag and drop
 		ui_shared_const_api char* TEXTURE_DAD_ID = "texture_dad";
+		// The drag and drop ID for accepting entities drag and drop
+		ui_shared_const_api char* ENTITY_DAD_ID = "entity_dad";
 		// The tag for the content browser view
 		ui_shared_const_api char* CONTENT_BROWSER_VIEW_TAG = "content_browser_view";
 		// Wheter if the performance view should be open or not

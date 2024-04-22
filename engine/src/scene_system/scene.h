@@ -34,6 +34,9 @@ namespace lumina
 		// Get's the scene camera
 		camera_component* get_camera() { return camera_; }
 
+		// Get's a entity by a given id or null entity if not found
+		entity get_entity_by_id(const std::string& id);
+
 		// Wheter if the scene has an active scene camera
 		bool has_camera() { return camera_ != nullptr; }
 

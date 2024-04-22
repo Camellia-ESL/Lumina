@@ -786,6 +786,10 @@ namespace lumina
 
 #endif 
 
+		transform_component& entity_transform = entity_fetched.get_component<transform_component>();
+		entity_hierarchy_component& entity_hierarchy = entity_fetched.get_component<entity_hierarchy_component>();
+		glm::mat4 pre_transformation_matrix = entity_transform.get_model_matrix();
+
 		// Get's the vector x,y,z 
 		MonoClass* vec_class = mono_object_get_class(vecToSet);
 
@@ -808,7 +812,25 @@ namespace lumina
 		);
 
 		// Set the value of the out vector
-		entity_fetched.get_component<transform_component>().set_position({ x , y , z });
+		entity_transform.set_position({ x , y , z });
+
+		// If the entity has childs apply the position to all the childs
+		if (entity_hierarchy.has_childs())
+		{
+			entity_hierarchy.dispatch_func_to_childs(
+				[&](lumina::entity& ent_iterated) -> void
+				{
+					if (!ent_iterated.has_component<lumina::transform_component>())
+						return;
+
+					lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
+					ent_ith_transform.set_model(
+						lumina::transform_component::compute_models_difference(pre_transformation_matrix, entity_transform.get_model_matrix()) *
+						ent_ith_transform.get_model_matrix()
+					);
+				}
+			);
+		}
 	}
 
 	static void transform_rotate_func(MonoObject* ownerEntity, MonoObject* vecToSet, float angleDeg)
@@ -824,6 +846,10 @@ namespace lumina
 
 #endif 
 
+		transform_component& entity_transform = entity_fetched.get_component<transform_component>();
+		entity_hierarchy_component& entity_hierarchy = entity_fetched.get_component<entity_hierarchy_component>();
+		glm::mat4 pre_transformation_matrix = entity_transform.get_model_matrix();
+
 		// Get's the vector x,y,z 
 		MonoClass* vec_class = mono_object_get_class(vecToSet);
 
@@ -846,7 +872,25 @@ namespace lumina
 		);
 
 		// Set the value of the out vector
-		entity_fetched.get_component<transform_component>().rotate({ x , y , z }, glm::radians(angleDeg));
+		entity_transform.rotate({ x , y , z }, glm::radians(angleDeg));
+
+		// If the entity has childs apply the position to all the childs
+		if (entity_hierarchy.has_childs())
+		{
+			entity_hierarchy.dispatch_func_to_childs(
+				[&](lumina::entity& ent_iterated) -> void
+				{
+					if (!ent_iterated.has_component<lumina::transform_component>())
+						return;
+
+					lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
+					ent_ith_transform.set_model(
+						lumina::transform_component::compute_models_difference(pre_transformation_matrix, entity_transform.get_model_matrix()) *
+						ent_ith_transform.get_model_matrix()
+					);
+				}
+			);
+		}
 	}
 
 	static void transform_set_scale_func(MonoObject* ownerEntity, MonoObject* vecToSet)
@@ -862,6 +906,10 @@ namespace lumina
 
 #endif 
 
+		transform_component& entity_transform = entity_fetched.get_component<transform_component>();
+		entity_hierarchy_component& entity_hierarchy = entity_fetched.get_component<entity_hierarchy_component>();
+		glm::mat4 pre_transformation_matrix = entity_transform.get_model_matrix();
+
 		// Get's the vector x,y,z 
 		MonoClass* vec_class = mono_object_get_class(vecToSet);
 
@@ -884,7 +932,25 @@ namespace lumina
 		);
 
 		// Set the value of the out vector
-		entity_fetched.get_component<transform_component>().set_scale({ x , y , z });
+		entity_transform.set_scale({ x , y , z });
+
+		// If the entity has childs apply the position to all the childs
+		if (entity_hierarchy.has_childs())
+		{
+			entity_hierarchy.dispatch_func_to_childs(
+				[&](lumina::entity& ent_iterated) -> void
+				{
+					if (!ent_iterated.has_component<lumina::transform_component>())
+						return;
+
+					lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
+					ent_ith_transform.set_model(
+						lumina::transform_component::compute_models_difference(pre_transformation_matrix, entity_transform.get_model_matrix()) *
+						ent_ith_transform.get_model_matrix()
+					);
+				}
+			);
+		}
 	}
 
 	void script_binder::bind_transform(mono_script* script_to_forward_binds)

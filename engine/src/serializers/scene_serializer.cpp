@@ -44,10 +44,10 @@ namespace lumina
 		glm::vec3 scale_ptr;
 
 		ImGuizmo::DecomposeMatrixToComponents(
-			(const float*)&component.get_model_matrix(),
-			(float*)&position_ptr,
-			(float*)&rotation_ptr,
-			(float*)&scale_ptr
+			(const l_float32*)&component.get_model_matrix(),
+			(l_float32*)&position_ptr,
+			(l_float32*)&rotation_ptr,
+			(l_float32*)&scale_ptr
 			);
 
 		yaml_stream_emitter << YAML::Key << "Position";
@@ -63,10 +63,10 @@ namespace lumina
 		types_serializer::serialize_yaml_vec3(scale_ptr, yaml_stream_emitter);
 		
 		ImGuizmo::RecomposeMatrixFromComponents(
-			(const float*)&position_ptr,
-			(const float*)&rotation_ptr,
-			(const float*)&scale_ptr,
-			(float*)&component.get_model_matrix()
+			(const l_float32*)&position_ptr,
+			(const l_float32*)&rotation_ptr,
+			(const l_float32*)&scale_ptr,
+			(l_float32*)&component.get_model_matrix()
 		);
 
 		// End the
@@ -145,6 +145,29 @@ namespace lumina
 		yaml_stream_emitter << YAML::EndMap;
 	}
 
+	template<>
+	static void scene_serializer::serialize_component_yaml<entity_hierarchy_component>(entity_hierarchy_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
+	{
+		yaml_stream_emitter << YAML::Key << "Hierarchy Component";
+
+		// Create's the component map
+		yaml_stream_emitter << YAML::Value << YAML::BeginMap;
+
+		yaml_stream_emitter << YAML::Key << "Childs";
+		yaml_stream_emitter << YAML::Value << YAML::BeginSeq;
+		for (auto& child : component.get_childs())
+		{
+			yaml_stream_emitter << child.get_component<identity_component>().id;
+		}
+		yaml_stream_emitter << YAML::Value << YAML::EndSeq;
+
+		yaml_stream_emitter << YAML::Key << "Parent";
+		yaml_stream_emitter << YAML::Value << (component.get_parent().has_entity() ? component.get_parent().get_component<identity_component>().id : "not_parented");
+
+		// End the
+		yaml_stream_emitter << YAML::EndMap;
+	}
+
 	void scene_serializer::serialize_yaml(scene* scene, const std::string& file_path)
 	{
 		// Check if the scene is null
@@ -178,6 +201,8 @@ namespace lumina
 
 			serialize_component_yaml(entity.get_component<identity_component>(), yaml_stream_emitter, scene);
 			
+			serialize_component_yaml(entity.get_component<entity_hierarchy_component>(), yaml_stream_emitter, scene);
+
 			if(entity.has_component<transform_component>())
 				serialize_component_yaml(entity.get_component<transform_component>(), yaml_stream_emitter, scene);
 
@@ -239,10 +264,10 @@ namespace lumina
 		glm::vec3 scale_ptr;
 
 		ImGuizmo::DecomposeMatrixToComponents(
-			(const float*)&ent_component.get_model_matrix(),
-			(float*)&position_ptr,
-			(float*)&rotation_ptr,
-			(float*)&scale_ptr
+			(const l_float32*)&ent_component.get_model_matrix(),
+			(l_float32*)&position_ptr,
+			(l_float32*)&rotation_ptr,
+			(l_float32*)&scale_ptr
 		);
 
 		position_ptr = position;
@@ -250,10 +275,10 @@ namespace lumina
 		scale_ptr = scale;
 
 		ImGuizmo::RecomposeMatrixFromComponents(
-			(const float*)&position_ptr,
-			(const float*)&rotation_ptr,
-			(const float*)&scale_ptr,
-			(float*)&ent_component.get_model_matrix()
+			(const l_float32*)&position_ptr,
+			(const l_float32*)&rotation_ptr,
+			(const l_float32*)&scale_ptr,
+			(l_float32*)&ent_component.get_model_matrix()
 		);
 	}
 
@@ -303,16 +328,36 @@ namespace lumina
 		if (yaml_component["Is Active"].as<bool>())
 			scene->set_camera(&ent_component);
 
-		ent_component.fov_ = yaml_component["Fov"].as<float>();
-		ent_component.far_view_ = yaml_component["Far View"].as<float>();
-		ent_component.near_view_ = yaml_component["Near View"].as<float>();
-		ent_component.yaw_ = yaml_component["Yaw"].as<float>();
-		ent_component.pitch_ = yaml_component["Pitch"].as<float>();
+		ent_component.fov_ = yaml_component["Fov"].as<l_float32>();
+		ent_component.far_view_ = yaml_component["Far View"].as<l_float32>();
+		ent_component.near_view_ = yaml_component["Near View"].as<l_float32>();
+		ent_component.yaw_ = yaml_component["Yaw"].as<l_float32>();
+		ent_component.pitch_ = yaml_component["Pitch"].as<l_float32>();
 		ent_component.position_ = types_serializer::deserialize_yaml_vec3(position_node);
 		ent_component.front_ = types_serializer::deserialize_yaml_vec3(front_node);
 		ent_component.up_ = types_serializer::deserialize_yaml_vec3(up_node);
 		ent_component.right_ = types_serializer::deserialize_yaml_vec3(right_node);
 		ent_component.world_up_ = types_serializer::deserialize_yaml_vec3(world_up_node);
+	}
+
+	template<>
+	static void scene_serializer::deserialize_component_yaml<entity_hierarchy_component>(entity& null_ent, YAML::detail::iterator_value& yaml_entity, scene* scene)
+	{
+		// Note that by default here entity is always null
+		auto yaml_identity_component = yaml_entity["Identity Component"];
+		auto yaml_hierarchy_component = yaml_entity["Hierarchy Component"];
+		entity entity = scene->get_entity_by_id(yaml_identity_component["Entity UUID"].as<std::string>());
+		entity_hierarchy_component& ent_hierarchy_component = entity.get_component<entity_hierarchy_component>();
+		
+		// Deserialize the component
+		const std::string parent = yaml_hierarchy_component["Parent"].as<std::string>();
+		if(parent != "not_parented")
+			ent_hierarchy_component.set_parent(scene->get_entity_by_id(parent));
+
+		for (auto child : yaml_hierarchy_component["Childs"])
+			ent_hierarchy_component.attach_child(
+				scene->get_entity_by_id(child.as<std::string>())
+			);
 	}
 
 	bool scene_serializer::deserialize_yaml(scene* scene, const std::string& file_path)
@@ -342,6 +387,7 @@ namespace lumina
 		if (scene_yaml["Is Active Scene"] && scene_yaml["Is Active Scene"].as<bool>())
 			scenes_system::get_singleton().activate_scene(scene->get_name());
 
+		// Deserializes all the entities with their components
 		for (auto ent : scene_yaml["Entities"])
 		{
 			entity new_entity = scene->create_entity();
@@ -353,6 +399,14 @@ namespace lumina
 			deserialize_component_yaml<sprite_component>(new_entity, ent, scene);
 
 			deserialize_component_yaml<camera_component>(new_entity, ent, scene);
+		}
+
+		// Executes a special deserialization for the entity hierarchies
+		for (auto ent : scene_yaml["Entities"])
+		{
+			entity null_entity{};
+
+			deserialize_component_yaml<entity_hierarchy_component>(null_entity, ent, scene);
 		}
 
 		return true;

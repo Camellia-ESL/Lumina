@@ -11,6 +11,7 @@ namespace lumina
 	{
 		entity entity_buffer{ &registry_, registry_.create() };
 		entity_buffer.add_component<identity_component>();
+		entity_buffer.add_component<entity_hierarchy_component>();
 		return entity_buffer;
 	}
 
@@ -33,5 +34,17 @@ namespace lumina
 	void scene::destroy_entity(entt::entity entity)
 	{
 		registry_.destroy(entity);
+	}
+
+	entity scene::get_entity_by_id(const std::string& id)
+	{
+		for (auto ent_ith : registry_.view<identity_component>())
+		{
+			entity ent{ &registry_, ent_ith };
+			if (ent.get_component<identity_component>().id == id)
+				return ent;
+		}
+
+		return entity{};
 	}
 }
