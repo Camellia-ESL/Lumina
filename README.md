@@ -9,6 +9,7 @@ A little 2D focused game engine developed by Francesco Crocioni "Vanity".
 - Scripting in c#
 - A full entity system with various components
 - An asset system that currently only support textures as assets.
+- A small 2d physics system (using box2d)
 
 #### A photo of a pretty clean project in lumina
 ![image](https://github.com/VanityEmptiness/Lumina/assets/85369525/2e96f4d9-20ac-4427-8848-63bedd59b5f4)
