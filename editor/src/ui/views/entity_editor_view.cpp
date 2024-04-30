@@ -35,6 +35,7 @@ namespace lumina_editor
 		render_transform_component();
 		render_sprite_component();
 		render_camera_component();
+		render_physics_collider_2d_component();
 
 		ImGui::End();
 	}
@@ -62,6 +63,12 @@ namespace lumina_editor
 			if (ImGui::SmallButton("Add Camera"))
 			{
 				entity_.add_component<lumina::camera_component>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::SmallButton("Add Physics Collider 2D"))
+			{
+				entity_.add_component<lumina::physics_collider_2d_component>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -233,5 +240,40 @@ namespace lumina_editor
 			ImGui::TextColored(editor_ui_colors::GREEN, "Active");
 		else if(ImGui::SmallButton("Set Active"))
 			scene_->set_camera(&camera);
+	}
+
+	void entity_editor_view::render_physics_collider_2d_component()
+	{
+		// Check if the entity has not the component, to avoid rendering or crashing
+		if (!entity_.has_component<lumina::physics_collider_2d_component>())
+			return;
+
+		ImGui::SeparatorText("Physics Collider 2D");
+		ImGui::PushStyleColor(ImGuiCol_Separator, { 0.35f, 0.35f, 0.35f, 1.0f });
+		ImGui::Separator();
+		ImGui::PopStyleColor();
+
+		lumina::physics_collider_2d_component& physics_collider_2d = entity_.get_component<lumina::physics_collider_2d_component>();
+
+		if (view_instance_data_.is_first_physics_collider_2d_render)
+		{
+			view_instance_data_.fixture_size = physics_collider_2d.get_fixture_size();
+			view_instance_data_.is_first_physics_collider_2d_render = false;
+		}
+
+		const char* body_types_names[] = {
+			"Static",
+			"Kinematic",
+			"Dynamic"
+		};
+
+		ImGui::Combo("Body Type", (l_int32*)&physics_collider_2d.body_type, body_types_names, IM_ARRAYSIZE(body_types_names));
+		ImGui::Checkbox("Rotation Fixed", &physics_collider_2d.is_rotation_fixed);
+		ImGui::DragFloat("Density", &physics_collider_2d.density, 0.1f);
+		ImGui::DragFloat("Friction", &physics_collider_2d.friction, 0.01f);
+		ImGui::DragFloat("Restitution", &physics_collider_2d.restitution, 0.01f);
+		ImGui::DragFloat("Restitution Threshold", &physics_collider_2d.restitution_threshold, 0.01f);
+		ImGui::DragFloat2("Fixture Size", (float*)&view_instance_data_.fixture_size, 0.001f);
+		physics_collider_2d.set_fixture_size(view_instance_data_.fixture_size);
 	}
 }

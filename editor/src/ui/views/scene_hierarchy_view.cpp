@@ -74,7 +74,7 @@ namespace lumina_editor
 				}
 
 				// Handles entity right click
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 				{
 					right_clicked_entity_ = entity;
 					ImGui::OpenPopup("entity_action_menu_popup");
@@ -183,6 +183,10 @@ namespace lumina_editor
 			{
 				// Destroy if exist the previous entity editor view
 				destroy_selected_entity_context();
+
+				// Set the selected entity
+				selected_entity_ = lumina::entity{};
+
 				scene_registry.destroy(right_clicked_entity_.get_entity());
 				right_clicked_entity_ = lumina::entity{};
 			}

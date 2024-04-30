@@ -3,6 +3,8 @@
 #include "entity.h"
 
 #include "components/components.h"
+#include "physics/2d/physics_simulator_2d.h"
+
 #include "entt/entt.hpp"
 
 #include <string>
@@ -34,6 +36,9 @@ namespace lumina
 		// Get's the scene camera
 		camera_component* get_camera() { return camera_; }
 
+		// Get's the 2D physics simulator
+		physics_simulator_2d& get_physics_simulator_2d() { return physics_2d_sim_; }
+
 		// Get's a entity by a given id or null entity if not found
 		entity get_entity_by_id(const std::string& id);
 
@@ -57,12 +62,31 @@ namespace lumina
 		// The active camera used to render the scene
 		camera_component* camera_{};
 
+		// The 2d physics simulator of the scene
+		physics_simulator_2d physics_2d_sim_;
+
 		// Set the scene name
 		void set_name(const std::string& new_name) { name_ = new_name; }
+
+		// Called on scene creation
+		void on_create();
+
+		// Called on scene destruction
+		void on_destroy();
+
+		// Called on activation
+		void on_activate();
+
+		// Called on deactivation
+		void on_deactivate();
+
+		// Called whenever the scene get's loaded with all its entities (example: when it get's deserialized)
+		void on_load();
 
 	private:
 
 		friend class scenes_system;
+		friend class scene_serializer;
 
 	};
 }

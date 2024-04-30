@@ -10,3 +10,4 @@
 #include "transform_component.h"
 #include "identity_component.h"
 #include "entity_hierarchy_component.h"
+#include "physics_collider_2d.h"

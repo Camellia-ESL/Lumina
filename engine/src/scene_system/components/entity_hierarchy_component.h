@@ -9,7 +9,7 @@
 
 namespace lumina
 {
-	struct entity_hierarchy_component : component
+	struct entity_hierarchy_component : public component
 	{
 	public:
 

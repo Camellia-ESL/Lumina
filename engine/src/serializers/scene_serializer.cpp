@@ -27,7 +27,7 @@ namespace lumina
 		yaml_stream_emitter << YAML::Key << "Entity UUID";
 		yaml_stream_emitter << YAML::Value << component.id;
 
-		// End the
+		// End the component map
 		yaml_stream_emitter << YAML::EndMap;
 	}
 
@@ -69,7 +69,7 @@ namespace lumina
 			(l_float32*)&component.get_model_matrix()
 		);
 
-		// End the
+		// End the component map
 		yaml_stream_emitter << YAML::EndMap;
 	}
 
@@ -91,7 +91,7 @@ namespace lumina
 		yaml_stream_emitter << YAML::Value;
 		types_serializer::serialize_yaml_vec4(component.color, yaml_stream_emitter);
 
-		// End the
+		// End the component map
 		yaml_stream_emitter << YAML::EndMap;
 	}
 
@@ -141,7 +141,7 @@ namespace lumina
 		yaml_stream_emitter << YAML::Value;
 		types_serializer::serialize_yaml_vec3(component.world_up_, yaml_stream_emitter);
 
-		// End the
+		// End the component map
 		yaml_stream_emitter << YAML::EndMap;
 	}
 
@@ -165,6 +165,43 @@ namespace lumina
 		yaml_stream_emitter << YAML::Value << (component.get_parent().has_entity() ? component.get_parent().get_component<identity_component>().id : "not_parented");
 
 		// End the
+		yaml_stream_emitter << YAML::EndMap;
+	}
+
+	template<>
+	static void scene_serializer::serialize_component_yaml<physics_collider_2d_component>(physics_collider_2d_component& component, YAML::Emitter& yaml_stream_emitter, scene* scene)
+	{
+		yaml_stream_emitter << YAML::Key << "PhysicsCollider2D Component";
+
+		// Create's the component map
+		yaml_stream_emitter << YAML::Value << YAML::BeginMap;
+
+		yaml_stream_emitter << YAML::Key << "Body Type";
+		yaml_stream_emitter << YAML::Value << (l_uint32)component.body_type;
+
+		yaml_stream_emitter << YAML::Key << "Shape Type";
+		yaml_stream_emitter << YAML::Value << (l_uint32)component.shape_type;
+
+		yaml_stream_emitter << YAML::Key << "Is Rotation Fixed";
+		yaml_stream_emitter << YAML::Value << component.is_rotation_fixed;
+
+		yaml_stream_emitter << YAML::Key << "Density";
+		yaml_stream_emitter << YAML::Value << component.density;
+
+		yaml_stream_emitter << YAML::Key << "Friction";
+		yaml_stream_emitter << YAML::Value << component.friction;
+
+		yaml_stream_emitter << YAML::Key << "Restitution";
+		yaml_stream_emitter << YAML::Value << component.restitution;
+
+		yaml_stream_emitter << YAML::Key << "Restitution Threshold";
+		yaml_stream_emitter << YAML::Value << component.restitution_threshold;
+
+		yaml_stream_emitter << YAML::Key << "Fixture Size";
+		yaml_stream_emitter << YAML::Value;
+		types_serializer::serialize_yaml_vec2(component.get_fixture_size(), yaml_stream_emitter);
+
+		// End the component map
 		yaml_stream_emitter << YAML::EndMap;
 	}
 
@@ -211,6 +248,9 @@ namespace lumina
 
 			if (entity.has_component<camera_component>())
 				serialize_component_yaml(entity.get_component<camera_component>(), yaml_stream_emitter, scene);
+
+			if (entity.has_component<physics_collider_2d_component>())
+				serialize_component_yaml(entity.get_component<physics_collider_2d_component>(), yaml_stream_emitter, scene);
 
 			// Save the entity map
 			yaml_stream_emitter << YAML::EndMap;
@@ -360,6 +400,30 @@ namespace lumina
 			);
 	}
 
+	template<>
+	static void scene_serializer::deserialize_component_yaml<physics_collider_2d_component>(entity& entity, YAML::detail::iterator_value& yaml_entity, scene* scene)
+	{
+		auto yaml_component = yaml_entity["PhysicsCollider2D Component"];
+
+		// Check if the component doesn't exist
+		if (!yaml_component)
+			return;
+
+		physics_collider_2d_component& ent_component = entity.add_component<physics_collider_2d_component>();
+
+		auto fixture_size_node = yaml_component["Fixture Size"];
+
+		// Deserialize the component
+		ent_component.body_type = (physics_collider_2d_component::body_type_e)yaml_component["Body Type"].as<l_uint32>();
+		ent_component.shape_type = (physics_collider_2d_component::shape_type_e)yaml_component["Shape Type"].as<l_uint32>();
+		ent_component.is_rotation_fixed = yaml_component["Is Rotation Fixed"].as<bool>();
+		ent_component.density = yaml_component["Density"].as<l_float32>();
+		ent_component.friction = yaml_component["Friction"].as<l_float32>();
+		ent_component.restitution = yaml_component["Restitution"].as<l_float32>();
+		ent_component.restitution_threshold = yaml_component["Restitution Threshold"].as<l_float32>();
+		ent_component.set_fixture_size(types_serializer::deserialize_yaml_vec2(fixture_size_node));
+	}
+
 	bool scene_serializer::deserialize_yaml(scene* scene, const std::string& file_path)
 	{
 		// Check if the scene is null
@@ -399,6 +463,8 @@ namespace lumina
 			deserialize_component_yaml<sprite_component>(new_entity, ent, scene);
 
 			deserialize_component_yaml<camera_component>(new_entity, ent, scene);
+
+			deserialize_component_yaml<physics_collider_2d_component>(new_entity, ent, scene);
 		}
 
 		// Executes a special deserialization for the entity hierarchies
@@ -408,6 +474,9 @@ namespace lumina
 
 			deserialize_component_yaml<entity_hierarchy_component>(null_entity, ent, scene);
 		}
+
+		// Calls the scene on load
+		scene->on_load();
 
 		return true;
 	}

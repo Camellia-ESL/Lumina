@@ -2,6 +2,7 @@
 
 #include "resource_loader.h"
 #include "script_assemblies/runtime_script_manager.h"
+#include "physics_handler/physics_2d_manager.h"
 
 namespace lumina_runtime_player
 {
@@ -24,6 +25,9 @@ namespace lumina_runtime_player
 	{
 		// Calls the on update for the scripting manager
 		runtime_script_manager::get_singleton().call_on_update();
+
+		// Calls the on update for the physics managers
+		physics_2d_manager_s::on_update();
 	}
 
 	void runtime_player_app_player::on_render()

@@ -2,32 +2,25 @@ Scene Name: Untitled Scene
 Is Active Scene: true
 Entities:
   - Identity Component:
-      Entity Name: Test Entity
-      Entity UUID: 5a203b4a-2bfd-4a73-909a-7e4802e7f7b5
+      Entity Name: Empty Object
+      Entity UUID: 53d15c20-9f34-4d68-b39b-6c28d061cd2d
+    Hierarchy Component:
+      Childs:
+        []
+      Parent: not_parented
     Transform Component:
       Position:
-        - -0.281864136
-        - 0.237281755
-        - -0.237266496
+        - 0
+        - 0
+        - 0.59482038
       Rotation:
         - 0
-        - 45
+        - -0
         - 0
       Scale:
-        - 0.999999881
-        - 1
-        - 0.999999881
-    Sprite Component:
-      Shape: 0
-      TextureAssetId: ""
-      Color:
         - 1
         - 1
-        - 0
-        - 0.0666666701
-  - Identity Component:
-      Entity Name: Camera
-      Entity UUID: d05e749b-e203-4e17-8f86-341c753b71ac
+        - 1
     Camera Component:
       Is Active: true
       Fov: 90
@@ -55,3 +48,81 @@ Entities:
         - 0
         - 1
         - 0
+  - Identity Component:
+      Entity Name: Empty Object
+      Entity UUID: 73f83c32-6f1b-459d-b736-730e31c93422
+    Hierarchy Component:
+      Childs:
+        []
+      Parent: not_parented
+    Transform Component:
+      Position:
+        - -0.0832036287
+        - 2.22186184
+        - -2.04219651
+      Rotation:
+        - 0
+        - -0
+        - 0
+      Scale:
+        - 0.99999845
+        - 0.99999845
+        - 1
+    Sprite Component:
+      Shape: 0
+      TextureAssetId: ""
+      Color:
+        - 1
+        - 1
+        - 0
+        - 1
+    PhysicsCollider2D Component:
+      Body Type: 2
+      Shape Type: 0
+      Is Rotation Fixed: true
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      Restitution Threshold: 0.5
+      Fixture Size:
+        - 1
+        - 1
+  - Identity Component:
+      Entity Name: Empty Object
+      Entity UUID: 421faab3-d55d-48b8-85f2-9b14290f2e74
+    Hierarchy Component:
+      Childs:
+        []
+      Parent: not_parented
+    Transform Component:
+      Position:
+        - 0
+        - -2.82588744
+        - -1.71115601
+      Rotation:
+        - 0
+        - -0
+        - -24.0309868
+      Scale:
+        - 4.5798893
+        - 0.999999702
+        - 6.23999977
+    Sprite Component:
+      Shape: 0
+      TextureAssetId: ""
+      Color:
+        - 1
+        - 0.345549703
+        - 0
+        - 1
+    PhysicsCollider2D Component:
+      Body Type: 0
+      Shape Type: 0
+      Is Rotation Fixed: true
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      Restitution Threshold: 0.5
+      Fixture Size:
+        - 4.57999992
+        - 1

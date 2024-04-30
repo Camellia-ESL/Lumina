@@ -19,6 +19,9 @@ namespace lumina
 		// Set the position of the transform
 		transform_component& set_position(const glm::vec3& position);
 		
+		// Set the rotation using euler angles
+		transform_component& set_rotation(const glm::vec3& angles);
+
 		// Set the scale of the transform
 		transform_component& set_scale(const glm::vec3& scale);
 

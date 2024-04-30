@@ -8,12 +8,36 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 namespace lumina
 {
 	transform_component& transform_component::set_position(const glm::vec3& position)
 	{
 		model_matrix_[3] = glm::vec4(position, 1.0f);
+		return *this;
+	}
+
+	transform_component& transform_component::set_rotation(const glm::vec3& angles)
+	{
+		// Create quaternions representing rotations around each axis
+		glm::quat quaternion_x = glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::quat quaternion_y = glm::angleAxis(angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::quat quaternion_z = glm::angleAxis(angles.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		// Convert the quaternion to a rotation matrix
+		glm::quat rot_quat_computed = quaternion_x * quaternion_y * quaternion_z;
+
+		// Decompose the model matrix into its individual components
+		glm::vec3 scale, translation, skew;
+		glm::vec4 perspective;
+		glm::quat rotation;
+		glm::decompose(model_matrix_, scale, rotation, translation, skew, perspective);
+
+		// Reconstruct the model matrix with only the rotation applied
+		model_matrix_ = glm::mat4_cast(rot_quat_computed);
+		model_matrix_[3] = glm::vec4(translation, 1.0f); // Restore the translation
+		model_matrix_ = glm::scale(model_matrix_, scale); // Restore the scale
 		return *this;
 	}
 

@@ -19,8 +19,11 @@ namespace lumina
 		if (has_scene(scene_name))
 			return false;
 
+		std::shared_ptr<scene> new_scene = std::make_shared<scene>(scene_name);
+		new_scene->on_create();
+
 		// Add the scene to the scene system 
-		scenes_.push_back(std::make_shared<scene>(scene_name));
+		scenes_.push_back(new_scene);
 
 		return true;
 	}
@@ -43,12 +46,16 @@ namespace lumina
 		while (scene_it != scenes_.end())
 		{
 			if (scene_it->get()->get_name() == scene_name)
+			{
+				scene_to_destroy->on_destroy();
 				scene_it = scenes_.erase(scene_it);
+				return true;
+			}
 			else
 				scene_it++;
 		}
 
-		return true;
+		return false;
 	}
 
 	bool scenes_system::change_name(const std::string& scene_name, const std::string& new_name)
@@ -74,8 +81,13 @@ namespace lumina
 
 		scene* scene_to_activate = get_scene(scene_name);
 
+		if (has_active_scene())
+			active_scene_->on_deactivate();
+
 		// Set the scene pointer as the active scene pointer
 		active_scene_ = scene_to_activate;
+
+		active_scene_->on_activate();
 	}
 
 	void scenes_system::destroy_all()

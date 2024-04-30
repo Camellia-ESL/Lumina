@@ -47,18 +47,18 @@ project "lumina_engine"
        defines { "DEBUG" }
        runtime "Debug"
        symbols "On"
-       links { "yaml-cppd.lib" }
+       links { "yaml-cppd.lib", "box2dd.lib" }
 
    filter "configurations:Release"
        defines { "RELEASE" }
        runtime "Release"
        optimize "On"
        symbols "On"
-       links { "yaml-cpp.lib" }
+       links { "yaml-cpp.lib", "box2d.lib" }
 
    filter "configurations:Dist"
        defines { "DIST" }
        runtime "Release"
        optimize "On"
        symbols "Off"
-       links { "yaml-cpp.lib" }
+       links { "yaml-cpp.lib", "box2d.lib" }

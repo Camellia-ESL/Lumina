@@ -27,6 +27,8 @@ namespace lumina_editor
 		{
 			lumina_ui_input_text entity_name_input_text;
 			bool is_active_camera;
+			bool is_first_physics_collider_2d_render = true;
+			glm::vec2 fixture_size;
 		}view_instance_data_;
 
 		// Render the popup menu of the entity
@@ -37,5 +39,6 @@ namespace lumina_editor
 		void render_transform_component();
 		void render_sprite_component();
 		void render_camera_component();
+		void render_physics_collider_2d_component();
 	};
 }
