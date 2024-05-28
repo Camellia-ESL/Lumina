@@ -22,6 +22,9 @@ namespace lumina
 		// Set the rotation using euler angles
 		transform_component& set_rotation(const glm::vec3& angles);
 
+		// Set the rotation using quaternions
+		transform_component& set_rotation(const glm::quat& rotation);
+
 		// Set the scale of the transform
 		transform_component& set_scale(const glm::vec3& scale);
 
@@ -49,6 +52,13 @@ namespace lumina
 		// Compute the difference about 2 transforms model matricies and return the matrix holding the difference
 		// note: the function involves several decomposition and calculations it may be slow
 		static glm::mat4 compute_models_difference(const glm::mat4& mat1, const glm::mat4& mat2);
+
+		// Resolve the translation and rotation difference in 2D only (applying differences to position x,y and rot angle z)
+		static void adjust_transforms_diffs_2d(
+			transform_component& parent_pre_transformation, 
+			transform_component& parent, 
+			transform_component& child
+		);
 
 	private:
 

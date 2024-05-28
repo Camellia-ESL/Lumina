@@ -4,6 +4,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #endif
 
+#include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
@@ -20,24 +21,32 @@ namespace lumina
 
 	transform_component& transform_component::set_rotation(const glm::vec3& angles)
 	{
-		// Create quaternions representing rotations around each axis
-		glm::quat quaternion_x = glm::angleAxis(angles.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		glm::quat quaternion_y = glm::angleAxis(angles.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::quat quaternion_z = glm::angleAxis(angles.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		const glm::vec3 angles_diff = angles - glm::radians(get_euler_angles());
 
-		// Convert the quaternion to a rotation matrix
-		glm::quat rot_quat_computed = quaternion_x * quaternion_y * quaternion_z;
+		// Yaw
+		if (angles_diff.x != 0.0f)
+			rotate({ 1.0f, 0.0f, 0.0f }, angles_diff.x);
 
-		// Decompose the model matrix into its individual components
-		glm::vec3 scale, translation, skew;
-		glm::vec4 perspective;
-		glm::quat rotation;
-		glm::decompose(model_matrix_, scale, rotation, translation, skew, perspective);
+		// Pitch
+		if (angles_diff.y != 0.0f)
+			rotate({ 0.0f, 1.0f, 0.0f }, angles_diff.y);
 
-		// Reconstruct the model matrix with only the rotation applied
-		model_matrix_ = glm::mat4_cast(rot_quat_computed);
-		model_matrix_[3] = glm::vec4(translation, 1.0f); // Restore the translation
-		model_matrix_ = glm::scale(model_matrix_, scale); // Restore the scale
+		// Roll
+		if (angles_diff.z != 0.0f)
+			rotate({ 0.0f, 0.0f, 1.0f }, angles_diff.z);
+
+		return *this;
+	}
+
+	transform_component& transform_component::set_rotation(const glm::quat& rotation)
+	{
+		// Convert quaternion to rotation matrix
+		glm::mat4 rot_mat = glm::mat4_cast(rotation);
+
+		// Replace the rotation component of the model matrix
+		model_matrix_[0] = glm::vec4(rot_mat[0]);
+		model_matrix_[1] = glm::vec4(rot_mat[1]);
+		model_matrix_[2] = glm::vec4(rot_mat[2]);
 		return *this;
 	}
 
@@ -112,5 +121,49 @@ namespace lumina
 			glm::translate(glm::mat4(1.0f), translate_dif) *
 			glm::toMat4(rot_dif) *
 			glm::scale(glm::mat4(1.0f), glm::vec3(1.0f) + scale_dif);
+	}
+
+	void transform_component::adjust_transforms_diffs_2d(
+		transform_component& parent_pre_transformation,
+		transform_component& parent,
+		transform_component& child
+	)
+	{
+		glm::vec3 ent_ith_transform_rot = child.get_euler_angles();
+		const glm::vec3 delta_pos = parent.get_position() - parent_pre_transformation.get_position();
+		const float delta_angle = parent.get_euler_angles().z - parent_pre_transformation.get_euler_angles().z;
+
+		// It zero's the rotation before translating the position
+		child.set_rotation({
+			glm::radians(ent_ith_transform_rot.x),
+			glm::radians(ent_ith_transform_rot.y),
+			0.0f
+			});
+
+		// Applies the world translation
+		child.translate(delta_pos);
+
+		auto rotate_around_point =
+			[&](float rad, const glm::vec3& point, const glm::vec3& axis)
+			{
+				auto t1 = glm::translate(glm::mat4(1), -point);
+				auto r = glm::rotate(glm::mat4(1), rad, axis);
+				auto t2 = glm::translate(glm::mat4(1), point);
+				return t2 * r * t1;
+			};
+
+		// Applies the rotated absolute position
+		child.set_position(
+			rotate_around_point(glm::radians(delta_angle), parent.get_position(), glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::translate(glm::mat4(1), child.get_position()) *
+			glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		);
+
+		// Set the new rotation of the object
+		child.set_rotation({
+			glm::radians(ent_ith_transform_rot.x),
+			glm::radians(ent_ith_transform_rot.y),
+			glm::radians(ent_ith_transform_rot.z) + glm::radians(delta_angle)
+			});
 	}
 }

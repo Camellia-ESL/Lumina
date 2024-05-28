@@ -6,6 +6,18 @@
 
 #include "spdlog/spdlog.h"
 
+
+#ifndef GLM_ENABLE_EXPERIMENTAL
+#define GLM_ENABLE_EXPERIMENTAL
+#endif
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
 namespace lumina
 {
 	void physics_simulator_2d::play()
@@ -33,7 +45,7 @@ namespace lumina
 		constexpr const l_int32 position_iterations = 2;
 		physics_world_->Step(
 			application_player::get_singleton().get_delta_time(), 
-			velocity_iterations, 
+			velocity_iterations,
 			position_iterations
 		);
 		
@@ -48,33 +60,30 @@ namespace lumina
 			auto& obj_pos_in_physics_world = 
 				physics_collider_2d.get_native_body()->GetPosition();
 			auto transform_rotation = transform.get_euler_angles();
-			glm::mat4 pre_transformation_matrix = transform.get_model_matrix();
+			transform_component transform_pre_physics = transform;
 
 			transform.set_position({
 				physics_collider_2d_component::box2_unit_to_engine_unit(obj_pos_in_physics_world.x),
 				physics_collider_2d_component::box2_unit_to_engine_unit(obj_pos_in_physics_world.y),
 				transform.get_position().z
 				});
-
+			
 			transform.set_rotation({
 				glm::radians(transform_rotation.x),
 				glm::radians(transform_rotation.y),
-				physics_collider_2d.get_native_body()->GetAngle()
+				physics_collider_2d.get_native_body()->GetTransform().q.GetAngle()
 				});
-
-			glm::mat4 computed_transform_diff = 
-				lumina::transform_component::compute_models_difference(pre_transformation_matrix, transform.get_model_matrix());
 
 			entity_hierarchy.dispatch_func_to_childs(
 				[&](lumina::entity& ent_iterated) -> void
 				{
 					if (!ent_iterated.has_component<lumina::transform_component>())
 						return;
-
-					lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
-					ent_ith_transform.set_model(
-						computed_transform_diff *
-						ent_ith_transform.get_model_matrix()
+				
+					lumina::transform_component::adjust_transforms_diffs_2d(
+						transform_pre_physics, 
+						transform, 
+						ent_iterated.get_component<lumina::transform_component>()
 					);
 				}
 			);
