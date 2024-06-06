@@ -4,7 +4,7 @@
   This header contains the includes of every accessible file of Lumina Engine,
   and some compilation settings.
 
-  Lumina Engine made by https://github.com/VanityEmptiness/
+  Lumina Engine made by https://github.com/Camellia-ESL/
 */
 
 #include "application/app.h"

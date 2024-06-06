@@ -1,9 +1,9 @@
 #pragma once
 
 /*
-  This header contains a thread safe logger made my Vanity.
+  This header contains a thread safe logger made my Camellia.
 
-  Lumina Engine made by https://github.com/VanityEmptiness/
+  Lumina Engine made by https://github.com/Camellia-ESL/
 */
 
 #include "core/lumina_singleton.h"

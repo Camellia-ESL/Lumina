@@ -2,7 +2,7 @@
 
 /*
 	This header contains the whole function of the event system of Lumina Engine
-	made by https://github.com/VanityEmptiness 
+	made by https://github.com/Camellia-ESL 
 */
 
 #include "mouse_event.h"

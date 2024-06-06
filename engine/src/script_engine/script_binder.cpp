@@ -788,7 +788,7 @@ namespace lumina
 
 		transform_component& entity_transform = entity_fetched.get_component<transform_component>();
 		entity_hierarchy_component& entity_hierarchy = entity_fetched.get_component<entity_hierarchy_component>();
-		glm::mat4 pre_transformation_matrix = entity_transform.get_model_matrix();
+		transform_component pre_transformation_trans = entity_transform;
 
 		// Get's the vector x,y,z 
 		MonoClass* vec_class = mono_object_get_class(vecToSet);
@@ -811,22 +811,33 @@ namespace lumina
 			lumina_csharp_namespace::vec3_csharp_type::fields::_Z
 		);
 
+		// If the entity has a 2d collider sets the position thru the physics system
+		if (entity_fetched.has_component<physics_collider_2d_component>())
+		{
+			physics_collider_2d_component physics_collider = entity_fetched.get_component<physics_collider_2d_component>();
+			if (physics_collider.get_native_body() != nullptr)
+				physics_collider.get_native_body()->SetTransform({ x , y }, physics_collider.get_native_body()->GetTransform().q.GetAngle());
+		}
+		
 		// Set the value of the out vector
 		entity_transform.set_position({ x , y , z });
-
+		
 		// If the entity has childs apply the position to all the childs
 		if (entity_hierarchy.has_childs())
 		{
 			entity_hierarchy.dispatch_func_to_childs(
-				[&](lumina::entity& ent_iterated) -> void
+				[&](entity& ent_iterated) -> void
 				{
-					if (!ent_iterated.has_component<lumina::transform_component>())
+					if (!ent_iterated.has_component<transform_component>())
 						return;
 
-					lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
-					ent_ith_transform.set_model(
-						lumina::transform_component::compute_models_difference(pre_transformation_matrix, entity_transform.get_model_matrix()) *
-						ent_ith_transform.get_model_matrix()
+					transform_component& ent_ith_transform = ent_iterated.get_component<transform_component>();
+					
+					// @enhancement-[script_binder]: It should be changed with the 3d version
+					transform_component::adjust_transforms_diffs_2d(
+						pre_transformation_trans, 
+						entity_transform, 
+						ent_ith_transform
 					);
 				}
 			);
@@ -848,7 +859,7 @@ namespace lumina
 
 		transform_component& entity_transform = entity_fetched.get_component<transform_component>();
 		entity_hierarchy_component& entity_hierarchy = entity_fetched.get_component<entity_hierarchy_component>();
-		glm::mat4 pre_transformation_matrix = entity_transform.get_model_matrix();
+		transform_component pre_transformation_trans = entity_transform;
 
 		// Get's the vector x,y,z 
 		MonoClass* vec_class = mono_object_get_class(vecToSet);
@@ -871,22 +882,38 @@ namespace lumina
 			lumina_csharp_namespace::vec3_csharp_type::fields::_Z
 		);
 
+		// If the entity has a 2d collider sets the rotation thru the physics system
+		if (entity_fetched.has_component<physics_collider_2d_component>())
+		{
+			physics_collider_2d_component physics_collider = 
+				entity_fetched.get_component<physics_collider_2d_component>();
+
+			if (physics_collider.get_native_body() != nullptr)
+				physics_collider.get_native_body()->SetTransform(
+					physics_collider.get_native_body()->GetPosition(), 
+					glm::radians(angleDeg) * z
+				);
+		}
+		
 		// Set the value of the out vector
 		entity_transform.rotate({ x , y , z }, glm::radians(angleDeg));
 
-		// If the entity has childs apply the position to all the childs
+		// If the entity has childs apply the rotation to all the childs
 		if (entity_hierarchy.has_childs())
 		{
 			entity_hierarchy.dispatch_func_to_childs(
-				[&](lumina::entity& ent_iterated) -> void
+				[&](entity& ent_iterated) -> void
 				{
-					if (!ent_iterated.has_component<lumina::transform_component>())
+					if (!ent_iterated.has_component<transform_component>())
 						return;
 
-					lumina::transform_component& ent_ith_transform = ent_iterated.get_component<lumina::transform_component>();
-					ent_ith_transform.set_model(
-						lumina::transform_component::compute_models_difference(pre_transformation_matrix, entity_transform.get_model_matrix()) *
-						ent_ith_transform.get_model_matrix()
+					transform_component& ent_ith_transform = ent_iterated.get_component<transform_component>();
+
+					// @enhancement-[script_binder]: It should be changed with the 3d version
+					transform_component::adjust_transforms_diffs_2d(
+						pre_transformation_trans,
+						entity_transform,
+						ent_ith_transform
 					);
 				}
 			);

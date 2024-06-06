@@ -2,7 +2,7 @@
 /*
 * This header contains all the definitions of the various script API in other languages
 * 
-* Lumina Engine made by https://github.com/VanityEmptiness/	
+* Lumina Engine made by https://github.com/Camellia-ESL/	
 */
 
 #include <string>
