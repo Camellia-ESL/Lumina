@@ -1,6 +1,6 @@
 # Lumina Engine
 
-A little 2D focused game engine developed by Francesco Crocioni "Vanity".
+A little 2D focused game engine developed by Francesco Crocioni "Camellia-ESL (Vanity before)".
 
 ### What is Lumina able to do?
 #### Lumina lists a small list of features for now, it currently supports:
